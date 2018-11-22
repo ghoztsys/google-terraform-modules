@@ -13,6 +13,15 @@ resource "random_id" "default" {
   byte_length = 4
 }
 
+resource "random_id" "password" {
+  byte_length = 8
+  count = "${var.auth_password == "" ? 1 : 0}"
+
+  keepers {
+    name = "${random_id.default.hex}"
+  }
+}
+
 resource "google_container_cluster" "default" {
   name = "${random_id.default.keepers.name}-${random_id.default.hex}-cluster"
   zone = "${var.region_zone}"
@@ -28,7 +37,7 @@ resource "google_container_cluster" "default" {
 
   master_auth {
     username = "${var.auth_username}"
-    password = "${var.auth_password}"
+    password = "${var.auth_password == "" ? random_id.password.hex : var.auth_password}"
   }
 
   node_config {
@@ -48,6 +57,12 @@ resource "google_container_cluster" "default" {
   }
 }
 
+resource "null_resource" "default" {
+  provisioner "local-exec" {
+    command = "gcloud compute instance-groups set-named-ports ${google_container_cluster.default.instance_group_urls[0]} --named-ports=${var.node_port_name}:${var.node_port}"
+  }
+}
+
 resource "google_compute_firewall" "default" {
   name = "${google_container_cluster.default.name}-node-port"
   network = "${var.network}"
@@ -62,10 +77,4 @@ resource "google_compute_firewall" "default" {
 
   source_ranges = ["0.0.0.0/0"]
   target_tags = ["${google_container_cluster.default.name}"]
-}
-
-# Outputs.
-output "instance_group_urls" {
-  description = "URL of provisioned instance groups."
-  value = "${module.cluster0.instance_group_urls}"
 }

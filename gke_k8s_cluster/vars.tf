@@ -1,10 +1,17 @@
+variable project_id {
+  description = "Google Cloud Platform project ID."
+}
+
 variable app_id {
-  description = "The app ID (i.e. `sybl`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
+  description = "The app ID (i.e. `sybl-core`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
+}
+
+variable region {
+  description = "The region where the project resides."
 }
 
 variable region_zone {
   description = "The region zone where the new resources will be created in, i.e. `us-central1-a`. See https://cloud.google.com/compute/docs/regions-zones/."
-  default = "us-central1-a"
 }
 
 variable environment {
@@ -18,12 +25,17 @@ variable node_count {
 }
 
 variable node_port {
-  description = "Specify the node port (30000-32767) to indicate that node port is being used"
+  description = "Node port (30000-32767) to open."
   default = 30000
 }
 
+variable node_port_name {
+  description = "Name of the opened node port."
+  default = "http"
+}
+
 variable expose_node_port {
-  description = "Specify whether the node port should be open to the public"
+  description = "Specifies whether the node port should be exposed to the public."
   default = false
 }
 
@@ -74,4 +86,5 @@ variable "auth_username" {
 
 variable "auth_password" {
   description = "Password for authenticating and accessing the Kubernetes cluster"
+  default = ""
 }

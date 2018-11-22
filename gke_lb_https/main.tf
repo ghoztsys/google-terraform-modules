@@ -1,5 +1,10 @@
 # This module creates an HTTPS load balancer on GCP using forwarding rules.
 
+provider "google" {
+  project = "${var.project_id}"
+  region  = "${var.region}"
+}
+
 resource "google_compute_global_forwarding_rule" "http" {
   name = "${var.name}"
   target = "${google_compute_target_http_proxy.default.self_link}"

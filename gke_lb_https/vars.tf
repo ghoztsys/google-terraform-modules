@@ -1,3 +1,11 @@
+variable project_id {
+  description = "Google Cloud Platform project ID."
+}
+
+variable region {
+  description = "The region where the project resides."
+}
+
 variable ip_version {
   description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"
   default = ""
