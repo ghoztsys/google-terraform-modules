@@ -194,3 +194,5 @@ To get the IP of a pod, run:
 # IP is the pod IP
 $ kubectl describe pods
 ```
+
+If you are accessing the service via `<node_external_ip>:<node_port>`, be sure to create a firewall rule that allows TCP access to the node port.
