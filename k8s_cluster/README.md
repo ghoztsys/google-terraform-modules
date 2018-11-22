@@ -1,17 +1,41 @@
 # k8s_cluster
 
-This module provisions a Kubernetes cluster with an HTTPS load balancer using forwarding rules. The cluster assumes that the containerized application exposes a `NodePort` service on port `30000`.
+This module provisions a new Kubernetes cluster on Google Kubernetes Engine.
 
-## Secrets
+## Concept
 
-You should define all your sensitive environment variables using [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/). To do so, prepare a `secret.yaml` file but make sure that **you don't submit that file to version control. An example `secret.yaml` file looks like this:
+Some terms you should be familiar with before using Kubernetes:
+
+1. **Pod**: A Pod is the smallest deployable unit in Kubernetes. A Pod consists of one or more Docker containers. Containers have access to each other because they coexist in the same enclosed network (within the Pod), hence they can ping each other via `localhost`.
+2. **Deployment**: A Deployment controller is a configuration file that declaratively defines how Pod instances are created, deployed and maintained. This is how you create Pods.
+3. **Service**: A Service controller organizes Pods into logical units and exposes ports on these logical units so the service can be accessed from outside of the cluster.
+4. **Cluster**: A cluster is the largest unit of Kubernetes. It consists of Pod(s), Deployment controller(s) and Service controller(s).
+5. **Node**: A node is a VM instance that hosts a cluster. A cluster can be hosted on multiple nodes. Kubernetes automatically distributes resources among these nodes depending on resource usage (CPU, RAM, etc).
+
+## Usage
+
+After provisioning this module, go to Kubernetes Engine dashboard and grab the command to connect to the provisioned cluster via `kubectl`. It should look something like this:
+
+```sh
+$ gcloud container clusters get-credentials sybl-core-dc0-dev-cluster-2641b9bb --zone us-central1-a --project sybl-core
+```
+
+You can then use `kubectl` to interact with the cluster.
+
+## Deploying an Application On the Cluster
+
+To deploy an application, need to create **deployment** controller(s) and **secret** controller(s) (only if you need to secure environment variables for the application).
+
+### Secrets
+
+You should define all your sensitive environment variables using [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/). To do so, prepare a `secret.yaml` file but make sure that **you don't submit that file to version control**. An example `secret.yaml` file looks like this:
 
 ```yaml
 # secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-secret
+  name: secret-name
 type: Opaque
 data:
   db-host: "redacted"
@@ -37,32 +61,32 @@ $ echo "cGFzc3dvcmQ=" | base64 --decode
 > password
 ```
 
-To apply `secret.yaml`, simply do:
+To apply `secret.yaml`, simply run:
 
 ```sh
 $ kubectl create -f secret.yaml
 ```
 
-## Deployments
+### Deployments
 
-Next you need to tell Kubernetes to deploy your container. This step assumes that you already have a Docker image built somewhere and that Kubernetes has access rights to pull the image. You will need to create a file that defines your deployment, as specified in the official docs: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/. A deployment file looks like this:
+Next you need to tell Kubernetes to deploy your containerized application. This step assumes that you already have a Docker image built somewhere and that Kubernetes has access rights to pull the image. You will need to create a file that defines your deployment, as specified in the official docs: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/. A deployment file looks like this:
 
 ```yaml
 # deployment.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: service-name
+  name: app-name
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        run: service-name
+        app: app-name
     spec:
       hostNetwork: false
       containers:
-        - name: service-name
+        - name: app-name
           image: "docker-image-location"
           ports:
             - containerPort: 8080
@@ -73,8 +97,8 @@ spec:
             - name: BAR
               valueFrom:
                 secretKeyRef:
-                  name: my-secret
-                  key: bar
+                  name: secret-name
+                  key: secret-key
 ```
 
 Note how the above example references an environment variable from an existing secret. Next, just apply the file:
@@ -83,29 +107,50 @@ Note how the above example references an environment variable from an existing s
 $ kubectl create -f deployment.yaml
 ```
 
-## Services
+## Exposing the Application to the Internet
 
-To route external traffic to your containers, you need to define a service. Use Kubernetes `NodePort` service for this purpose. You can set this up with yet another `yaml` file, like so:
+### Services
+
+To route external traffic to your containers, you need to define a service. There are two types of services you can use to expose a port on your clsuter.
+
+#### LoadBalancer Service
 
 ```yaml
 # service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-nodeport-service
+  name: service-name
 spec:
-  type: NodePort
-  ports:
-    - nodePort: 30000
-      port: 80
-      protocol: TCP
-      targetPort: 8080
-      name: http
+  type: LoadBalancer
   selector:
-    run: service-name
+    app: app-name
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
 ```
 
-Apply is like so:
+#### NodePort Service
+
+```yaml
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-name
+spec:
+  type: NodePort
+  selector:
+    app: app-name
+  ports:
+    - name: http
+      protocol: TCP
+      nodePort: 30000
+      port: 8080
+```
+
+Then apply the service like so:
 
 ```sh
 $ kubectl create -f service.yaml
