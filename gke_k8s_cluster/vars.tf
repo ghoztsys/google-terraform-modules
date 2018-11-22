@@ -1,20 +1,10 @@
 variable app_id {
   description = "The app ID (i.e. `sybl`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
-  default = "sybl"
-}
-
-variable service_id {
-  description = "The service ID. This is added to the name of the generated GCE instance and its tags."
 }
 
 variable region_zone {
   description = "The region zone where the new resources will be created in, i.e. `us-central1-a`. See https://cloud.google.com/compute/docs/regions-zones/."
   default = "us-central1-a"
-}
-
-variable datacenter {
-  description = "The datacenter of the new resources. This value becomes a tag and label."
-  default = "dc0"
 }
 
 variable environment {
@@ -23,8 +13,18 @@ variable environment {
 }
 
 variable node_count {
-  description = "The number of nodes to create for this Kubernetes cluster."
-  default = 5
+  description = "The initial number of nodes to create for this Kubernetes cluster."
+  default = 3
+}
+
+variable node_port {
+  description = "Specify the node port (30000-32767) to indicate that node port is being used"
+  default = 30000
+}
+
+variable expose_node_port {
+  description = "Specify whether the node port should be open to the public"
+  default = false
 }
 
 variable machine_type {
@@ -65,4 +65,13 @@ variable cluster_ipv4_cidr {
 variable network {
   description = "The name of the network to attach this interface to."
   default = "default"
+}
+
+variable "auth_username" {
+  description = "Username for authenticating and accessing the Kubernetes cluster."
+  default = "admin"
+}
+
+variable "auth_password" {
+  description = "Password for authenticating and accessing the Kubernetes cluster"
 }

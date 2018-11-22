@@ -1,4 +1,4 @@
-# k8s_cluster
+# gke_k8s_cluster
 
 This module provisions a new Kubernetes cluster on Google Kubernetes Engine.
 
