@@ -6,10 +6,10 @@ This module provisions a new Kubernetes cluster on Google Kubernetes Engine.
 
 Some terms you should be familiar with before using Kubernetes:
 
-1. **Pod**: A Pod is the smallest deployable unit in Kubernetes. A Pod consists of one or more Docker containers. Containers have access to each other because they coexist in the same enclosed network (within the Pod), hence they can ping each other via `localhost`.
-2. **Deployment**: A Deployment controller is a configuration file that declaratively defines how Pod instances are created, deployed and maintained. This is how you create Pods.
-3. **Service**: A Service controller organizes Pods into logical units and exposes ports on these logical units so the service can be accessed from outside of the cluster.
-4. **Cluster**: A cluster is the largest unit of Kubernetes. It consists of Pod(s), Deployment controller(s) and Service controller(s).
+1. **Pod**: A pod is the smallest deployable unit in Kubernetes. A pod consists of one or more Docker containers. Containers have access to each other because they coexist in the same enclosed network (within the pod), hence they can ping each other via `localhost`.
+2. **Deployment**: A deployment controller is a configuration file that declaratively defines how pod instances are created, deployed and maintained. This is how you create Pods.
+3. **Service**: A service controller organizes Pods into logical units and exposes ports on these logical units so the service can be accessed from outside of the cluster.
+4. **Cluster**: A cluster is the largest unit of Kubernetes. It consists of pod(s), deployment controller(s) and service controller(s).
 5. **Node**: A node is a VM instance that hosts a cluster. A cluster can be hosted on multiple nodes. Kubernetes automatically distributes resources among these nodes depending on resource usage (CPU, RAM, etc).
 
 ## Usage
@@ -126,9 +126,21 @@ spec:
   selector:
     app: app-name
   ports:
-    - name: http
-      protocol: TCP
+    - protocol: TCP
+      name: http
       port: 8080
+```
+
+Apply the service:
+
+```sh
+$ kubectl create -f service.yaml
+```
+
+Look up the public IP of the service which you can then access it by `<public_ip>:<port>`:
+
+```sh
+$ kubectl get services
 ```
 
 #### NodePort Service
@@ -144,14 +156,41 @@ spec:
   selector:
     app: app-name
   ports:
-    - name: http
-      protocol: TCP
+    - protocol: TCP
+      name: http
       nodePort: 30000
-      port: 8080
+      port: 80
+      targetPort: 8080
 ```
 
-Then apply the service like so:
+Create the service:
 
 ```sh
 $ kubectl create -f service.yaml
+```
+
+You can now access the service via 3 different addresses:
+
+1. `<node_external_ip>:30000` - Available from anywhere: outside of cluster or inside a cluster (in a pod or node)
+2. `<service_ip>:80` - Only available inside a cluster (in a pod or node)
+3. `<pod_ip>:8080` - Only available inside a cluster (in a pod or node)
+
+You can always grab the opened NodePort and the service IP by running:
+
+```sh
+# IP is the service IP, NodePort is NodePort
+$ kubectl describe services <service_name>
+```
+
+You can list your node instances by running:
+
+```sh
+$ gcloud compute instances list
+```
+
+To get the IP of a pod, run:
+
+```sh
+# IP is the pod IP
+$ kubectl describe pods
 ```
