@@ -22,7 +22,7 @@ output "auth_username" {
 
 output "auth_password" {
   description = "Password to authenticate access to the Kubernetes cluster."
-  value = "${var.auth_password == "" ? random_id.password.hex : var.auth_password}"
+  value = "${var.auth_password == "" ? random_id.password.0.hex : var.auth_password}"
   sensitive = true
 }
 
