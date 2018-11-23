@@ -36,20 +36,29 @@ resource "google_compute_ssl_certificate" "default" {
 }
 
 resource "google_compute_target_http_proxy" "default" {
-  name    = "${var.name}-http-proxy"
-  url_map = "${element(compact(concat(list(var.url_map), google_compute_url_map.default.*.self_link)), 0)}"
+  name = "${var.name}-http-proxy"
+  url_map = "${google_compute_url_map.default.0.self_link}"
 }
 
 resource "google_compute_target_https_proxy" "default" {
   name = "${var.name}-https-proxy"
-  url_map = "${element(compact(concat(list(var.url_map), google_compute_url_map.default.*.self_link)), 0)}"
+  url_map = "${google_compute_url_map.default.self_link}"
   ssl_certificates = ["${google_compute_ssl_certificate.default.self_link}"]
 }
 
 resource "google_compute_url_map" "default" {
-  count = "${var.create_url_map ? 1 : 0}"
   name = "${var.name}-url-map"
   default_service = "${google_compute_backend_service.default.0.self_link}"
+
+  host_rule = {
+    hosts = ["*"]
+    path_matcher = "allpaths"
+  }
+
+  path_matcher = {
+    name = "allpaths"
+    default_service = "${google_compute_backend_service.default.0.self_link}"
+  }
 }
 
 resource "google_compute_backend_service" "default" {

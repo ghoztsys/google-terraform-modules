@@ -30,16 +30,6 @@ variable backend_protocol {
   default = "HTTP"
 }
 
-variable create_url_map {
-  description = "Set to `false` if url_map variable is provided."
-  default = true
-}
-
-variable url_map {
-  description = "The url_map resource to use. Default is to send all traffic to first backend."
-  default = ""
-}
-
 variable private_key {
   description = "Content of the private SSL key."
 }
