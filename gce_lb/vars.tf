@@ -15,13 +15,18 @@ variable name {
   description = "Name for the forwarding rule and prefix for supporting resources."
 }
 
-variable backends {
-  description = "Map backend indices to list of backend maps."
+variable backend_services {
+  description = "Map backend service indices to list of backend maps."
   type = "map"
 }
 
-variable backend_params {
+variable backend_service_params {
   description = "Comma-separated encoded list of parameters in order: health check path, service port name, service port, backend timeout seconds."
+  type = "list"
+}
+
+variable backend_bucket_params {
+  description = "Comma-separated encoded list of parameters in order: url map pathname, bucket name, location."
   type = "list"
 }
 
@@ -32,10 +37,12 @@ variable backend_protocol {
 
 variable private_key {
   description = "Content of the private SSL key."
+  default = ""
 }
 
 variable certificate {
   description = "Content of the SSL certificate."
+  default = ""
 }
 
 variable security_policy {
@@ -43,9 +50,9 @@ variable security_policy {
   default = ""
 }
 
-variable cdn {
+variable enable_cdn {
   description = "Set to `true` to enable cdn on backend."
-  default = false
+  default = true
 }
 
 variable target_tags {
