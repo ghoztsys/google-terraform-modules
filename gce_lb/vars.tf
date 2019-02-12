@@ -23,11 +23,13 @@ variable backend_services {
 variable backend_service_params {
   description = "Comma-separated encoded list of parameters in order: health check path, service port name, service port, backend timeout seconds."
   type = "list"
+  default = []
 }
 
 variable backend_bucket_params {
   description = "Comma-separated encoded list of parameters in order: url map pathname, bucket name, location."
   type = "list"
+  default = []
 }
 
 variable backend_protocol {
@@ -58,4 +60,5 @@ variable enable_cdn {
 variable target_tags {
   description = "List of target tags for health check firewall rule."
   type = "list"
+  default = []
 }
