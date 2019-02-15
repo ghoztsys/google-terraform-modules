@@ -4,8 +4,8 @@ This module provisions a new Kubernetes cluster on Google Kubernetes Engine. For
 
 ## Inputs
 
-> See `vars.tf`
+> See [`vars.tf`](./vars.tf)
 
 ## Outputs
 
-> See `outputs.tf`
+> See [`outputs.tf`](./outputs.tf)
