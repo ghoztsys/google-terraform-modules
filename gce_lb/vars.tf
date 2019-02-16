@@ -37,13 +37,18 @@ variable backend_protocol {
   default = "HTTP"
 }
 
-variable private_key {
-  description = "Content of the private SSL key."
+variable ssl_domains {
+  description = "Specifies the domains for managed SSL certificates."
+  default = []
+}
+
+variable ssl_private_key {
+  description = "Content of the custom private SSL key."
   default = ""
 }
 
-variable certificate {
-  description = "Content of the SSL certificate."
+variable ssl_certificate {
+  description = "Content of the custom SSL certificate."
   default = ""
 }
 
