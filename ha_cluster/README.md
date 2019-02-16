@@ -1,4 +1,4 @@
-# ha_cluster
+# `ha_cluster`
 
 This module defines a high availability cluster that runs an application, consisting of the following nodes: the master node(s) for controlling all other nodes within the cluster, the load balancer node(s) for directing traffic to the nodes that actually run the app, the database node(s) for storing data, and the application node(s) for serving the app and handling requests.
 

@@ -1,4 +1,4 @@
-# ha_sandbox
+# `ha_sandbox`
 
 This module defines a single node that contains all the services required to run an application (i.e. master, load balancer, database).
 

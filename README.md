@@ -1,4 +1,4 @@
-# Sybl Custom Terraform Modules
+# Terraform Modules
 
 Terraform modules package cloud resources together to make up an enclosed, reusable system. This repo consists of Sybl's custom reusable Terraform modules.
 
