@@ -4,8 +4,7 @@ resource "google_dns_record_set" "default" {
   type = "TXT"
   ttl = 3600
   rrdatas = ["${var.value}"]
-
-  lifecycle  {
+  lifecycle {
     create_before_destroy = false
   }
 }

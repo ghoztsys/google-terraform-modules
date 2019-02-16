@@ -42,7 +42,7 @@ resource "google_compute_ssl_certificate" "custom" {
   certificate = "${var.ssl_certificate}"
   private_key = "${var.ssl_private_key}"
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = false
   }
 }
 
@@ -56,7 +56,7 @@ resource "google_compute_ssl_certificate" "managed" {
     ]
   }
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = false
   }
 }
 
