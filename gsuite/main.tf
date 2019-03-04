@@ -1,14 +1,3 @@
-# Set up TXT record for G Suite SPF setup.
-resource "google_dns_record_set" "txt" {
-  name = "${var.dns_name}"
-  managed_zone = "${var.dns_managed_zone}"
-  type = "TXT"
-  ttl = 3600
-  rrdatas = [
-    "\"v=spf1 include:_spf.google.com ~all\"",
-  ]
-}
-
 # Set up A records to enable naked domain (IPv4).
 # @see https://support.google.com/a/answer/2579934?visit_id=1-636447692970509696-3484342373&rd=1
 resource "google_dns_record_set" "a" {
