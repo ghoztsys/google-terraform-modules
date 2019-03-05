@@ -11,7 +11,7 @@ resource "google_dns_record_set" "a" {
     "216.239.36.21",
     "216.239.38.21",
   ],
-  lifecycle  {
+  lifecycle {
     create_before_destroy = false
   }
 }
@@ -29,12 +29,12 @@ resource "google_dns_record_set" "aaaa" {
     "2001:4860:4802:36::15",
     "2001:4860:4802:38::15",
   ],
-  lifecycle  {
+  lifecycle {
     create_before_destroy = false
   }
 }
 
-# Set up MX records\.
+# Set up MX records.
 resource "google_dns_record_set" "mx" {
   name = "${var.dns_name}"
   managed_zone = "${var.dns_managed_zone}"
@@ -47,7 +47,7 @@ resource "google_dns_record_set" "mx" {
     "10 alt3.aspmx.l.google.com.",
     "10 alt4.aspmx.l.google.com.",
   ],
-  lifecycle  {
+  lifecycle {
     create_before_destroy = false
   }
 }
@@ -61,7 +61,7 @@ resource "google_dns_record_set" "mail" {
   rrdatas = [
     "ghs.googlehosted.com.",
   ],
-  lifecycle  {
+  lifecycle {
     create_before_destroy = false
   }
 }
@@ -75,7 +75,7 @@ resource "google_dns_record_set" "calendar" {
   rrdatas = [
     "ghs.googlehosted.com.",
   ],
-  lifecycle  {
+  lifecycle {
     create_before_destroy = false
   }
 }
@@ -89,7 +89,7 @@ resource "google_dns_record_set" "drive" {
   rrdatas = [
     "ghs.googlehosted.com.",
   ],
-  lifecycle  {
+  lifecycle {
     create_before_destroy = false
   }
 }
