@@ -30,7 +30,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
   provider = "google-beta"
   count = "${length(var.ssl_domains)}"
   name = "${var.name}-default-cert-${count.index}"
-  default {
+  managed {
     domains = [
       "${element(var.ssl_domains, count.index)}"
     ]
@@ -53,7 +53,7 @@ resource "google_compute_target_https_proxy" "default" {
   count = "${(length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0}"
   name = "${var.name}-https-proxy"
   url_map = "${element(compact(concat(google_compute_url_map.with_backend_bucket.*.self_link, google_compute_url_map.default.*.self_link)), 0)}"
-  ssl_certificates = ["${compact(concat(google_compute_ssl_certificate.default.*.self_link, google_compute_ssl_certificate.default.*.self_link))}"]
+  ssl_certificates = ["${compact(concat(google_compute_ssl_certificate.default.*.self_link, google_compute_managed_ssl_certificate.default.*.self_link))}"]
 }
 
 # Create a global forwarding rule for HTTP routing. Refer to the load balancing
