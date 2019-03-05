@@ -105,6 +105,12 @@ resource "google_storage_bucket" "default" {
   }
 }
 
+# Configure default ACL for the GCS bucket to be readable by everyone.
+resource "google_storage_bucket_acl" "default" {
+  bucket = "${google_storage_bucket.default.name}"
+  default_acl = "publicread"
+}
+
 # Create the backend bucket.
 resource "google_compute_backend_bucket" "default" {
   name = "${var.name}-backend-bucket"

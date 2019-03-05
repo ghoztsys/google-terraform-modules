@@ -10,5 +10,5 @@ This module creates a Google Cloud Storage bucket fronted by an HTTP(S) load bal
 4. A [self-managed SSL certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates) resource is created if a certificate and private key are specified.
 5. A [Google-managed SSL certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates#managed-certs) is created for each domain in `ssl_domains`.
 6. A [URL map](https://cloud.google.com/load-balancing/docs/https/url-map) that directs traffic to the Google Cloud Storage backend bucket.
-7. A [Google Cloud Storage bucket](https://cloud.google.com/storage/)
+7. A [Google Cloud Storage bucket](https://cloud.google.com/storage/) with default ACL set to public read.
 8. A [backend bucket](https://cloud.google.com/load-balancing/docs/backend-bucket) that points to the GCS bucket created above.

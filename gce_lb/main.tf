@@ -1,5 +1,3 @@
-# This module creates an HTTP(S) load balancer on GCP using forwarding rules.
-
 provider "google" {
   project = "${var.project_id}"
   region = "${var.region}"
@@ -10,11 +8,56 @@ provider "google-beta" {
   region = "${var.region}"
 }
 
+# Reserve a static IP for the load balancer.
 resource "google_compute_global_address" "default" {
   name = "${var.name}-address"
   ip_version = "${var.ip_version}"
 }
 
+# Create an SSL certificate from the provided keys (optional).
+resource "google_compute_ssl_certificate" "default" {
+  provider = "google"
+  count = "${(var.ssl_private_key != "" && var.ssl_certificate != "") ? 1 : 0}"
+  certificate = "${var.ssl_certificate}"
+  private_key = "${var.ssl_private_key}"
+  lifecycle {
+    create_before_destroy = false
+  }
+}
+
+# Create a default SSL certificate (optional).
+resource "google_compute_managed_ssl_certificate" "default" {
+  provider = "google-beta"
+  count = "${length(var.ssl_domains)}"
+  name = "${var.name}-default-cert-${count.index}"
+  default {
+    domains = [
+      "${element(var.ssl_domains, count.index)}"
+    ]
+  }
+  lifecycle {
+    create_before_destroy = false
+  }
+}
+
+# Create an HTTP target proxy for the load balancer. Automatically derive the
+# URL map.
+resource "google_compute_target_http_proxy" "default" {
+  name = "${var.name}-http-proxy"
+  url_map = "${element(compact(concat(google_compute_url_map.with_backend_bucket.*.self_link, google_compute_url_map.default.*.self_link)), 0)}"
+}
+
+# Create an HTTPS target proxy for the load balancer. Automatically derive the
+# URL map.
+resource "google_compute_target_https_proxy" "default" {
+  count = "${(length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0}"
+  name = "${var.name}-https-proxy"
+  url_map = "${element(compact(concat(google_compute_url_map.with_backend_bucket.*.self_link, google_compute_url_map.default.*.self_link)), 0)}"
+  ssl_certificates = ["${compact(concat(google_compute_ssl_certificate.default.*.self_link, google_compute_ssl_certificate.default.*.self_link))}"]
+}
+
+# Create a global forwarding rule for HTTP routing. Refer to the load balancing
+# target proxy and the reserved global address.
 resource "google_compute_global_forwarding_rule" "http" {
   name = "${var.name}"
   target = "${google_compute_target_http_proxy.default.self_link}"
@@ -25,6 +68,8 @@ resource "google_compute_global_forwarding_rule" "http" {
   ]
 }
 
+# Create a global forwarding rule for HTTPS routing (if SSL is enabled). Refer
+# to the load balancing target proxy and the reserved global address.
 resource "google_compute_global_forwarding_rule" "https" {
   count = "${(length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0}"
   name = "${var.name}-https"
@@ -36,42 +81,7 @@ resource "google_compute_global_forwarding_rule" "https" {
   ]
 }
 
-resource "google_compute_ssl_certificate" "custom" {
-  provider = "google"
-  count = "${(var.ssl_private_key != "" && var.ssl_certificate != "") ? 1 : 0}"
-  certificate = "${var.ssl_certificate}"
-  private_key = "${var.ssl_private_key}"
-  lifecycle {
-    create_before_destroy = false
-  }
-}
-
-resource "google_compute_ssl_certificate" "managed" {
-  provider = "google-beta"
-  count = "${length(var.ssl_domains)}"
-  type = "MANAGED"
-  managed {
-    domains = [
-      "${element(var.ssl_domains, count.index)}"
-    ]
-  }
-  lifecycle {
-    create_before_destroy = false
-  }
-}
-
-resource "google_compute_target_http_proxy" "default" {
-  name = "${var.name}-http-proxy"
-  url_map = "${element(compact(concat(google_compute_url_map.with_backend_bucket.*.self_link, google_compute_url_map.default.*.self_link)), 0)}"
-}
-
-resource "google_compute_target_https_proxy" "default" {
-  count = "${(length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0}"
-  name = "${var.name}-https-proxy"
-  url_map = "${element(compact(concat(google_compute_url_map.with_backend_bucket.*.self_link, google_compute_url_map.default.*.self_link)), 0)}"
-  ssl_certificates = ["${compact(concat(google_compute_ssl_certificate.custom.*.self_link, google_compute_ssl_certificate.managed.*.self_link))}"]
-}
-
+# Create a URL map for the load balancer (without a backend bucket).
 resource "google_compute_url_map" "default" {
   count = "${(length(var.backend_bucket_params) == 0) ? 1 : 0}"
   name = "${var.name}-url-map"
@@ -86,6 +96,7 @@ resource "google_compute_url_map" "default" {
   }
 }
 
+# Create a URL map for the load balancer (with a backend bucket).
 resource "google_compute_url_map" "with_backend_bucket" {
   count = "${(length(var.backend_bucket_params) == 0) ? 0 : 1}"
   name = "${var.name}-url-map"
@@ -108,6 +119,7 @@ resource "google_compute_url_map" "with_backend_bucket" {
   }
 }
 
+# Create backend service.
 resource "google_compute_backend_service" "default" {
   count = "${length(var.backend_service_params)}"
   name = "${var.name}-backend-${count.index}"
