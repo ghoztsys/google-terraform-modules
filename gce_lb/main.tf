@@ -32,7 +32,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
   name = "${var.name}-default-cert-${count.index}"
   managed {
     domains = [
-      "${element(var.ssl_domains, count.index)}"
+      "${element(var.ssl_domains, count.index)}",
     ]
   }
   lifecycle {
@@ -43,8 +43,9 @@ resource "google_compute_managed_ssl_certificate" "default" {
 # Create an HTTP target proxy for the load balancer. Automatically derive the
 # URL map.
 resource "google_compute_target_http_proxy" "default" {
+  count = "${var.enable_http ? 1 : 0}"
   name = "${var.name}-http-proxy"
-  url_map = "${element(compact(concat(google_compute_url_map.with_backend_bucket.*.self_link, google_compute_url_map.default.*.self_link)), 0)}"
+  url_map = "${element(compact(concat(list(var.url_map), google_compute_url_map.default.*.self_link)), 0)}"
 }
 
 # Create an HTTPS target proxy for the load balancer. Automatically derive the
@@ -52,13 +53,14 @@ resource "google_compute_target_http_proxy" "default" {
 resource "google_compute_target_https_proxy" "default" {
   count = "${(length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0}"
   name = "${var.name}-https-proxy"
-  url_map = "${element(compact(concat(google_compute_url_map.with_backend_bucket.*.self_link, google_compute_url_map.default.*.self_link)), 0)}"
+  url_map = "${element(compact(concat(list(var.url_map), google_compute_url_map.default.*.self_link)), 0)}"
   ssl_certificates = ["${compact(concat(google_compute_ssl_certificate.default.*.self_link, google_compute_managed_ssl_certificate.default.*.self_link))}"]
 }
 
 # Create a global forwarding rule for HTTP routing. Refer to the load balancing
 # target proxy and the reserved global address.
 resource "google_compute_global_forwarding_rule" "http" {
+  count = "${var.enable_http ? 1 : 0}"
   name = "${var.name}"
   target = "${google_compute_target_http_proxy.default.self_link}"
   ip_address = "${google_compute_global_address.default.address}"
@@ -83,7 +85,7 @@ resource "google_compute_global_forwarding_rule" "https" {
 
 # Create a URL map for the load balancer (without a backend bucket).
 resource "google_compute_url_map" "default" {
-  count = "${(length(var.backend_bucket_params) == 0) ? 1 : 0}"
+  count = "${var.create_url_map ? 1 : 0}"
   name = "${var.name}-url-map"
   default_service = "${google_compute_backend_service.default.0.self_link}"
   host_rule {
@@ -96,29 +98,6 @@ resource "google_compute_url_map" "default" {
   }
 }
 
-# Create a URL map for the load balancer (with a backend bucket).
-resource "google_compute_url_map" "with_backend_bucket" {
-  count = "${(length(var.backend_bucket_params) == 0) ? 0 : 1}"
-  name = "${var.name}-url-map"
-  default_service = "${google_compute_backend_service.default.0.self_link}"
-  host_rule {
-    hosts = [
-      "*",
-    ]
-    path_matcher = "allpaths"
-  }
-  path_matcher {
-    name = "allpaths"
-    default_service = "${google_compute_backend_service.default.0.self_link}"
-    path_rule {
-      paths = [
-        "${element(split(",", element(var.backend_bucket_params, 0)), 0)}",
-      ]
-      service = "${google_compute_backend_bucket.default.0.self_link}"
-    }
-  }
-}
-
 # Create backend service.
 resource "google_compute_backend_service" "default" {
   count = "${length(var.backend_service_params)}"
@@ -126,31 +105,14 @@ resource "google_compute_backend_service" "default" {
   protocol = "${var.backend_protocol}"
   port_name = "${element(split(",", element(var.backend_service_params, count.index)), 1)}"
   timeout_sec = "${element(split(",", element(var.backend_service_params, count.index)), 3)}"
+  security_policy = "${var.security_policy}"
+  enable_cdn = "${var.enable_cdn}"
   backend = [
     "${var.backend_services["${count.index}"]}",
   ]
   health_checks = [
     "${element(google_compute_http_health_check.default.*.self_link, count.index)}",
   ]
-  security_policy = "${var.security_policy}"
-  enable_cdn = "${var.enable_cdn}"
-}
-
-resource "google_compute_backend_bucket" "default" {
-  count = "${length(var.backend_bucket_params)}"
-  name = "${var.name}-backend-bucket-${count.index}"
-  bucket_name = "${element(google_storage_bucket.default.*.name, count.index)}"
-  enable_cdn = "${var.enable_cdn}"
-  depends_on = [
-    "google_storage_bucket.default",
-  ]
-}
-
-resource "google_storage_bucket" "default" {
-  count = "${length(var.backend_bucket_params)}"
-  name = "${var.name}-bucket-${count.index}"
-  location = "${element(split(",", element(var.backend_bucket_params, count.index)), 2)}"
-  force_destroy = true
 }
 
 resource "google_compute_http_health_check" "default" {

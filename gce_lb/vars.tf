@@ -15,6 +15,11 @@ variable name {
   description = "Name for the forwarding rule and prefix for supporting resources."
 }
 
+variable enable_http {
+  description = "Set to `false` to disable HTTP forward to port 80."
+  default = true
+}
+
 variable backend_services {
   description = "Map backend service indices to list of backend maps."
   type = "map"
@@ -23,13 +28,6 @@ variable backend_services {
 variable backend_service_params {
   description = "Comma-separated encoded list of parameters in order: health check path, service port name, service port, backend timeout seconds."
   type = "list"
-  default = []
-}
-
-variable backend_bucket_params {
-  description = "Comma-separated encoded list of parameters in order: url map pathname, bucket name, location."
-  type = "list"
-  default = []
 }
 
 variable backend_protocol {
@@ -62,8 +60,17 @@ variable enable_cdn {
   default = true
 }
 
+variable create_url_map {
+  description = "Specifies whether a default URL map should be generated."
+  default = true
+}
+
+variable url_map {
+  description = "Provide a custom URL map resource to be used instead of automatically generating one."
+  default = ""
+}
+
 variable target_tags {
   description = "List of target tags for health check firewall rule."
-  type = "list"
   default = []
 }
