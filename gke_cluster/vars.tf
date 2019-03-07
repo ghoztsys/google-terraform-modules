@@ -19,22 +19,42 @@ variable environment {
   default = "development"
 }
 
-variable node_count {
-  description = "The initial number of nodes to create for this Kubernetes cluster."
-  default = 3
+variable namespace {
+  description = "Namespace to include default service"
+  default = "default"
 }
 
-variable node_port {
+variable node_count {
+  description = "The initial number of nodes to create for this Kubernetes cluster."
+  default = 1
+}
+
+variable service_name {
+  description = "Name of the default NodePort service."
+  default = "default"
+}
+
+variable service_port {
   description = "Node port (30000-32767) to open."
   default = 30000
 }
 
-variable node_port_name {
+variable service_port_name {
   description = "Name of the opened node port."
   default = "http"
 }
 
-variable expose_node_port {
+variable target_port {
+  description = "Target port for the default NodePort service."
+  default = 8080
+}
+
+variable host_port {
+  description = "Host port for the default NodePort service."
+  default = 80
+}
+
+variable expose_service_port {
   description = "Specifies whether the node port should be exposed to the public."
   default = false
 }

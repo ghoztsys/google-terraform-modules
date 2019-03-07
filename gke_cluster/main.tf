@@ -1,6 +1,15 @@
 provider "google" {
   project = "${var.project_id}"
-  region  = "${var.region}"
+  region = "${var.region}"
+}
+
+provider "kubernetes" {
+  host = "${google_container_cluster.default.endpoint}"
+  username = "${var.auth_username}"
+  password = "${var.auth_password == "" ? random_id.password.0.hex : var.auth_password}"
+  client_certificate = "${base64decode(google_container_cluster.default.master_auth.0.client_certificate)}"
+  client_key = "${base64decode(google_container_cluster.default.master_auth.0.client_key)}"
+  cluster_ca_certificate = "${base64decode(google_container_cluster.default.master_auth.0.cluster_ca_certificate)}"
 }
 
 resource "random_id" "default" {
@@ -20,6 +29,7 @@ resource "random_id" "password" {
   }
 }
 
+# Create the Kubernetes cluster.
 resource "google_container_cluster" "default" {
   name = "${random_id.default.keepers.name}-${random_id.default.hex}-cluster"
   zone = "${var.region_zone}"
@@ -50,21 +60,52 @@ resource "google_container_cluster" "default" {
   }
 }
 
+# Set named ports for created instance group.
 resource "null_resource" "default" {
   provisioner "local-exec" {
-    command = "gcloud compute instance-groups set-named-ports ${google_container_cluster.default.instance_group_urls[0]} --named-ports=${var.node_port_name}:${var.node_port}"
+    command = "gcloud compute instance-groups set-named-ports ${google_container_cluster.default.instance_group_urls[0]} --named-ports=${var.service_port_name}:${var.service_port}"
   }
 }
 
+# Create namespace for default service.
+resource "kubernetes_namespace" "default" {
+  count = "${(var.namespace == "" || var.namespace == "default") ? 0 : 1}"
+  metadata {
+    name = "${var.namespace}"
+  }
+}
+
+# Create default NodePort service.
+resource "kubernetes_service" "default" {
+  metadata {
+    name = "${var.service_name}"
+    namespace = "${kubernetes_namespace.default.metadata.0.name}"
+  }
+  spec {
+    type = "NodePort"
+    selector {
+      name = "${var.service_name}"
+    }
+    port {
+      protocol = "TCP"
+      name = "${var.service_port_name}"
+      target_port = "${var.target_port}"
+      port = "${var.host_port}"
+      node_port = "${var.service_port}"
+    }
+  }
+}
+
+# Create firewall for NodePort service (if specified).
 resource "google_compute_firewall" "default" {
-  name = "${google_container_cluster.default.name}-node-port"
+  name = "${google_container_cluster.default.name}-service-port"
   network = "${var.network}"
   priority = 1000
-  count = "${var.expose_node_port ? 1 : 0}"
+  count = "${var.expose_service_port ? 1 : 0}"
   allow {
     protocol = "tcp"
     ports = [
-      "${var.node_port}",
+      "${var.service_port}",
     ]
   }
   source_ranges = [
