@@ -113,6 +113,9 @@ resource "google_compute_backend_service" "default" {
   health_checks = [
     "${element(google_compute_http_health_check.default.*.self_link, count.index)}",
   ]
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 resource "google_compute_http_health_check" "default" {
