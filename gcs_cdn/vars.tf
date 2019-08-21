@@ -7,8 +7,8 @@ variable region {
 }
 
 variable ip_version {
-  description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"
   default = ""
+  description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"
 }
 
 variable name {
@@ -16,21 +16,21 @@ variable name {
 }
 
 variable bucket_location {
-  description = "GCS bucket location"
   default = "US"
+  description = "GCS bucket location"
 }
 
 variable ssl_domains {
-  description = "Specifies the domains for managed SSL certificates."
   default = []
+  description = "Specifies the domains for managed SSL certificates."
 }
 
 variable ssl_private_key {
-  description = "Content of the custom private SSL key."
   default = ""
+  description = "Content of the custom private SSL key."
 }
 
 variable ssl_certificate {
-  description = "Content of the custom SSL certificate."
   default = ""
+  description = "Content of the custom SSL certificate."
 }

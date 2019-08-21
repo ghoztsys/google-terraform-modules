@@ -7,8 +7,8 @@ variable region {
 }
 
 variable ip_version {
-  description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"
   default = ""
+  description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"
 }
 
 variable name {
@@ -16,8 +16,8 @@ variable name {
 }
 
 variable enable_http {
-  description = "Set to `false` to disable HTTP forward to port 80."
   default = true
+  description = "Set to `false` to disable HTTP forward to port 80."
 }
 
 variable backend_services {
@@ -31,46 +31,46 @@ variable backend_service_params {
 }
 
 variable backend_protocol {
-  description = "The protocol with which to talk to the backend service."
   default = "HTTP"
+  description = "The protocol with which to talk to the backend service."
 }
 
 variable ssl_domains {
-  description = "Specifies the domains for managed SSL certificates."
   default = []
+  description = "Specifies the domains for managed SSL certificates."
 }
 
 variable ssl_private_key {
-  description = "Content of the custom private SSL key."
   default = ""
+  description = "Content of the custom private SSL key."
 }
 
 variable ssl_certificate {
-  description = "Content of the custom SSL certificate."
   default = ""
+  description = "Content of the custom SSL certificate."
 }
 
 variable security_policy {
-  description = "The resource URL for the security policy to associate with the backend service."
   default = ""
+  description = "The resource URL for the security policy to associate with the backend service."
 }
 
 variable enable_cdn {
-  description = "Set to `true` to enable cdn on backend."
   default = true
+  description = "Set to `true` to enable cdn on backend."
 }
 
 variable create_url_map {
-  description = "Specifies whether a default URL map should be generated."
   default = true
+  description = "Specifies whether a default URL map should be generated."
 }
 
 variable url_map {
-  description = "Provide a custom URL map resource to be used instead of automatically generating one."
   default = ""
+  description = "Provide a custom URL map resource to be used instead of automatically generating one."
 }
 
 variable target_tags {
-  description = "List of target tags for health check firewall rule."
   default = []
+  description = "List of target tags for health check firewall rule."
 }

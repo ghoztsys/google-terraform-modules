@@ -15,96 +15,96 @@ variable region_zone {
 }
 
 variable environment {
-  description = "The environment of the resources, i.e. development, staging, etc. This value becomes a tag and label."
   default = "development"
+  description = "The environment of the resources, i.e. development, staging, etc. This value becomes a tag and label."
 }
 
 variable namespace {
-  description = "Namespace to include default service"
   default = "default"
+  description = "Namespace to include default service"
 }
 
 variable node_count {
-  description = "The initial number of nodes to create for this Kubernetes cluster."
   default = 1
+  description = "The initial number of nodes to create for this Kubernetes cluster."
 }
 
 variable service_name {
-  description = "Name of the default NodePort service."
   default = "default"
+  description = "Name of the default NodePort service."
 }
 
 variable service_port {
-  description = "Node port (30000-32767) to open."
   default = 30000
+  description = "Node port (30000-32767) to open."
 }
 
 variable service_port_name {
-  description = "Name of the opened node port."
   default = "http"
+  description = "Name of the opened node port."
 }
 
 variable target_port {
-  description = "Target port for the default NodePort service."
   default = 8080
+  description = "Target port for the default NodePort service."
 }
 
 variable host_port {
-  description = "Host port for the default NodePort service."
   default = 80
+  description = "Host port for the default NodePort service."
 }
 
 variable expose_service_port {
-  description = "Specifies whether the node port should be exposed to the public."
   default = false
+  description = "Specifies whether the node port should be exposed to the public."
 }
 
 variable machine_type {
-  description = "The machine type of the resource. See https://cloud.google.com/compute/docs/machine-types."
   default = "g1-small"
+  description = "The machine type of the resource. See https://cloud.google.com/compute/docs/machine-types."
 }
 
 variable disk_image {
-  description = "The disk image of the resource. Ubuntu is preferred. You can find a list of images in your GCP console by selecting 'Images' in the 'Compute Engine' dashboard."
   default = "ubuntu-1604-xenial-v20161214"
+  description = "The disk image of the resource. Ubuntu is preferred. You can find a list of images in your GCP console by selecting 'Images' in the 'Compute Engine' dashboard."
 }
 
 variable disk_type {
-  description = "The disk type (i.e. local or persistent disk, standard or ssd) as specified by`pd-standard`, `pd-ssd`, or `local-ssd`. `pd-ssd` is preferred."
   default = "pd-ssd"
+  description = "The disk type (i.e. local or persistent disk, standard or ssd) as specified by`pd-standard`, `pd-ssd`, or `local-ssd`. `pd-ssd` is preferred."
 }
 
 variable tags {
-  description = "Additional tags."
   default = []
+  description = "Additional tags."
 }
 
 variable service_scopes {
-  description = "The service scopes. Both OAuth2 URLs and short names are supported. See https://developers.google.com/identity/protocols/googlescopes."
   default = [
     "https://www.googleapis.com/auth/compute",
     "https://www.googleapis.com/auth/logging.write",
     "https://www.googleapis.com/auth/monitoring",
     "https://www.googleapis.com/auth/devstorage.read_write"
   ]
+  description = "The service scopes. Both OAuth2 URLs and short names are supported. See https://developers.google.com/identity/protocols/googlescopes."
 }
 
 variable cluster_ipv4_cidr {
-  description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."
   default = ""
+  description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."
 }
 
 variable network {
-  description = "The name of the network to attach this interface to."
   default = "default"
+  description = "The name of the network to attach this interface to."
 }
 
 variable "auth_username" {
-  description = "Username for authenticating and accessing the Kubernetes cluster."
   default = "admin"
+  description = "Username for authenticating and accessing the Kubernetes cluster."
 }
 
 variable "auth_password" {
-  description = "Password for authenticating and accessing the Kubernetes cluster"
   default = ""
+  description = "Password for authenticating and accessing the Kubernetes cluster"
 }

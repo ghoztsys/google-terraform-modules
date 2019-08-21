@@ -10,26 +10,26 @@ output "name" {
 
 output "host" {
   description = "The IP address of this cluster's Kubernetes master."
-  value = "${google_container_cluster.default.endpoint}"
   sensitive = true
+  value = "${google_container_cluster.default.endpoint}"
 }
 
 output "client_certificate" {
   description = "Base64 encoded public certificate used by clients to authenticate to the cluster endpoint."
-  value = "${google_container_cluster.default.master_auth.0.client_certificate}"
   sensitive = true
+  value = "${google_container_cluster.default.master_auth.0.client_certificate}"
 }
 
 output "client_key" {
   description = "Base64 encoded private key used by clients to authenticate to the cluster endpoint."
-  value = "${google_container_cluster.default.master_auth.0.client_key}"
   sensitive = true
+  value = "${google_container_cluster.default.master_auth.0.client_key}"
 }
 
 output "cluster_ca_certificate" {
   description = "Base64 encoded public certificate that is the root of trust for the cluster."
-  value = "${google_container_cluster.default.master_auth.0.cluster_ca_certificate}"
   sensitive = true
+  value = "${google_container_cluster.default.master_auth.0.cluster_ca_certificate}"
 }
 
 output "instance_group_urls" {
@@ -69,12 +69,12 @@ output host_port {
 
 output "auth_username" {
   description = "Username to authenticate access to the Kubernetes cluster."
-  value = "${var.auth_username}"
   sensitive = true
+  value = "${var.auth_username}"
 }
 
 output "auth_password" {
   description = "Password to authenticate access to the Kubernetes cluster."
-  value = "${var.auth_password == "" ? random_id.password.0.hex : var.auth_password}"
   sensitive = true
+  value = "${var.auth_password == "" ? random_id.password.0.hex : var.auth_password}"
 }
