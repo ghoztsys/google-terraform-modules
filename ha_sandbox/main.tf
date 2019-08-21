@@ -12,27 +12,19 @@ resource "random_id" "default" {
 }
 
 resource "google_compute_instance" "default" {
-  name = "gce-${random_id.default.keepers.name}-${random_id.default.hex}"
-  machine_type = "${var.machine_type}"
-  zone = "${var.region_zone}"
-  tags = ["${concat(var.tags, list(
-    "gce-${random_id.default.keepers.name}-${random_id.default.hex}",
-    "sandbox",
-    "${random_id.default.keepers.service_id}",
-    "${random_id.default.keepers.environment}",
-    "${random_id.default.keepers.datacenter}"
-  ))}"]
-  labels {
-    service = "${random_id.default.keepers.service_id}"
-    environment = "${random_id.default.keepers.environment}"
-    datacenter = "${random_id.default.keepers.datacenter}"
-  }
   boot_disk {
     initialize_params {
       image = "${var.disk_image}"
       type = "${var.disk_type}"
     }
   }
+  labels {
+    service = "${random_id.default.keepers.service_id}"
+    environment = "${random_id.default.keepers.environment}"
+    datacenter = "${random_id.default.keepers.datacenter}"
+  }
+  machine_type = "${var.machine_type}"
+  name = "gce-${random_id.default.keepers.name}-${random_id.default.hex}"
   network_interface {
     network = "${var.network}"
     access_config {
@@ -42,6 +34,15 @@ resource "google_compute_instance" "default" {
   service_account {
     scopes = ["${var.service_scopes}"]
   }
+  tags = ["${concat(var.tags, list(
+    "gce-${random_id.default.keepers.name}-${random_id.default.hex}",
+    "sandbox",
+    "${random_id.default.keepers.service_id}",
+    "${random_id.default.keepers.environment}",
+    "${random_id.default.keepers.datacenter}"
+  ))}"]
+  zone = "${var.region_zone}"
+
   provisioner "remote-exec" {
     script = "${path.module}/scripts/wait_for_instance"
     connection {
@@ -54,12 +55,7 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_firewall" "external" {
-  name = "${google_compute_instance.default.name}-external"
-  network = "${var.network}"
-  priority = 1000
-
-  # Allow access to HTTP/HTTPS, HAProxy stats and Consul endpoints from anywhere.
-  allow {
+  allow { # Allow access to HTTP/HTTPS, HAProxy stats and Consul endpoints from anywhere.
     protocol = "tcp"
     ports = [
       "${var.http_port}",
@@ -84,6 +80,9 @@ resource "google_compute_firewall" "external" {
       "22",
     ]
   }
+  name = "${google_compute_instance.default.name}-external"
+  network = "${var.network}"
+  priority = 1000
   source_ranges = [
     "0.0.0.0/0",
   ]
@@ -93,9 +92,6 @@ resource "google_compute_firewall" "external" {
 }
 
 resource "google_compute_firewall" "internal" {
-  name = "${google_compute_instance.default.name}-internal"
-  network = "${var.network}"
-  priority = 1000
   allow {
     protocol = "tcp"
     ports = [
@@ -111,6 +107,9 @@ resource "google_compute_firewall" "internal" {
   allow {
     protocol = "icmp"
   }
+  name = "${google_compute_instance.default.name}-internal"
+  network = "${var.network}"
+  priority = 1000
   source_ranges = [
     "10.128.0.0/9",
   ]

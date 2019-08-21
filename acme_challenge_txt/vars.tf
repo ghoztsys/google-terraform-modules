@@ -7,8 +7,8 @@ variable dns_managed_zone {
 }
 
 variable subdomain {
-  description = "The subdomain, i.e. `api`. Leave blank if this is not a subdomain."
   default = ""
+  description = "The subdomain, i.e. `api`. Leave blank if this is not a subdomain."
 }
 
 variable value {
