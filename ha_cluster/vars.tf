@@ -124,7 +124,7 @@ variable "master_count" {
 
 variable "master_service_scopes" {
   default = [
-    "https://www.googleapis.com/auth/logging.write"
+    "https://www.googleapis.com/auth/logging.write",
   ]
   description = "The service scopes of Consul/Nomad master resources. Both OAuth2 URLs and short names are supported. See https://developers.google.com/identity/protocols/googlescopes."
 }
@@ -156,7 +156,7 @@ variable "db_count" {
 
 variable "db_service_scopes" {
   default = [
-    "https://www.googleapis.com/auth/logging.write"
+    "https://www.googleapis.com/auth/logging.write",
   ]
   description = "The service scopes of MongoDB resources. Both OAuth2 URLs and short names are supported. See https://developers.google.com/identity/protocols/googlescopes."
 }

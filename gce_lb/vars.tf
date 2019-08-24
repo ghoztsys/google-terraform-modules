@@ -22,12 +22,12 @@ variable enable_http {
 
 variable backend_services {
   description = "Map backend service indices to list of backend maps."
-  type = "map"
+  type = list(any)
 }
 
 variable backend_service_params {
   description = "Comma-separated encoded list of parameters in order: health check path, service port name, service port, backend timeout seconds."
-  type = "list"
+  type = list(string)
 }
 
 variable backend_protocol {

@@ -1,11 +1,8 @@
 # Set up A records to enable naked domain (IPv4).
 # @see https://support.google.com/a/answer/2579934?visit_id=1-636447692970509696-3484342373&rd=1
 resource "google_dns_record_set" "a" {
-  lifecycle {
-    create_before_destroy = false
-  }
-  managed_zone = "${var.dns_managed_zone}"
-  name = "${var.dns_name}"
+  managed_zone = var.dns_managed_zone
+  name = var.dns_name
   rrdatas = [
     "216.239.32.21",
     "216.239.34.21",
@@ -14,16 +11,17 @@ resource "google_dns_record_set" "a" {
   ],
   ttl = 3600
   type = "A"
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 # Set up AAAA records to enable naked domain (IPv6).
 # @see https://support.google.com/a/answer/2579934?visit_id=1-636447692970509696-3484342373&rd=1
 resource "google_dns_record_set" "aaaa" {
-  lifecycle {
-    create_before_destroy = false
-  }
-  managed_zone = "${var.dns_managed_zone}"
-  name = "${var.dns_name}"
+  managed_zone = var.dns_managed_zone
+  name = var.dns_name
   rrdatas = [
     "2001:4860:4802:32::15",
     "2001:4860:4802:34::15",
@@ -32,6 +30,10 @@ resource "google_dns_record_set" "aaaa" {
   ],
   ttl = 3600
   type = "AAAA"
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 # Set up MX records.

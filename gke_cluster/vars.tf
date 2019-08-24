@@ -34,27 +34,27 @@ variable service_name {
   description = "Name of the default NodePort service."
 }
 
-variable service_port {
+variable node_port {
   default = 30000
-  description = "Node port (30000-32767) to open."
+  description = "Port (30000-32767) to open to the public in the node(s) for the NodePort service."
 }
 
-variable service_port_name {
+variable node_port_name {
   default = "http"
   description = "Name of the opened node port."
 }
 
-variable target_port {
+variable container_port {
   default = 8080
   description = "Target port for the default NodePort service."
 }
 
-variable host_port {
+variable cluster_internal_port {
   default = 80
-  description = "Host port for the default NodePort service."
+  description = "Port to expose the service to within the cluster."
 }
 
-variable expose_service_port {
+variable expose_node_port {
   default = false
   description = "Specifies whether the node port should be exposed to the public."
 }
@@ -84,7 +84,7 @@ variable service_scopes {
     "https://www.googleapis.com/auth/compute",
     "https://www.googleapis.com/auth/logging.write",
     "https://www.googleapis.com/auth/monitoring",
-    "https://www.googleapis.com/auth/devstorage.read_write"
+    "https://www.googleapis.com/auth/devstorage.read_write",
   ]
   description = "The service scopes. Both OAuth2 URLs and short names are supported. See https://developers.google.com/identity/protocols/googlescopes."
 }

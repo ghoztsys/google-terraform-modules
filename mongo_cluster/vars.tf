@@ -49,7 +49,7 @@ variable tags {
 
 variable service_scopes {
   default = [
-    "https://www.googleapis.com/auth/logging.write"
+    "https://www.googleapis.com/auth/logging.write",
   ]
   description = "The service scopes. Both OAuth2 URLs and short names are supported. See https://developers.google.com/identity/protocols/googlescopes."
 }
