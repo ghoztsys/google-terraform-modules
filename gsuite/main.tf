@@ -8,7 +8,7 @@ resource "google_dns_record_set" "a" {
     "216.239.34.21",
     "216.239.36.21",
     "216.239.38.21",
-  ],
+  ]
   ttl = 3600
   type = "A"
 
@@ -27,7 +27,7 @@ resource "google_dns_record_set" "aaaa" {
     "2001:4860:4802:34::15",
     "2001:4860:4802:36::15",
     "2001:4860:4802:38::15",
-  ],
+  ]
   ttl = 3600
   type = "AAAA"
 
@@ -38,9 +38,6 @@ resource "google_dns_record_set" "aaaa" {
 
 # Set up MX records.
 resource "google_dns_record_set" "mx" {
-  lifecycle {
-    create_before_destroy = false
-  }
   managed_zone = "${var.dns_managed_zone}"
   name = "${var.dns_name}"
   rrdatas = [
@@ -49,49 +46,56 @@ resource "google_dns_record_set" "mx" {
     "5 alt2.aspmx.l.google.com.",
     "10 alt3.aspmx.l.google.com.",
     "10 alt4.aspmx.l.google.com.",
-  ],
+  ]
   ttl = 3600
   type = "MX"
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 # Create custom URL for G Suite email.
 resource "google_dns_record_set" "mail" {
-  lifecycle {
-    create_before_destroy = false
-  }
   managed_zone = "${var.dns_managed_zone}"
   name = "mail.${var.dns_name}"
   rrdatas = [
     "ghs.googlehosted.com.",
-  ],
+  ]
   ttl = 300
   type = "CNAME"
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 # Create custom URL for G Suite calendar.
 resource "google_dns_record_set" "calendar" {
-  lifecycle {
-    create_before_destroy = false
-  }
   managed_zone = "${var.dns_managed_zone}"
   name = "calendar.${var.dns_name}"
   rrdatas = [
     "ghs.googlehosted.com.",
-  ],
+  ]
   ttl = 300
   type = "CNAME"
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 # Create custom URL for G Suite Drive.
 resource "google_dns_record_set" "drive" {
-  lifecycle {
-    create_before_destroy = false
-  }
   managed_zone = "${var.dns_managed_zone}"
   name = "drive.${var.dns_name}"
   rrdatas = [
     "ghs.googlehosted.com.",
-  ],
+  ]
   ttl = 300
   type = "CNAME"
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
