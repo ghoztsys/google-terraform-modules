@@ -51,12 +51,12 @@ output name {
 
 output port {
   description = "Port in the K8s cluster that is exposed to the external network."
-  value = var.node_port
+  value = var.port
 }
 
 output port_name {
   description = "Name of the port in the K8s cluster that is exposed to the external network."
-  value = var.node_port_name
+  value = var.port_name
 }
 
 output service_name {
