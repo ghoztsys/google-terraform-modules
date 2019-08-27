@@ -74,7 +74,7 @@ resource "google_compute_firewall" "external" {
   source_ranges = [
     "0.0.0.0/0",
   ]
-  target_tags = google_compute_instance.default.*.name
+  target_tags = google_compute_instance.default[*].name
 
   allow { # Allow RDP from anywhere.
     protocol = "tcp"

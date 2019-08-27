@@ -17,6 +17,7 @@ provider "random" {
 
 resource "random_id" "default" {
   byte_length = 4
+
   keepers {
     datacenter = var.datacenter
     environment = var.environment
@@ -231,7 +232,7 @@ resource "google_compute_firewall" "www" {
   source_ranges = [
     "0.0.0.0/0",
   ]
-  target_tags = google_compute_instance.lb.*.name
+  target_tags = google_compute_instance.lb[*].name
 
   allow {
     protocol = "tcp"
@@ -247,8 +248,8 @@ resource "google_compute_firewall" "haproxy" {
   name = "gce-${random_id.default.keepers.name}-${random_id.default.hex}-haproxy"
   network = var.network
   priority = 1000
-  source_tags = google_compute_instance.lb.*.name
-  target_tags = google_compute_instance.lb.*.name
+  source_tags = google_compute_instance.lb[*].name
+  target_tags = google_compute_instance.lb[*].name
 
   allow {
     protocol = "tcp"
@@ -263,8 +264,8 @@ resource "google_compute_firewall" "node" {
   name = "gce-${random_id.default.keepers.name}-${random_id.default.hex}-node"
   network = var.network
   priority = 1000
-  source_tags = google_compute_instance.lb.*.name
-  target_tags = google_compute_instance.node.*.name
+  source_tags = google_compute_instance.lb[*].name
+  target_tags = google_compute_instance.node[*].name
 
   allow {
     protocol = "tcp"
@@ -279,8 +280,8 @@ resource "google_compute_firewall" "consul" {
   name = "gce-${random_id.default.keepers.name}-${random_id.default.hex}-consul"
   network = var.network
   priority = 1000
-  source_tags = concat(google_compute_instance.master.*.name, google_compute_instance.node.*.name, google_compute_instance.db.*.name, google_compute_instance.lb.*.name)
-  target_tags = concat(google_compute_instance.master.*.name, google_compute_instance.node.*.name, google_compute_instance.db.*.name, google_compute_instance.lb.*.name)
+  source_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
+  target_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
 
   allow {
     protocol = "tcp"
@@ -302,8 +303,8 @@ resource "google_compute_firewall" "nomad" {
   name = "gce-${random_id.default.keepers.name}-${random_id.default.hex}-nomad"
   network = var.network
   priority = 1000
-  source_tags = concat(google_compute_instance.master.*.name, google_compute_instance.node.*.name)
-  target_tags = concat(google_compute_instance.master.*.name, google_compute_instance.node.*.name)
+  source_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name)
+  target_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name)
 
   allow {
     protocol = "tcp"
@@ -318,8 +319,8 @@ resource "google_compute_firewall" "mongodb" {
   name = "gce-${random_id.default.keepers.name}-${random_id.default.hex}-mongodb"
   network = var.network
   priority = 1000
-  source_tags = google_compute_instance.node.*.name
-  target_tags = google_compute_instance.db.*.name
+  source_tags = google_compute_instance.node[*].name
+  target_tags = google_compute_instance.db[*].name
 
   allow {
     protocol = "tcp"
@@ -338,7 +339,7 @@ resource "google_compute_firewall" "external" {
   source_ranges = [
     "0.0.0.0/0",
   ]
-  target_tags = concat(google_compute_instance.master.*.name, google_compute_instance.node.*.name, google_compute_instance.db.*.name, google_compute_instance.lb.*.name)
+  target_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
 
   allow { # Allow RDP from anywhere.
     protocol = "tcp"
@@ -368,7 +369,7 @@ resource "google_compute_firewall" "internal" {
   source_ranges = [
     "10.128.0.0/9",
   ]
-  target_tags = concat(google_compute_instance.master.*.name, google_compute_instance.node.*.name, google_compute_instance.db.*.name, google_compute_instance.lb.*.name)
+  target_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
 
   allow {
     protocol = "tcp"

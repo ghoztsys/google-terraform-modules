@@ -61,7 +61,7 @@ resource "google_compute_target_http_proxy" "default" {
 resource "google_compute_target_https_proxy" "default" {
   count = (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0
   name = "${var.name}-https-proxy"
-  ssl_certificates = compact(concat(google_compute_ssl_certificate.default.*.self_link, google_compute_managed_ssl_certificate.default.*.self_link))
+  ssl_certificates = compact(concat(google_compute_ssl_certificate.default[*].self_link, google_compute_managed_ssl_certificate.default[*].self_link))
   url_map = google_compute_url_map.default.self_link
 }
 

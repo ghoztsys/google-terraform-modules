@@ -54,7 +54,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
 resource "google_compute_target_http_proxy" "default" {
   count = var.enable_http ? 1 : 0
   name = "${var.name}-http-proxy"
-  url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default.*.self_link)), 0)
+  url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default[*].self_link)), 0)
 }
 
 # Create an HTTPS target proxy for the load balancer. Automatically derive the
@@ -62,8 +62,8 @@ resource "google_compute_target_http_proxy" "default" {
 resource "google_compute_target_https_proxy" "default" {
   count = (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0
   name = "${var.name}-https-proxy"
-  ssl_certificates = compact(concat(google_compute_ssl_certificate.default.*.self_link, google_compute_managed_ssl_certificate.default.*.self_link))
-  url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default.*.self_link)), 0)
+  ssl_certificates = compact(concat(google_compute_ssl_certificate.default[*].self_link, google_compute_managed_ssl_certificate.default[*].self_link))
+  url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default[*].self_link)), 0)
 }
 
 # Create a global forwarding rule for HTTP routing. Refer to the load balancing
@@ -114,7 +114,7 @@ resource "google_compute_backend_service" "default" {
   count = length(var.backend_services_params)
   enable_cdn = var.enable_cdn
   health_checks = [
-    element(google_compute_http_health_check.default.*.self_link, count.index),
+    element(google_compute_http_health_check.default[*].self_link, count.index),
   ]
   name = "${var.name}-backend-${count.index}"
   port_name = lookup(var.backend_services_params[count.index], "port_name", "http")
