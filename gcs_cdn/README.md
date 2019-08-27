@@ -1,4 +1,4 @@
-# `gcp_cloud_cdn_bucket`
+# `gcs_cdn`
 
 This module creates a Google Cloud Storage bucket fronted by an HTTP(S) load balancer with Cloud CDN enabled. You have the option to specify your own SSL certificates. If not, the certificate will automatically created and managed by Google (recommended).
 
