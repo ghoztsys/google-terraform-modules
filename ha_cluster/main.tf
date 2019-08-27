@@ -5,14 +5,8 @@
 # storing data, and the application node(s) for serving the app and handling
 # requests.
 
-provider "google" {
-  project = var.project_id
-  region = var.region
-  version = "~> 2.13"
-}
-
-provider "random" {
-  version = "~> 2.2"
+terraform {
+  required_version = ">= 0.12.7"
 }
 
 resource "random_id" "default" {

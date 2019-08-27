@@ -1,14 +1,8 @@
 # This module defines a single GCE instance that contains all the services
 # required to run an application (i.e. master, load balancer, database).
 
-provider "google" {
-  project = var.project_id
-  region = var.region
-  version = "~> 2.13"
-}
-
-provider "random" {
-  version = "~> 2.2"
+terraform {
+  required_version = ">= 0.12.7"
 }
 
 resource "random_id" "default" {

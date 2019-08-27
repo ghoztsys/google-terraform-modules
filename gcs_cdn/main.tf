@@ -2,18 +2,6 @@ terraform {
   required_version = ">= 0.12.7"
 }
 
-provider "google" {
-  project = var.project_id
-  region = var.region
-  version = "~> 2.13"
-}
-
-provider "google-beta" {
-  project = var.project_id
-  region = var.region
-  version = "~> 2.13"
-}
-
 # Reserve a static IP for the load balancer.
 resource "google_compute_global_address" "default" {
   name = "${var.name}-address"

@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.12.7"
+}
+
 # Set up A records to enable naked domain (IPv4).
 # @see https://support.google.com/a/answer/2579934?visit_id=1-636447692970509696-3484342373&rd=1
 resource "google_dns_record_set" "a" {

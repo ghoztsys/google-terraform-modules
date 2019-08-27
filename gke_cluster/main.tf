@@ -1,25 +1,5 @@
-provider "google" {
-  project = var.project_id
-  region = var.region
-  version = "~> 2.13"
-}
-
-provider "kubernetes" {
-  client_certificate = base64decode(google_container_cluster.default.master_auth[0].client_certificate)
-  client_key = base64decode(google_container_cluster.default.master_auth[0].client_key)
-  cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
-  host = google_container_cluster.default.endpoint
-  password = var.auth_password == "" ? random_id.password[0].hex : var.auth_password
-  username = var.auth_username
-  version = "~> 1.9"
-}
-
-provider "random" {
-  version = "~> 2.2"
-}
-
-provider "null" {
-  version = "~> 2.1"
+terraform {
+  required_version = ">= 0.12.7"
 }
 
 # Generate random ID to be used for naming the created cloud resources.
