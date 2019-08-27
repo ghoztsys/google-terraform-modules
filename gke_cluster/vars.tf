@@ -69,11 +69,6 @@ variable region_zone {
   description = "The region zone where the new resources will be created in, i.e. `us-central1-a`. See https://cloud.google.com/compute/docs/regions-zones/."
 }
 
-variable service_name {
-  default = "default"
-  description = "Name of the default NodePort service."
-}
-
 variable service_scopes {
   default = [
     "https://www.googleapis.com/auth/compute",

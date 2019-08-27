@@ -58,8 +58,3 @@ output port_name {
   description = "Name of the port in the K8s cluster that is exposed to the external network."
   value = var.port_name
 }
-
-output service_name {
-  description = "Name of the default NodePort service."
-  value = var.service_name
-}
