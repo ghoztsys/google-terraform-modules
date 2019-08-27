@@ -1,9 +1,6 @@
-variable project_id {
-  description = "Google Cloud Platform project ID."
-}
-
-variable region {
-  description = "The region where the project resides."
+variable bucket_location {
+  default = "US"
+  description = "GCS bucket location"
 }
 
 variable ip_version {
@@ -15,9 +12,17 @@ variable name {
   description = "Name for the forwarding rule and prefix for supporting resources."
 }
 
-variable bucket_location {
-  default = "US"
-  description = "GCS bucket location"
+variable project_id {
+  description = "Google Cloud Platform project ID."
+}
+
+variable region {
+  description = "The region where the project resides."
+}
+
+variable ssl_certificate {
+  default = ""
+  description = "Content of the custom SSL certificate."
 }
 
 variable ssl_domains {
@@ -28,9 +33,4 @@ variable ssl_domains {
 variable ssl_private_key {
   default = ""
   description = "Content of the custom private SSL key."
-}
-
-variable ssl_certificate {
-  default = ""
-  description = "Content of the custom SSL certificate."
 }

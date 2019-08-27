@@ -1,47 +1,20 @@
-variable project_id {
-  description = "Google Cloud Platform project ID."
-}
-
 variable app_id {
   description = "The app ID (i.e. `sybl-core`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
 }
 
-variable region {
-  description = "The region where the project resides."
+variable auth_password {
+  default = ""
+  description = "Password for authenticating and accessing the Kubernetes cluster"
 }
 
-variable region_zone {
-  description = "The region zone where the new resources will be created in, i.e. `us-central1-a`. See https://cloud.google.com/compute/docs/regions-zones/."
+variable auth_username {
+  default = "admin"
+  description = "Username for authenticating and accessing the Kubernetes cluster."
 }
 
-variable environment {
-  default = "development"
-  description = "The environment of the resources, i.e. development, staging, etc. This value becomes a tag and label."
-}
-
-variable node_count {
-  default = 1
-  description = "The initial number of nodes to create for this Kubernetes cluster."
-}
-
-variable service_name {
-  default = "default"
-  description = "Name of the default NodePort service."
-}
-
-variable port {
-  default = 30000
-  description = "Port of the cluster that is exposed to the external network."
-}
-
-variable port_name {
-  default = "http"
-  description = "Name of the exposed cluster port."
-}
-
-variable machine_type {
-  default = "g1-small"
-  description = "The machine type of the resource. See https://cloud.google.com/compute/docs/machine-types."
+variable cluster_ipv4_cidr {
+  default = ""
+  description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."
 }
 
 variable disk_image {
@@ -54,9 +27,51 @@ variable disk_type {
   description = "The disk type (i.e. local or persistent disk, standard or ssd) as specified by`pd-standard`, `pd-ssd`, or `local-ssd`. `pd-ssd` is preferred."
 }
 
-variable tags {
-  default = []
-  description = "Additional tags."
+variable environment {
+  default = "development"
+  description = "The environment of the resources, i.e. development, staging, etc. This value becomes a tag and label."
+}
+
+variable machine_type {
+  default = "g1-small"
+  description = "The machine type of the resource. See https://cloud.google.com/compute/docs/machine-types."
+}
+
+variable network {
+  default = "default"
+  description = "The name of the network to attach this interface to."
+}
+
+variable node_count {
+  default = 1
+  description = "The initial number of nodes to create for this Kubernetes cluster."
+}
+
+variable port {
+  default = 80
+  description = "Port in the K8s cluster that is exposed to the external network."
+}
+
+variable port_name {
+  default = "http"
+  description = "Name of the port in the K8s cluster that is exposed to the external network."
+}
+
+variable project_id {
+  description = "Google Cloud Platform project ID."
+}
+
+variable region {
+  description = "The region where the project resides."
+}
+
+variable region_zone {
+  description = "The region zone where the new resources will be created in, i.e. `us-central1-a`. See https://cloud.google.com/compute/docs/regions-zones/."
+}
+
+variable service_name {
+  default = "default"
+  description = "Name of the default NodePort service."
 }
 
 variable service_scopes {
@@ -69,22 +84,7 @@ variable service_scopes {
   description = "The service scopes. Both OAuth2 URLs and short names are supported. See https://developers.google.com/identity/protocols/googlescopes."
 }
 
-variable cluster_ipv4_cidr {
-  default = ""
-  description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."
-}
-
-variable network {
-  default = "default"
-  description = "The name of the network to attach this interface to."
-}
-
-variable "auth_username" {
-  default = "admin"
-  description = "Username for authenticating and accessing the Kubernetes cluster."
-}
-
-variable "auth_password" {
-  default = ""
-  description = "Password for authenticating and accessing the Kubernetes cluster"
+variable tags {
+  default = []
+  description = "Additional tags."
 }
