@@ -4,6 +4,16 @@ provider "google" {
   version = "~> 2.13"
 }
 
+provider "kubernetes" {
+  client_certificate = base64decode(google_container_cluster.default.master_auth[0].client_certificate)
+  client_key = base64decode(google_container_cluster.default.master_auth[0].client_key)
+  cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
+  host = google_container_cluster.default.endpoint
+  password = var.auth_password == "" ? random_id.password[0].hex : var.auth_password
+  username = var.auth_username
+  version = "~> 1.9"
+}
+
 provider "random" {
   version = "~> 2.2"
 }
