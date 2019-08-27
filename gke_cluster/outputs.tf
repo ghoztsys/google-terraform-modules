@@ -37,34 +37,19 @@ output "instance_group_urls" {
   value = google_container_cluster.default.instance_group_urls
 }
 
-output "namespace" {
-  description = "The namespace created to store the Kubernetes application."
-  value = (var.namespace == "default" || var.namespace == "") ? "default" : kubernetes_namespace.default[0].metadata[0].name
-}
-
 output service_name {
   description = "Name of the default NodePort service."
   value = var.service_name
 }
 
-output node_port {
-  description = "Node port of default NodePort service."
-  value = var.node_port
+output port {
+  description = "Port of the cluster that is exposed to the external network."
+  value = var.port
 }
 
-output node_port_name {
-  description = "Name of the opened node port."
-  value = var.node_port_name
-}
-
-output container_port {
-  description = "Target port for the default NodePort service."
-  value = var.container_port
-}
-
-output cluster_internal_port {
-  description = "Host port for the default NodePort service."
-  value = var.cluster_internal_port
+output port_name {
+  description = "Name of the exposed cluster port."
+  value = var.port_name
 }
 
 output "auth_username" {

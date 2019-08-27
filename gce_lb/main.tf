@@ -109,18 +109,18 @@ resource "google_compute_url_map" "default" {
   }
 }
 
-# Create backend service.
+# Create backend service(s).
 resource "google_compute_backend_service" "default" {
-  count = length(var.backend_service_params)
+  count = length(var.backend_services_params)
   enable_cdn = var.enable_cdn
   health_checks = [
     element(google_compute_http_health_check.default.*.self_link, count.index),
   ]
   name = "${var.name}-backend-${count.index}"
-  port_name = element(split(",", element(var.backend_service_params, count.index)), 1)
+  port_name = lookup(var.backend_services_params[count.index], "port_name", "http")
   protocol = var.backend_protocol
   security_policy = var.security_policy
-  timeout_sec = element(split(",", element(var.backend_service_params, count.index)), 3)
+  timeout_sec = lookup(var.backend_services_params[count.index], "timeout", 10)
 
   dynamic "backend" {
     for_each = [var.backend_services[count.index]]
@@ -144,14 +144,14 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  count = length(var.backend_service_params)
+  count = length(var.backend_services_params)
   name = "${var.name}-backend-${count.index}"
-  port = element(split(",", element(var.backend_service_params, count.index)), 2)
-  request_path = element(split(",", element(var.backend_service_params, count.index)), 0)
+  port = lookup(var.backend_services_params[count.index], "port", 80)
+  request_path = lookup(var.backend_services_params[count.index], "health_check_path", "/health")
 }
 
 resource "google_compute_firewall" "default" {
-  count = length(var.backend_service_params)
+  count = length(var.backend_services_params)
   name = "${var.name}-firewall-${count.index}"
   network = "default"
   source_ranges = [
@@ -165,7 +165,7 @@ resource "google_compute_firewall" "default" {
   allow {
     protocol = "tcp"
     ports = [
-      "${element(split(",", element(var.backend_service_params, count.index)), 2)}",
+      lookup(var.backend_services_params[count.index], "port", 80),
     ]
   }
 }

@@ -4,16 +4,6 @@ provider "google" {
   version = "~> 2.13"
 }
 
-provider "kubernetes" {
-  client_certificate = base64decode(google_container_cluster.default.master_auth[0].client_certificate)
-  client_key = base64decode(google_container_cluster.default.master_auth[0].client_key)
-  cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
-  host = google_container_cluster.default.endpoint
-  password = var.auth_password == "" ? random_id.password[0].hex : var.auth_password
-  username = var.auth_username
-  version = "~> 1.9"
-}
-
 provider "random" {
   version = "~> 2.2"
 }
@@ -78,58 +68,6 @@ resource "google_container_cluster" "default" {
 # Set named ports for created instance group.
 resource "null_resource" "default" {
   provisioner "local-exec" {
-    command = "gcloud compute instance-groups set-named-ports ${google_container_cluster.default.instance_group_urls[0]} --named-ports=${var.node_port_name}:${var.node_port}"
-  }
-}
-
-# Create namespace for default service.
-resource "kubernetes_namespace" "default" {
-  count = (var.namespace == "" || var.namespace == "default") ? 0 : 1
-
-  metadata {
-    name = var.namespace
-  }
-}
-
-# Create default NodePort service.
-resource "kubernetes_service" "default" {
-  metadata {
-    name = var.service_name
-    namespace = kubernetes_namespace.default[0].metadata[0].name
-  }
-
-  spec {
-    selector = {
-      name = var.service_name
-    }
-    type = "NodePort"
-
-    port {
-      name = var.node_port_name
-      node_port = var.node_port
-      port = var.cluster_internal_port
-      protocol = "TCP"
-    }
-  }
-}
-
-# Create firewall for NodePort service (if specified).
-resource "google_compute_firewall" "default" {
-  count = var.expose_node_port ? 1 : 0
-  name = "${google_container_cluster.default.name}-service-port"
-  network = var.network
-  priority = 1000
-  source_ranges = [
-    "0.0.0.0/0",
-  ]
-  target_tags = [
-    google_container_cluster.default.name,
-  ]
-
-  allow {
-    protocol = "tcp"
-    ports = [
-      var.node_port,
-    ]
+    command = "gcloud compute instance-groups set-named-ports ${google_container_cluster.default.instance_group_urls[0]} --named-ports=${var.port_name}:${var.port}"
   }
 }

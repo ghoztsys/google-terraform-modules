@@ -21,13 +21,13 @@ variable enable_http {
 }
 
 variable backend_services {
-  description = "Map backend service indices to list of backend maps."
+  description = "List of `backend` blocks per backend service."
   type = list(any)
 }
 
-variable backend_service_params {
-  description = "Comma-separated encoded list of parameters in order: health check path, service port name, service port, backend timeout seconds."
-  type = list(string)
+variable backend_services_params {
+  description = "List of backend service param maps with the following available fields: `health_check_path`, `port_name`, `port`, `timeout` (in seconds)."
+  type = list(any)
 }
 
 variable backend_protocol {
@@ -42,22 +42,22 @@ variable ssl_domains {
 
 variable ssl_private_key {
   default = ""
-  description = "Content of the custom private SSL key."
+  description = "Content of the custom private SSL key. If this is provided, a complimentary SSL certificate must also be provided."
 }
 
 variable ssl_certificate {
   default = ""
-  description = "Content of the custom SSL certificate."
+  description = "Content of the custom SSL certificate. If this is provided, a complimentary SSL private key must also be provided."
 }
 
 variable security_policy {
   default = ""
-  description = "The resource URL for the security policy to associate with the backend service."
+  description = "The resource URL for the security policy to associate with the backend service(s)."
 }
 
 variable enable_cdn {
   default = true
-  description = "Set to `true` to enable cdn on backend."
+  description = "Set to `true` to enable cdn on backend service(s)."
 }
 
 variable create_url_map {
