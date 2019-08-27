@@ -2,6 +2,12 @@ terraform {
   required_version = ">= 0.12.7"
 }
 
+resource "google_storage_bucket" "default" {
+  force_destroy = true
+  location = var.bucket_location
+  name = "${var.name}-bucket"
+}
+
 resource "google_storage_bucket_acl" "default" {
   bucket = google_storage_bucket.default.name
   default_acl = "publicread"
