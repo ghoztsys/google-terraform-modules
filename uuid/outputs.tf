@@ -1,3 +1,3 @@
 output value {
-  value = "${random_id.default.name}-${random_id.default.hex}"
+  value = "${random_id.default.keepers.name}-${random_id.default.hex}"
 }

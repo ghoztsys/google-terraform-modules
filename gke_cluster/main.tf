@@ -4,6 +4,7 @@ terraform {
   required_providers {
     google = ">= 3.19.0"
     kubernetes = ">= 1.11.1"
+    random = ">= 2.2.1"
   }
 }
 

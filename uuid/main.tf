@@ -1,5 +1,9 @@
 terraform {
   required_version = ">= 0.12.24"
+
+  required_providers {
+    random = ">= 2.2.1"
+  }
 }
 
 resource "random_id" "default" {
