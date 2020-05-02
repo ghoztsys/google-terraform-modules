@@ -5,6 +5,7 @@ terraform {
     google = ">= 3.19.0"
     kubernetes = ">= 1.11.1"
     random = ">= 2.2.1"
+    null = ">= 2.1.2"
   }
 }
 
