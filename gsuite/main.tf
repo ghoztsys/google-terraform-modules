@@ -1,9 +1,12 @@
 terraform {
-  required_version = ">= 0.12.7"
+  required_version = ">= 0.12.24"
+
+  required_providers {
+    google = ">= 2.20.3"
+  }
 }
 
 # Set up A records to enable naked domain (IPv4).
-# @see https://support.google.com/a/answer/2579934?visit_id=1-636447692970509696-3484342373&rd=1
 resource "google_dns_record_set" "a" {
   managed_zone = var.dns_managed_zone
   name = var.dns_name
@@ -15,14 +18,9 @@ resource "google_dns_record_set" "a" {
   ]
   ttl = 3600
   type = "A"
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }
 
 # Set up AAAA records to enable naked domain (IPv6).
-# @see https://support.google.com/a/answer/2579934?visit_id=1-636447692970509696-3484342373&rd=1
 resource "google_dns_record_set" "aaaa" {
   managed_zone = var.dns_managed_zone
   name = var.dns_name
@@ -34,16 +32,12 @@ resource "google_dns_record_set" "aaaa" {
   ]
   ttl = 3600
   type = "AAAA"
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }
 
 # Set up MX records.
 resource "google_dns_record_set" "mx" {
-  managed_zone = "${var.dns_managed_zone}"
-  name = "${var.dns_name}"
+  managed_zone = var.dns_managed_zone
+  name = var.dns_name
   rrdatas = [
     "1 aspmx.l.google.com.",
     "5 alt1.aspmx.l.google.com.",
@@ -53,53 +47,37 @@ resource "google_dns_record_set" "mx" {
   ]
   ttl = 3600
   type = "MX"
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }
 
 # Create custom URL for G Suite email.
 resource "google_dns_record_set" "mail" {
-  managed_zone = "${var.dns_managed_zone}"
+  managed_zone = var.dns_managed_zone
   name = "mail.${var.dns_name}"
   rrdatas = [
     "ghs.googlehosted.com.",
   ]
   ttl = 300
   type = "CNAME"
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }
 
 # Create custom URL for G Suite calendar.
 resource "google_dns_record_set" "calendar" {
-  managed_zone = "${var.dns_managed_zone}"
+  managed_zone = var.dns_managed_zone
   name = "calendar.${var.dns_name}"
   rrdatas = [
     "ghs.googlehosted.com.",
   ]
   ttl = 300
   type = "CNAME"
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }
 
 # Create custom URL for G Suite Drive.
 resource "google_dns_record_set" "drive" {
-  managed_zone = "${var.dns_managed_zone}"
+  managed_zone = var.dns_managed_zone
   name = "drive.${var.dns_name}"
   rrdatas = [
     "ghs.googlehosted.com.",
   ]
   ttl = 300
   type = "CNAME"
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }

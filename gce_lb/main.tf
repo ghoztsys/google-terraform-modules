@@ -1,5 +1,9 @@
 terraform {
-  required_version = ">= 0.12.7"
+  required_version = ">= 0.12.24"
+
+  required_providers {
+    google = ">= 2.20.3"
+  }
 }
 
 # Reserve a static IP for the load balancer.
@@ -13,22 +17,14 @@ resource "google_compute_ssl_certificate" "default" {
   certificate = var.ssl_certificate
   count = (var.ssl_private_key != "" && var.ssl_certificate != "") ? 1 : 0
   private_key = var.ssl_private_key
-  provider = "google"
-
-  lifecycle {
-    create_before_destroy = false
-  }
+  provider = google
 }
 
 # Create a default SSL certificate (optional).
 resource "google_compute_managed_ssl_certificate" "default" {
   count = length(var.ssl_domains)
   name = "${var.name}-default-cert-${count.index}"
-  provider = "google-beta"
-
-  lifecycle {
-    create_before_destroy = false
-  }
+  provider = google-beta
 
   managed {
     domains = [
@@ -124,10 +120,6 @@ resource "google_compute_backend_service" "default" {
       max_rate_per_instance = lookup(backend.value, "max_rate_per_instance", null)
       max_utilization = lookup(backend.value, "max_utilization", null)
     }
-  }
-
-  lifecycle {
-    create_before_destroy = false
   }
 }
 

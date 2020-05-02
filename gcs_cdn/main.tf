@@ -1,5 +1,9 @@
 terraform {
-  required_version = ">= 0.12.7"
+  required_version = ">= 0.12.24"
+
+  required_providers {
+    google = ">= 2.20.3"
+  }
 }
 
 # Reserve a static IP for the load balancer.
@@ -13,23 +17,14 @@ resource "google_compute_ssl_certificate" "default" {
   certificate = var.ssl_certificate
   count = (var.ssl_private_key != "" && var.ssl_certificate != "") ? 1 : 0
   private_key = var.ssl_private_key
-  provider = "google"
-
-  lifecycle {
-    create_before_destroy = false
-  }
+  provider = google
 }
 
 # Create a managed SSL certificate (optional).
 resource "google_compute_managed_ssl_certificate" "default" {
   count = length(var.ssl_domains)
   name = "${var.name}-managed-cert-${count.index}"
-  provider = "google-beta"
-
-  lifecycle {
-    create_before_destroy = false
-  }
-
+  provider = google-beta
   managed {
     domains = [
       element(var.ssl_domains, count.index),
@@ -57,7 +52,7 @@ resource "google_compute_target_https_proxy" "default" {
 # target proxy and the reserved global address.
 resource "google_compute_global_forwarding_rule" "http" {
   depends_on = [
-    "google_compute_global_address.default",
+    google_compute_global_address.default,
   ]
   ip_address = google_compute_global_address.default.address
   name = var.name
@@ -70,7 +65,7 @@ resource "google_compute_global_forwarding_rule" "http" {
 resource "google_compute_global_forwarding_rule" "https" {
   count = (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0
   depends_on = [
-    "google_compute_global_address.default",
+    google_compute_global_address.default
   ]
   ip_address = google_compute_global_address.default.address
   name = "${var.name}-https"
@@ -99,10 +94,6 @@ resource "google_storage_bucket" "default" {
   force_destroy = true
   location = var.bucket_location
   name = "${var.name}-bucket"
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }
 
 # Configure default ACL for the GCS bucket to be readable by everyone.
@@ -115,12 +106,8 @@ resource "google_storage_bucket_acl" "default" {
 resource "google_compute_backend_bucket" "default" {
   bucket_name = google_storage_bucket.default.name
   depends_on = [
-    "google_storage_bucket.default",
+    google_storage_bucket.default,
   ]
   enable_cdn = true
   name = "${var.name}-backend-bucket"
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }

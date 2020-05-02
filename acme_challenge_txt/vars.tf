@@ -11,6 +11,6 @@ variable subdomain {
   description = "The subdomain, i.e. `api`. Leave blank if this is not a subdomain."
 }
 
-variable value {
+variable text {
   description = "The TXT record value."
 }

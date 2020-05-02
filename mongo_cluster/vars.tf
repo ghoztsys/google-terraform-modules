@@ -3,9 +3,9 @@ variable app_id {
   description = "The app ID (i.e. `sybl`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
 }
 
-variable count {
+variable nodes {
   default = 1
-  description = "Number of clusters to create."
+  description = "Number of nodes to create in the cluster."
 }
 
 variable datacenter {

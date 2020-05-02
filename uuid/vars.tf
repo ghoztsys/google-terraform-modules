@@ -1,8 +1,8 @@
-variable app_id {
-  description = "The app ID (i.e. `sybl-core`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
+variable basename {
+  description = "The basename of the generated UUID."
 }
 
 variable environment {
   default = "development"
-  description = "The environment of the resources, i.e. development, staging, etc. This value becomes a tag and label."
+  description = "The environment used to generate the UUID. This environment string automatically gets shortened to 3 characters."
 }

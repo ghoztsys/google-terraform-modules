@@ -1,5 +1,9 @@
 terraform {
-  required_version = ">= 0.12.7"
+  required_version = ">= 0.12.24"
+
+  required_providers {
+    google = ">= 2.20.3"
+  }
 }
 
 resource "google_storage_bucket" "default" {
@@ -16,7 +20,7 @@ resource "google_storage_bucket_acl" "default" {
 resource "google_compute_backend_bucket" "default" {
   bucket_name = google_storage_bucket.default.name
   depends_on = [
-    "google_storage_bucket.default",
+    google_storage_bucket.default,
   ]
   enable_cdn = true
   name = "${var.name}-backend-bucket"

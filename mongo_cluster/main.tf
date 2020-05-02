@@ -1,28 +1,28 @@
 terraform {
-  required_version = ">= 0.12.7"
-}
+  required_version = ">= 0.12.24"
 
-resource "random_id" "default" {
-  byte_length = 4
-
-  keepers {
-    name = "${var.app_id}-${var.service_id}-${var.datacenter}-${var.environment != "production" ? format("%.3s-", var.environment) : ""}db"
-    service_id = var.service_id
-    datacenter = var.datacenter
-    environment = var.environment
+  required_providers {
+    google = ">= 2.20.3"
   }
 }
 
+# Generate random ID to be used for naming the created cloud resources.
+module "uuid" {
+  basename = "${var.app_id}-${var.service_id}-${var.datacenter}"
+  environment = var.environment
+  source = "../uuid"
+}
+
 resource "google_compute_instance" "default" {
-  count = var.count
-  machine_type = "${var.machine_type}"
-  name = "gce-${random_id.default.keepers.name}-${random_id.default.hex}${count.index}"
+  count = var.nodes
+  machine_type = var.machine_type
+  name = "${module.uuid.value}-db${count.index}"
   tags = concat(var.tags, list(
-    "gce-${random_id.default.keepers.name}-${random_id.default.hex}${count.index}",
+    "${module.uuid.value}-db${count.index}",
     "db",
-    random_id.default.keepers.service_id,
-    random_id.default.keepers.environment,
-    random_id.default.keepers.datacenter,
+    var.service_id,
+    var.environment,
+    var.datacenter,
   ))
   zone = var.region_zone
 
@@ -34,14 +34,14 @@ resource "google_compute_instance" "default" {
   }
 
   labels {
-    service = random_id.default.keepers.service_id
-    environment = random_id.default.keepers.environment
-    datacenter = random_id.default.keepers.datacenter
+    service = var.service_id
+    environment = var.environment
+    datacenter = var.datacenter
     index = count.index
   }
 
   network_interface {
-    network = "${var.network}"
+    network = var.network
     access_config {} # Ephemeral IP
   }
 
