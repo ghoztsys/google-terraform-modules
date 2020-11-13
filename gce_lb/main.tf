@@ -7,13 +7,15 @@ terraform {
   }
 }
 
-# Reserve a static IP for the load balancer.
+# Reserve a global static external IP for the load balancer. This will be the address that users use to reach the load
+# balancer.
 resource "google_compute_global_address" "default" {
   name = "${var.name}-address"
   ip_version = var.ip_version
 }
 
-# Create an SSL certificate from the provided keys (optional).
+# If the appropriate parameters are provided, create a self-signed SSL certificate. This certifcate does not interfere
+# with any Google-managed certificates created in this module. Note that this is not recommended in production.
 resource "google_compute_ssl_certificate" "default" {
   certificate = var.ssl_certificate
   count = (var.ssl_private_key != "" && var.ssl_certificate != "") ? 1 : 0
@@ -21,7 +23,8 @@ resource "google_compute_ssl_certificate" "default" {
   provider = google
 }
 
-# Create a default SSL certificate (optional).
+# Create Google-managed SSL certificates as per specified parameter. Certificates created by this resource do not
+# interfere with the self-signed certificate.
 resource "google_compute_managed_ssl_certificate" "default" {
   count = length(var.ssl_domains)
   name = "${var.name}-default-cert-${count.index}"
@@ -34,16 +37,16 @@ resource "google_compute_managed_ssl_certificate" "default" {
   }
 }
 
-# Create an HTTP target proxy for the load balancer. Automatically derive the
-# URL map.
+# Create a Target HTTP Proxy resource to route incoming HTTP requests to a URL map. The URL map is automatically derived
+# from within this module.
 resource "google_compute_target_http_proxy" "default" {
   count = var.enable_http ? 1 : 0
   name = "${var.name}-http-proxy"
   url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default[*].self_link)), 0)
 }
 
-# Create an HTTPS target proxy for the load balancer. Automatically derive the
-# URL map.
+# Create a Target HTTPS Proxy resource to route incoming HTTPS requests to a URL map. The URL map is automatically
+# derived from within this module.
 resource "google_compute_target_https_proxy" "default" {
   count = (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0
   name = "${var.name}-https-proxy"
@@ -51,8 +54,8 @@ resource "google_compute_target_https_proxy" "default" {
   url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default[*].self_link)), 0)
 }
 
-# Create a global forwarding rule for HTTP routing. Refer to the load balancing
-# target proxy and the reserved global address.
+# Create a global forwarding rule for HTTP routing using the created Target HTTP Proxy resource and reserved external
+# IP.
 resource "google_compute_global_forwarding_rule" "http" {
   count = var.enable_http ? 1 : 0
   depends_on = [
@@ -64,8 +67,8 @@ resource "google_compute_global_forwarding_rule" "http" {
   target = google_compute_target_http_proxy.default[0].self_link
 }
 
-# Create a global forwarding rule for HTTPS routing (if SSL is enabled). Refer
-# to the load balancing target proxy and the reserved global address.
+# Create a global forwarding rule for HTTPS routing (if SSL is enabled) using the created Target HTTPS Proxy resource
+# and reserved external IP.
 resource "google_compute_global_forwarding_rule" "https" {
   count = (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0
   depends_on = [
@@ -77,7 +80,8 @@ resource "google_compute_global_forwarding_rule" "https" {
   target = google_compute_target_https_proxy.default[0].self_link
 }
 
-# Create a URL map for the load balancer (without a backend bucket).
+# Create a basic URL map for the load balancer for convenience if specified to do so. This URL map simply routes all
+# paths to the first backend service.
 resource "google_compute_url_map" "default" {
   count = var.create_url_map ? 1 : 0
   default_service = google_compute_backend_service.default[0].self_link
@@ -94,7 +98,7 @@ resource "google_compute_url_map" "default" {
   }
 }
 
-# Create backend service(s).
+# Create backend service(s) from provided parameters.
 resource "google_compute_backend_service" "default" {
   count = length(var.backend_services_params)
   enable_cdn = var.enable_cdn
@@ -124,6 +128,7 @@ resource "google_compute_backend_service" "default" {
   }
 }
 
+# Create health check resource(s) for the backend service(s).
 resource "google_compute_http_health_check" "default" {
   count = length(var.backend_services_params)
   name = "${var.name}-backend-${count.index}"
@@ -131,6 +136,7 @@ resource "google_compute_http_health_check" "default" {
   request_path = lookup(var.backend_services_params[count.index], "health_check_path", "/health")
 }
 
+# Create firewall rule(s) to grant external access to all backend service(s).
 resource "google_compute_firewall" "default" {
   count = length(var.backend_services_params)
   name = "${var.name}-firewall-${count.index}"
