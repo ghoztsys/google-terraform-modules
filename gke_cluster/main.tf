@@ -1,8 +1,8 @@
 terraform {
-  required_version = ">= 0.12.24"
+  required_version = ">= 0.12.25"
 
   required_providers {
-    google = ">= 3.19.0"
+    google = ">= 3.47.0"
     kubernetes = ">= 1.11.1"
     random = ">= 2.2.1"
     null = ">= 2.1.2"
@@ -69,7 +69,7 @@ resource "google_container_cluster" "default" {
   }
 }
 
-# Set named ports for created instance group.
+# Set named ports for created instance group. Note that this requires the gcloud CLI installed on the host.
 resource "null_resource" "default" {
   provisioner "local-exec" {
     command = "gcloud compute instance-groups set-named-ports ${google_container_cluster.default.instance_group_urls[0]} --named-ports=${var.port_name}:${var.port}"

@@ -48,7 +48,7 @@ variable node_count {
 }
 
 variable port {
-  default = 80
+  default = 30000
   description = "Port in the K8s cluster that is exposed to the external network."
 }
 

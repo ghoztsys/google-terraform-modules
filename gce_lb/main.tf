@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">= 0.12.24"
+  required_version = ">= 0.12.25"
 
   required_providers {
-    google = ">= 3.19.0"
-    google-beta = ">= 3.19.0"
+    google = ">= 3.47.0"
+    google-beta = ">= 3.47.0"
   }
 }
 
