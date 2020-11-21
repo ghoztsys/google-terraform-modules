@@ -1,6 +1,6 @@
 # Google Cloud External HTTP(S) Load Balancer Terraform Module
 
-This module creates an [external Google Cloud HTTP(S) load balancer](https://cloud.google.com/load-balancing/docs/https). External HTTP(S) load balancing is implemented by many proxies called Google Front Ends (GFEs), which are distributed globally and has automatic DDoS protection. In Premium Tier, GFEs offer global, cross-regional load balancing, directing traffic to the closest healthy backend that has capacity and terminating HTTP(S) as close as possible to the client. In this Terraform module, you have the option to specify regional or global, standard or premium tier (global is available only in premium tier), and pass in the backend services and/or backend buckets behind the load balancer.
+This module creates a global [external Google Cloud HTTP(S) load balancer](https://cloud.google.com/load-balancing/docs/https). External HTTP(S) load balancing is implemented by many proxies called Google Front Ends (GFEs), which are distributed globally and has automatic DDoS protection. Since this is a global load balancer, it is configured to operate in Premium Tier where GFEs offer global, cross-regional load balancing, directing traffic to the closest healthy backend that has capacity and terminating HTTP(S) as close as possible to the client. You have the option to pass in the backend services and/or backend buckets behind the load balancer.
 
 ## Usage
 
