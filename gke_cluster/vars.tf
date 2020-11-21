@@ -1,72 +1,71 @@
-variable app_id {
-  description = "The app ID (i.e. `sybl-core`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
-}
-
-variable auth_password {
-  default = ""
-  description = "Password for authenticating and accessing the Kubernetes cluster"
+variable name {
+  description = "Name of this module."
+  type = string
 }
 
 variable auth_username {
   default = "admin"
   description = "Username for authenticating and accessing the Kubernetes cluster."
+  type = string
+}
+
+variable auth_password {
+  default = ""
+  description = "Password for authenticating and accessing the Kubernetes cluster"
+  type = string
 }
 
 variable cluster_ipv4_cidr {
   default = ""
   description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."
+  type = string
 }
 
 variable disk_image {
   default = "ubuntu-1604-xenial-v20161214"
   description = "The disk image of the resource. Ubuntu is preferred. You can find a list of images in your GCP console by selecting 'Images' in the 'Compute Engine' dashboard."
+  type = string
 }
 
 variable disk_type {
   default = "pd-ssd"
   description = "The disk type (i.e. local or persistent disk, standard or ssd) as specified by`pd-standard`, `pd-ssd`, or `local-ssd`. `pd-ssd` is preferred."
-}
-
-variable environment {
-  default = "development"
-  description = "The environment of the resources, i.e. development, staging, etc. This value becomes a tag and label."
+  type = string
 }
 
 variable machine_type {
   default = "g1-small"
   description = "The machine type of the resource. See https://cloud.google.com/compute/docs/machine-types."
+  type = string
 }
 
 variable network {
   default = "default"
   description = "The name of the network to attach this interface to."
+  type = string
 }
 
 variable node_count {
   default = 1
   description = "The initial number of nodes to create for this Kubernetes cluster."
+  type = number
 }
 
 variable port {
   default = 30000
   description = "Port in the K8s cluster that is exposed to the external network."
+  type = number
 }
 
 variable port_name {
   default = "http"
   description = "Name of the port in the K8s cluster that is exposed to the external network."
-}
-
-variable project_id {
-  description = "Google Cloud Platform project ID."
-}
-
-variable region {
-  description = "The region where the project resides."
+  type = string
 }
 
 variable region_zone {
   description = "The region zone where the new resources will be created in, i.e. `us-central1-a`. See https://cloud.google.com/compute/docs/regions-zones/."
+  type = string
 }
 
 variable service_scopes {
@@ -77,9 +76,16 @@ variable service_scopes {
     "https://www.googleapis.com/auth/devstorage.read_write",
   ]
   description = "The service scopes. Both OAuth2 URLs and short names are supported. See https://developers.google.com/identity/protocols/googlescopes."
+  type = list(string)
+}
+
+variable labels {
+  description = "Labels (key/value pair) to be added to each node. The value of each label will also be added as tags."
+  type = map(string)
 }
 
 variable tags {
   default = []
-  description = "Additional tags."
+  description = "Additional tags to add to each node."
+  type = list(string)
 }

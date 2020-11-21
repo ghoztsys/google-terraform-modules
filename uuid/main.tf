@@ -1,8 +1,8 @@
 terraform {
-  required_version = ">= 0.12.25"
+  required_version = ">= 0.13.5"
 
   required_providers {
-    random = ">= 2.2.1"
+    random = ">= 3.0.0"
   }
 }
 

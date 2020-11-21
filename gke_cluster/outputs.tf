@@ -1,8 +1,3 @@
-output app_id {
-  description = "Service ID passed of the module."
-  value = var.app_id
-}
-
 output auth_password {
   description = "Password to authenticate access to the Kubernetes cluster."
   sensitive = true

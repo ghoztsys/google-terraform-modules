@@ -1,11 +1,11 @@
 terraform {
-  required_version = ">= 0.12.25"
+  required_version = ">= 0.13.5"
 
   required_providers {
-    google = ">= 3.47.0"
-    kubernetes = ">= 1.11.1"
-    random = ">= 2.2.1"
-    null = ">= 2.1.2"
+    google = ">= 3.48.0"
+    kubernetes = ">= 1.11.3"
+    random = ">= 3.0.0"
+    null = ">= 3.0.0"
   }
 }
 
@@ -16,14 +16,7 @@ provider "kubernetes" {
   host = google_container_cluster.default.endpoint
   password = var.auth_password == "" ? random_id.password[0].hex : var.auth_password
   username = var.auth_username
-  version = "~> 1.9"
-}
-
-# Generate random ID to be used for naming the created cloud resources.
-module "uuid" {
-  basename = var.app_id
-  environment = var.environment
-  source = "../uuid"
+  version = "~> 1.11.3"
 }
 
 # Generate random password used for connecting to the Kubernetes cluster.
@@ -31,7 +24,7 @@ resource "random_id" "password" {
   byte_length = 8
   count = var.auth_password == "" ? 1 : 0
   keepers = {
-    name = module.uuid.value
+    name = var.name
   }
 }
 
@@ -40,7 +33,7 @@ resource "google_container_cluster" "default" {
   cluster_ipv4_cidr = var.cluster_ipv4_cidr
   initial_node_count = var.node_count
   location = var.region_zone
-  name = "${module.uuid.value}-cluster"
+  name = var.name
   network = var.network
 
   addons_config {
@@ -57,15 +50,8 @@ resource "google_container_cluster" "default" {
   node_config {
     machine_type = var.machine_type
     oauth_scopes = var.service_scopes
-    tags = concat(var.tags, list(
-      "${module.uuid.value}-cluster",
-      var.app_id,
-      var.environment,
-    ))
-    labels = {
-      service = var.app_id
-      environment = var.environment
-    }
+    tags = concat(var.tags, [var.name], values(var.labels))
+    labels = var.labels
   }
 }
 
