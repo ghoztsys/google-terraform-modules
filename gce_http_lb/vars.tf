@@ -49,6 +49,12 @@ variable enable_http {
   type = bool
 }
 
+variable redirect_http {
+  default = true
+  description = "Specifies if HTTP traffic should be automatically redirected to HTTPS. This requires `enable_http` to be `true` and that there are SSL certificates/domains configured."
+  type = bool
+}
+
 variable ip_version {
   default = ""
   description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"
@@ -78,14 +84,8 @@ variable ssl_domains {
   type = list(string)
 }
 
-variable create_url_map {
-  default = true
-  description = "Specifies whether a URL map should be automatically generated based on the provided `backend_services` and `backend_buckets`."
-  type = bool
-}
-
 variable url_map {
-  default = ""
+  default = null
   description = "URI of the custom URL map resource to be used instead of automatically generated one, (i.e. google_compute_url_map.<name>.self_link)"
   type = string
 }

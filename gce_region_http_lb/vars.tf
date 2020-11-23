@@ -51,6 +51,12 @@ variable enable_http {
   type = bool
 }
 
+variable redirect_http {
+  default = true
+  description = "Specifies if HTTP traffic should be automatically redirected to HTTPS. This requires `enable_http` to be `true` and that there are SSL certificates/domains configured."
+  type = bool
+}
+
 variable ip_version {
   default = ""
   description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"

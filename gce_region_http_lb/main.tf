@@ -57,6 +57,9 @@ locals {
       compact([ for backend in var.backends[backend_service_index]: lookup(backend, "port", 8080) ]),
     ))
   }
+
+  # Indicates if HTTP-to-HTTPS redirection should be set up.
+  redirect_http = var.enable_http && var.redirect_http && (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != ""))
 }
 
 # Reserve a regional static external IP for the load balancer. This will be the address that users use to reach the load
@@ -74,7 +77,7 @@ resource "google_compute_target_http_proxy" "http" {
   count = var.enable_http ? 1 : 0
 
   name = "${var.name}-http-proxy"
-  url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default[*].self_link)), 0)
+  url_map = local.redirect_http ? google_compute_url_map.redirect[0].self_link : (var.url_map == null ? google_compute_url_map.default[0].self_link : var.url_map)
 }
 
 # Create a forwarding rule for HTTP routing using the Target HTTP Proxy resource and reserved external IP. This
@@ -239,10 +242,23 @@ resource "google_storage_bucket_acl" "default" {
   default_acl = lookup(each.value, "default_acl", "publicread")
 }
 
+# Create a HTTP URL map for HTTP-to-HTTPS redirection only, if needed.
+resource "google_compute_url_map" "redirect" {
+  count = local.redirect_http ? 1 : 0
+
+  name = "${var.name}-url-map-redirect"
+
+  default_url_redirect {
+    https_redirect = true
+    redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+    strip_query = false
+  }
+}
+
 # Create a basic URL map for the load balancer if `create_url_map` is `true`. This URL map routes all paths to the first
 # Backend Service resource created.
 resource "google_compute_url_map" "default" {
-  count = var.create_url_map ? 1 : 0
+  count = var.url_map == null ? 1 : 0
 
   default_service = google_compute_backend_service.default[0].self_link
   name = "${var.name}-url-map"
