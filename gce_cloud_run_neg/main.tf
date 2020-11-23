@@ -14,7 +14,7 @@ resource "google_compute_region_network_endpoint_group" "default" {
   region = var.region
 
   cloud_run {
-    service = google_cloud_run_service.default.name
+    service = var.service_name
     tag = var.tag
   }
 }
