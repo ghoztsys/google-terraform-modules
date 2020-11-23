@@ -1,6 +1,12 @@
 variable name {
   description = "The name of this module."
   type = string
+  default = null
+}
+
+variable service_name {
+  description = "Name of the Cloud Run service (i.e. google_cloud_run_service.default.name)."
+  type = string
 }
 
 variable region {
