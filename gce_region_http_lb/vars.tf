@@ -93,7 +93,7 @@ variable create_url_map {
 }
 
 variable url_map {
-  default = ""
+  default = null
   description = "URI of the custom URL map resource to be used instead of automatically generated one, (i.e. google_compute_url_map.<name>.self_link)"
   type = string
 }
