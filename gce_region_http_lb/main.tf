@@ -59,12 +59,13 @@ locals {
   }
 }
 
-# Reserve a global static external IP for the load balancer. This will be the address that users use to reach the load
+# Reserve a regional static external IP for the load balancer. This will be the address that users use to reach the load
 # balancer.
-resource "google_compute_global_address" "default" {
+resource "google_compute_address" "default" {
   address_type = "EXTERNAL"
-  ip_version = var.ip_version
   name = "${var.name}-address"
+  network_tier = "STANDARD"
+  region = var.region
 }
 
 # Create a Target HTTP Proxy resource to route incoming HTTP requests to a URL map. The URL map is either provided or is
@@ -76,27 +77,29 @@ resource "google_compute_target_http_proxy" "http" {
   url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default[*].self_link)), 0)
 }
 
-# Create a global forwarding rule for HTTP routing using the Target HTTP Proxy resource and reserved external IP. This
+# Create a forwarding rule for HTTP routing using the Target HTTP Proxy resource and reserved external IP. This
 # resource is only created if `enable_http` is `true`.
-resource "google_compute_global_forwarding_rule" "http" {
+resource "google_compute_forwarding_rule" "http" {
   count = var.enable_http ? 1 : 0
 
-  ip_address = google_compute_global_address.default.address
-  ip_version = var.ip_version
+  ip_address = google_compute_address.default.address
   load_balancing_scheme = "EXTERNAL"
   name = var.name
+  network_tier = "STANDARD"
   port_range = 80
+  region = var.region
   target = google_compute_target_http_proxy.http[0].self_link
 }
 
 # Create a self-signed SSL certificate resource if the certificate and key are provided. This does not interfere any
 # Google-managed certificates created in this module. Note that this is not recommended to be used in production.
-resource "google_compute_ssl_certificate" "https" {
+resource "google_compute_region_ssl_certificate" "https" {
   count = (var.ssl_private_key != "" && var.ssl_certificate != "") ? 1 : 0
 
   certificate = var.ssl_certificate
   private_key = var.ssl_private_key
   provider = google
+  region = var.region
 }
 
 # Create Google-managed SSL certificates for every domain as defined in `ssl_domains`. Certificates created by this
@@ -121,20 +124,21 @@ resource "google_compute_target_https_proxy" "https" {
   count = (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0
 
   name = "${var.name}-https-proxy"
-  ssl_certificates = compact(concat(google_compute_ssl_certificate.https[*].self_link, google_compute_managed_ssl_certificate.https[*].self_link))
+  ssl_certificates = compact(concat(google_compute_region_ssl_certificate.https[*].self_link, google_compute_managed_ssl_certificate.https[*].self_link))
   url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default[*].self_link)), 0)
 }
 
-# Create a global forwarding rule for HTTPS routing (if SSL certificates are properly set up) using the Target HTTPS
+# Create a regional forwarding rule for HTTPS routing (if SSL certificates are properly set up) using the Target HTTPS
 # Proxy resource and reserved external IP.
-resource "google_compute_global_forwarding_rule" "https" {
+resource "google_compute_forwarding_rule" "https" {
   count = (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0
 
-  ip_address = google_compute_global_address.default.address
-  ip_version = var.ip_version
+  ip_address = google_compute_address.default.address
   load_balancing_scheme = "EXTERNAL"
   name = "${var.name}-https"
+  network_tier = "STANDARD"
   port_range = 443
+  region = var.region
   target = google_compute_target_https_proxy.https[0].self_link
 }
 
@@ -167,7 +171,7 @@ resource "google_compute_health_check" "default" {
 resource "google_compute_backend_service" "default" {
   for_each = local.backend_services
 
-  enable_cdn = lookup(each.value, "enable_cdn", false)
+  enable_cdn = false
   health_checks = length(local.health_check_links[each.key]) == 0 ? null : local.health_check_links[each.key]
   load_balancing_scheme = "EXTERNAL"
   name = "${var.name}-backend${each.key}"
@@ -198,7 +202,7 @@ resource "google_compute_backend_bucket" "default" {
   for_each = local.backend_buckets
 
   bucket_name = google_storage_bucket.default[each.key].name
-  enable_cdn = lookup(each.value, "enable_cdn", false)
+  enable_cdn = false
   name = "${var.name}-backend-bucket${each.key}"
 }
 
@@ -207,8 +211,20 @@ resource "google_storage_bucket" "default" {
   for_each = local.backend_buckets
 
   force_destroy = true
-  location = lookup(each.value, "location", "US")
+  location = var.region
   name = "${var.name}-bucket${each.key}"
+  storage_class = "REGIONAL"
+
+  lifecycle_rule {
+    action {
+      type = "SetStorageClass"
+      storage_class = "NEARLINE"
+    }
+
+    condition {
+      matches_storage_class = ["REGIONAL"]
+    }
+  }
 
   versioning {
     enabled = lookup(each.value, "versioning", true)
@@ -227,6 +243,7 @@ resource "google_storage_bucket_acl" "default" {
 # Backend Service resource created.
 resource "google_compute_url_map" "default" {
   count = var.create_url_map ? 1 : 0
+
   default_service = google_compute_backend_service.default[0].self_link
   name = "${var.name}-url-map"
 

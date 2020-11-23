@@ -1,8 +1,12 @@
+variable region {
+  description = "Region of the load balancer (Standard Tier). Note that Standard Tier is only available in select regions, see https://cloud.google.com/network-tiers/docs/overview#regions_supporting_standard_tier."
+  type = string
+}
+
 variable backend_services {
   description = "List of maps, each defining a Backend Service to be created. See https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service."
   type = list
   # type = list(object({
-  #   enable_cdn = bool # Set to `true` to enable Cloud CDN on the current Backend Service.
   #   health_checks = list(object({ path = string, port = number })) # Health check ports/paths for all backends in the current Backend Service.
   #   path_rules = list(string) # Path rules to add to the generated URL map for directing traffic to the current Backend Service.
   #   port_name = string # Named port to direct load-balanced packets to. This is only applicable to instance groups (not NEGs), and if available, must have at least one port with the same name.
@@ -18,8 +22,6 @@ variable backend_buckets {
   type = list
   # type = list(object({
   #   default_acl = string # Default ACL of the GCS bucket associated with the current Backend Bucket.
-  #   enable_cdn = bool # Indicates if Cloud CDN is enabled for the current Backend Bucket.
-  #   location = string # Location of the current Backend Bucket (if this load balancer is regional, its location must match this).
   #   path_rules = list(string) # Path rules to add to the generated URL map for directing traffic to the current Backend Bucket.
   #   versioning = bool # Specifies if versioning is enabled for the GCS bucket.
   # }))

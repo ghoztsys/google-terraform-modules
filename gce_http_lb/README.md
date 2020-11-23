@@ -1,4 +1,4 @@
-# Google Cloud External HTTP(S) Load Balancer Terraform Module
+# Google Cloud Global External HTTP(S) Load Balancer Terraform Module
 
 This module creates a global [external Google Cloud HTTP(S) load balancer](https://cloud.google.com/load-balancing/docs/https). External HTTP(S) load balancing is implemented by many proxies called Google Front Ends (GFEs), which are distributed globally and has automatic DDoS protection. Since this is a global load balancer, it is configured to operate in Premium Tier where GFEs offer global, cross-regional load balancing, directing traffic to the closest healthy backend that has capacity and terminating HTTP(S) as close as possible to the client. You have the option to pass in the backend services and/or backend buckets behind the load balancer.
 
@@ -6,26 +6,30 @@ This module creates a global [external Google Cloud HTTP(S) load balancer](https
 
 ```ruby
 module "lb" {
-  source = "git::git@github.com:sybl/terraform-modules//gce_lb?ref=v0.27.0"
+  source = "git::git@github.com:sybl/terraform-modules//gce_http_lb?ref=v0.28.0"
 
-  name = "${module.app_cluster.name}-lb"
+  name = "lb"
   ssl_domains = ["www.example.com"]
-  target_tags = [module.app_cluster.name]
 
   backend_buckets = [{
-    location = "US"
     enable_cdn = true
+    location = "US"
     path_rules = ["/static", "/static/*"]
   }]
 
   backend_services = [{
-    health_checks = ["/health"]
+    enable_cdn = true
+    health_checks = [{
+      path = "/health"
+      port = 8080
+    }]
     port_name = "http"
-    port = 8080
   }]
 
   backends = [[{
-    group = module.app_cluster.instance_group_urls[0]
+    port = 8080
+    group = <instance_group_url>
+    target_tags = ["with-lb"]
   }]]
 }
 ```
@@ -41,3 +45,9 @@ module "lb" {
 7. `google_compute_backend_service.default.*`, `google_compute_health_check.default.*`: A set of backend services are created based on the provided parameters (see `backend_services` and `backends`) along with corresponding health check resources.
 8. `google_compute_backend_bucket.default.*`, `google_storage_bucket.default.*`, `google_storage_bucket_acl.default.*`: A set of [backend buckets](https://cloud.google.com/load-balancing/docs/backend-bucket) are created based on the provided parameters (see `backend_buckets`). As a result, corresponding [Google Cloud Storage bucket(s)](https://cloud.google.com/storage/) are also created with proper ACL configuration.
 9. `google_compute_firewall.health_check.*`: Firewall rules to support health check ranges for backend services.
+
+## References
+
+- [External HTTP(S) Load Balancing Overview](https://cloud.google.com/load-balancing/docs/https)
+- [Network Service Tiers Overview](https://cloud.google.com/network-tiers/docs/overview#configuring_standard_tier_for_load_balancing)
+- [Using Network Service Tiers](https://cloud.google.com/network-tiers/docs/using-network-service-tiers)
