@@ -35,6 +35,5 @@ resource "google_cloud_run_service_iam_policy" "no_auth" {
 
   location = var.region
   service = var.service_name
-  google_cloud_run_service.default.name
   policy_data = data.google_iam_policy.no_auth[0].policy_data
 }
