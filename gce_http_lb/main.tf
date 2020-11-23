@@ -212,6 +212,7 @@ resource "google_storage_bucket" "default" {
   force_destroy = true
   location = lookup(each.value, "location", "US")
   name = "${var.name}-bucket${each.key}"
+  labels = lookup(each.value, "labels", {})
 
   versioning {
     enabled = lookup(each.value, "versioning", true)

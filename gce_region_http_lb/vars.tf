@@ -22,6 +22,7 @@ variable backend_buckets {
   type = list
   # type = list(object({
   #   default_acl = string # Default ACL of the GCS bucket associated with the current Backend Bucket.
+  #   labels = map(string) # A set of key/value label pairs to assign to the GCS bucket.
   #   path_rules = list(string) # Path rules to add to the generated URL map for directing traffic to the current Backend Bucket.
   #   versioning = bool # Specifies if versioning is enabled for the GCS bucket.
   # }))

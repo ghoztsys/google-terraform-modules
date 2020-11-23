@@ -217,6 +217,7 @@ resource "google_storage_bucket" "default" {
   location = var.region
   name = "${var.name}-bucket${each.key}"
   storage_class = "REGIONAL"
+  labels = lookup(each.value, "labels", {})
 
   lifecycle_rule {
     action {

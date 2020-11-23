@@ -19,6 +19,7 @@ variable backend_buckets {
   # type = list(object({
   #   default_acl = string # Default ACL of the GCS bucket associated with the current Backend Bucket.
   #   enable_cdn = bool # Indicates if Cloud CDN is enabled for the current Backend Bucket.
+  #   labels = map(string) # A set of key/value label pairs to assign to the GCS bucket.
   #   location = string # Location of the current Backend Bucket (if this load balancer is regional, its location must match this).
   #   path_rules = list(string) # Path rules to add to the generated URL map for directing traffic to the current Backend Bucket.
   #   versioning = bool # Specifies if versioning is enabled for the GCS bucket.
