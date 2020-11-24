@@ -231,7 +231,7 @@ resource "google_storage_bucket" "default" {
   }
 
   versioning {
-    enabled = lookup(each.value, "versioning", true)
+    enabled = lookup(each.value, "versioning", false)
   }
 
   cors {

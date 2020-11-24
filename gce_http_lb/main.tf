@@ -215,7 +215,7 @@ resource "google_storage_bucket" "default" {
   labels = lookup(each.value, "labels", {})
 
   versioning {
-    enabled = lookup(each.value, "versioning", true)
+    enabled = lookup(each.value, "versioning", false)
   }
 
   cors {
