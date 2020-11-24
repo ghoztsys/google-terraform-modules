@@ -21,6 +21,7 @@ variable backend_buckets {
   description = "List of maps, each defining a Backend Bucket to be created."
   type = list
   # type = list(object({
+  #   cors = map(any) # CORS configuration.
   #   default_acl = string # Default ACL of the GCS bucket associated with the current Backend Bucket.
   #   labels = map(string) # A set of key/value label pairs to assign to the GCS bucket.
   #   path_rules = list(string) # Path rules to add to the generated URL map for directing traffic to the current Backend Bucket.

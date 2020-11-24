@@ -233,6 +233,13 @@ resource "google_storage_bucket" "default" {
   versioning {
     enabled = lookup(each.value, "versioning", true)
   }
+
+  cors {
+    origin = lookup(each.value, "cors.origin", null)
+    method = lookup(each.value, "cors.method", null)
+    response_header = lookup(each.value, "cors.response_header", null)
+    max_age_seconds = lookup(each.value, "cors.max_age_seconds", null)
+  }
 }
 
 # Configure ACL for each GCS bucket.

@@ -17,6 +17,7 @@ variable backend_buckets {
   description = "List of maps, each defining a Backend Bucket to be created."
   type = list
   # type = list(object({
+  #   cors = map(any) # CORS configuration.
   #   default_acl = string # Default ACL of the GCS bucket associated with the current Backend Bucket.
   #   enable_cdn = bool # Indicates if Cloud CDN is enabled for the current Backend Bucket.
   #   labels = map(string) # A set of key/value label pairs to assign to the GCS bucket.
