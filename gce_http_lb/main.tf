@@ -219,10 +219,10 @@ resource "google_storage_bucket" "default" {
   }
 
   cors {
-    origin = lookup(each.value, "cors.origin", null)
-    method = lookup(each.value, "cors.method", null)
-    response_header = lookup(each.value, "cors.response_header", null)
-    max_age_seconds = lookup(each.value, "cors.max_age_seconds", null)
+    origin = lookup(lookup(each.value, "cors", {}), "origin", null)
+    method = lookup(lookup(each.value, "cors", {}), "method", null)
+    response_header = lookup(lookup(each.value, "cors", {}), "response_header", null)
+    max_age_seconds = lookup(lookup(each.value, "cors", {}), "max_age_seconds", null)
   }
 }
 
