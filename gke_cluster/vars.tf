@@ -3,18 +3,6 @@ variable name {
   type = string
 }
 
-variable auth_username {
-  default = "admin"
-  description = "Username for authenticating and accessing the Kubernetes cluster."
-  type = string
-}
-
-variable auth_password {
-  default = ""
-  description = "Password for authenticating and accessing the Kubernetes cluster"
-  type = string
-}
-
 variable cluster_ipv4_cidr {
   default = ""
   description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."

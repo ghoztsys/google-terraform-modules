@@ -1,30 +1,11 @@
 terraform {
-  required_version = ">= 0.13.5"
+  required_version = ">= 1.0.1"
 
   required_providers {
-    google = ">= 3.48.0"
-    kubernetes = ">= 1.11.3"
-    random = ">= 3.0.0"
-    null = ">= 3.0.0"
-  }
-}
-
-provider "kubernetes" {
-  client_certificate = base64decode(google_container_cluster.default.master_auth[0].client_certificate)
-  client_key = base64decode(google_container_cluster.default.master_auth[0].client_key)
-  cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
-  host = google_container_cluster.default.endpoint
-  password = var.auth_password == "" ? random_id.password[0].hex : var.auth_password
-  username = var.auth_username
-  version = "~> 1.11.3"
-}
-
-# Generate random password used for connecting to the Kubernetes cluster.
-resource "random_id" "password" {
-  byte_length = 8
-  count = var.auth_password == "" ? 1 : 0
-  keepers = {
-    name = var.name
+    google = ">= 3.74.0"
+    kubernetes = ">= 2.3.2"
+    random = ">= 3.1.0"
+    null = ">= 3.1.0"
   }
 }
 
@@ -36,15 +17,15 @@ resource "google_container_cluster" "default" {
   name = var.name
   network = var.network
 
+  # Use legacy ABAC until these issues are resolved:
+  #   https://github.com/mcuadros/terraform-provider-helm/issues/56
+  #   https://github.com/terraform-providers/terraform-provider-kubernetes/pull/73
+  enable_legacy_abac = true
+
   addons_config {
     network_policy_config {
       disabled = true
     }
-  }
-
-  master_auth {
-    username = var.auth_username
-    password = var.auth_password == "" ? random_id.password[0].hex : var.auth_password
   }
 
   node_config {
@@ -52,6 +33,12 @@ resource "google_container_cluster" "default" {
     oauth_scopes = var.service_scopes
     tags = concat(var.tags, [var.name], values(var.labels))
     labels = var.labels
+  }
+
+  # Wait for the GCE LB controller to cleanup the resources.
+  provisioner "local-exec" {
+    when = destroy
+    command = "sleep 90"
   }
 }
 

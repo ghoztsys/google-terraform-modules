@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">= 0.13.5"
+  required_version = ">= 1.0.1"
 
   required_providers {
-    google = ">= 3.48.0"
-    google-beta = ">= 3.48.0"
+    google = ">= 3.74.0"
+    google-beta = ">= 3.74.0"
   }
 }
 
@@ -125,7 +125,7 @@ resource "google_compute_target_https_proxy" "https" {
 
   name = "${var.name}-https-proxy"
   ssl_certificates = compact(concat(google_compute_ssl_certificate.https[*].self_link, google_compute_managed_ssl_certificate.https[*].self_link))
-  url_map = element(compact(concat(list(var.url_map), google_compute_url_map.default[*].self_link)), 0)
+  url_map = element(compact(concat([var.url_map], google_compute_url_map.default[*].self_link)), 0)
 }
 
 # Create a global forwarding rule for HTTPS routing (if SSL certificates are properly set up) using the Target HTTPS

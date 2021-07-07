@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">= 0.13.5"
+  required_version = ">= 1.0.1"
 }
 
 provider "google" {
-  version = "~> 3.47.0"
+  google = ">= 3.74.0"
 }
 
 resource "google_dns_record_set" "default" {

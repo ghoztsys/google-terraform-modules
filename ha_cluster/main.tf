@@ -1,12 +1,10 @@
-# This module defines a high availability cluster that runs an application,
-# consisting of the following nodes: the master node(s) for controlling all
-# other nodes within the cluster, the load balancer node(s) for directing
-# traffic to the nodes that actually run the app, the database node(s) for
-# storing data, and the application node(s) for serving the app and handling
-# requests.
+# This module defines a high availability cluster that runs an application, consisting of the following nodes: the
+# master node(s) for controlling all other nodes within the cluster, the load balancer node(s) for directing traffic to
+# the nodes that actually run the app, the database node(s) for storing data, and the application node(s) for serving
+# the app and handling requests.
 
 terraform {
-  required_version = ">= 0.13.5"
+  required_version = ">= 1.0.1"
 
   required_providers {
     google = ">= 3.47.0"
@@ -20,20 +18,20 @@ module "uuid" {
   source = "../uuid"
 }
 
-# Create the GCE instance(s) for Consul/Nomad masters. They are responsible for
-# service discoveries and orchestrating Docker containers.
+# Create the GCE instance(s) for Consul/Nomad masters. They are responsible for service discoveries and orchestrating
+# Docker containers.
 resource "google_compute_instance" "master" {
   count = var.master_count
   machine_type = var.master_machine_type
   name = "${module.uuid.value}-master${count.index}"
-  tags = concat(var.master_tags, list(
+  tags = concat(var.master_tags, [
     "${module.uuid.value}-master${count.index}",
     "master",
     "ha-cluster",
     var.service_id,
     var.environment,
     var.datacenter,
-  ))
+  ])
   zone = var.region_zone
 
   boot_disk {
@@ -70,20 +68,19 @@ resource "google_compute_instance" "master" {
   }
 }
 
-# Create the GCE instance(s) for Nomad nodes. These nodes will be housing all
-# the orchestrated Docker app containers.
+# Create the GCE instance(s) for Nomad nodes. These nodes will be housing all the orchestrated Docker app containers.
 resource "google_compute_instance" "node" {
   count = var.node_count
   machine_type = var.node_machine_type
   name = "${module.uuid.value}-node${count.index}"
-  tags = concat(var.node_tags, list(
+  tags = concat(var.node_tags, [
     "${module.uuid.value}-node${count.index}",
     "node",
     "ha-cluster",
     var.service_id,
     var.environment,
     var.datacenter,
-  ))
+  ])
   zone = var.region_zone
 
   boot_disk {
@@ -125,14 +122,14 @@ resource "google_compute_instance" "db" {
   count = var.db_count
   machine_type = var.db_machine_type
   name = "${module.uuid.value}-db${count.index}"
-  tags = concat(var.db_tags, list(
+  tags = concat(var.db_tags, [
     "${module.uuid.value}-db${count.index}",
     "db",
     "ha-cluster",
     var.service_id,
     var.environment,
     var.datacenter,
-  ))
+  ])
   zone = var.region_zone
 
   boot_disk {
@@ -174,14 +171,14 @@ resource "google_compute_instance" "lb" {
   count = var.lb_count
   machine_type = var.lb_machine_type
   name = "${module.uuid.value}-lb${count.index}"
-  tags = concat(var.lb_tags, list(
+  tags = concat(var.lb_tags, [
     "${module.uuid.value}-lb${count.index}",
     "lb",
     "ha-cluster",
     var.service_id,
     var.environment,
     var.datacenter,
-  ))
+  ])
   zone = var.region_zone
 
   boot_disk {
@@ -324,8 +321,7 @@ resource "google_compute_firewall" "mongodb" {
   }
 }
 
-# Create common firewall rules for external access to all generated GCE
-# instances.
+# Create common firewall rules for external access to all generated GCE instances.
 resource "google_compute_firewall" "external" {
   name = "${module.uuid.value}-external"
   network = var.network
@@ -354,8 +350,7 @@ resource "google_compute_firewall" "external" {
   }
 }
 
-# Create common firewall rules for internal access to all generated GCE
-# instances.
+# Create common firewall rules for internal access to all generated GCE instances.
 resource "google_compute_firewall" "internal" {
   name = "${module.uuid.value}-internal"
   network = var.network

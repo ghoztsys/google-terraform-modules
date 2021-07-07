@@ -1,8 +1,8 @@
-# This module defines a single GCE instance that contains all the services
-# required to run an application (i.e. master, load balancer, database).
+# This module defines a single GCE instance that contains all the services required to run an application (i.e. master,
+# load balancer, database).
 
 terraform {
-  required_version = ">= 0.13.5"
+  required_version = ">= 1.0.1"
 
   required_providers {
     google = ">= 3.47.0"
@@ -19,13 +19,13 @@ module "uuid" {
 resource "google_compute_instance" "default" {
   machine_type = var.machine_type
   name = "${module.uuid.value}-sandbox"
-  tags = concat(var.tags, list(
+  tags = concat(var.tags, [
     "${module.uuid.value}-sandbox",
     "sandbox",
     var.service_id,
     var.environment,
     var.datacenter,
-  ))
+  ])
   zone = var.region_zone
 
   boot_disk {

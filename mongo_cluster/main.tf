@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.13.5"
+  required_version = ">= 1.0.1"
 
   required_providers {
     google = ">= 3.47.0"
@@ -17,13 +17,13 @@ resource "google_compute_instance" "default" {
   count = var.nodes
   machine_type = var.machine_type
   name = "${module.uuid.value}-db${count.index}"
-  tags = concat(var.tags, list(
+  tags = concat(var.tags, [
     "${module.uuid.value}-db${count.index}",
     "db",
     var.service_id,
     var.environment,
     var.datacenter,
-  ))
+  ])
   zone = var.region_zone
 
   boot_disk {

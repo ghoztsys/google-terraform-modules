@@ -1,15 +1,3 @@
-output auth_password {
-  description = "Password to authenticate access to the Kubernetes cluster."
-  sensitive = true
-  value = var.auth_password == "" ? random_id.password[0].hex : var.auth_password
-}
-
-output auth_username {
-  description = "Username to authenticate access to the Kubernetes cluster."
-  sensitive = true
-  value = var.auth_username
-}
-
 output client_certificate {
   description = "Base64 encoded public certificate used by clients to authenticate to the cluster endpoint."
   sensitive = true
