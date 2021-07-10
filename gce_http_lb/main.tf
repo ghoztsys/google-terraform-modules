@@ -62,13 +62,15 @@ resource "google_compute_ssl_certificate" "https" {
 # Create a Google-managed SSL certificate for all domains defined in `ssl_domains`. This certificate does not interfere
 # with the self-signed certificate (if applicable).
 resource "google_compute_managed_ssl_certificate" "https" {
-  count = length(var.ssl_domains) > 0 ? 1 : 0
+  count = length(var.ssl_domains)
 
-  name = "${var.name}-cert-${random_id.managed_cert[0].hex}"
+  name = "${var.name}-${random_id.managed_cert[0].hex}-cert${count.index}"
   provider = google-beta
 
   managed {
-    domains = var.ssl_domains
+    domains = [
+      element(var.ssl_domains, count.index),
+    ]
   }
 
   lifecycle {
