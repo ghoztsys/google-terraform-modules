@@ -92,8 +92,8 @@ resource "google_compute_global_forwarding_rule" "http" {
   target = google_compute_target_http_proxy.http[0].self_link
 }
 
-# Create a self-signed SSL certificate resource if the certificate and key are provided. This does not interfere any
-# Google-managed certificates created in this module. Note that this is not recommended to be used in production.
+# Create a self-signed SSL certificate resource if the certificate and key are provided. This does not interfere with
+# any Google-managed certificates created in this module. Note that this is not recommended to be used in production.
 resource "google_compute_ssl_certificate" "https" {
   count = (var.ssl_private_key != "" && var.ssl_certificate != "") ? 1 : 0
 
@@ -103,7 +103,7 @@ resource "google_compute_ssl_certificate" "https" {
 }
 
 # Create Google-managed SSL certificates for every domain as defined in `ssl_domains`. Certificates created by this
-# resource do not interfere with the self-signed certificate, if applicable.
+# resource do not interfere with the self-signed certificate (if applicable).
 resource "google_compute_managed_ssl_certificate" "https" {
   count = length(var.ssl_domains)
 
