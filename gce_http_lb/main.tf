@@ -150,7 +150,7 @@ resource "google_compute_url_map" "default" {
 
     content {
       name = "path-matcher${path_matcher.key}"
-      default_service = lookup(path_matcher.value, "backend_service_index", null) == null ? null : lookup(module.backend_service[path_matcher.value.backend_service_index], "self_link")
+      default_service = lookup(path_matcher.value, "default_backend_service_index", null) == null ? null : lookup(module.backend_service[path_matcher.value.default_backend_service_index], "self_link")
 
       dynamic "default_url_redirect" {
         for_each = lookup(path_matcher.value, "default_url_redirect", null) == null ? [] : [path_matcher.value.default_url_redirect]
@@ -163,11 +163,11 @@ resource "google_compute_url_map" "default" {
       }
 
       dynamic "path_rule" {
-        for_each = lookup(path_matcher.value, "paths", null) == null ? [] : [path_matcher.value.paths]
+        for_each = lookup(path_matcher.value, "path_rules", [])
 
         content {
-          service = lookup(module.backend_service[path_matcher.value.backend_service_index], "self_link")
-          paths = path_rule.value
+          service = lookup(module.backend_service[lookup(path_rule.value, "backend_service_index", 0)], "self_link")
+          paths = path_rule.value.paths
         }
       }
     }

@@ -28,7 +28,15 @@ module "lb" {
     type = "bucket"
     enable_cdn = true
     location = "US"
-    path_rules = ["/static", "/static/*"]
+  }]
+
+  url_map = [{
+    hosts = ["*"]
+    default_service_index = 0
+    path_rules = [{
+      paths = ["/static", "/static/*"]
+      backend_service_index = 1
+    }]
   }]
 }
 ```
