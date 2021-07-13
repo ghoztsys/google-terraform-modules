@@ -57,7 +57,7 @@ variable ssl_domains {
 }
 
 variable url_map {
-  default = null
+  default = []
   description = "A map that describes how the URL map should be constructed."
   type = any
   # type = list(object({
