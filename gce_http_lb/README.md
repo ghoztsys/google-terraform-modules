@@ -1,6 +1,6 @@
 # Google Cloud Global External HTTP(S) Load Balancer Terraform Module
 
-This module creates a global [external Google Cloud HTTP(S) load balancer](https://cloud.google.com/load-balancing/docs/https). External HTTP(S) load balancing is implemented by many proxies called Google Front Ends (GFEs), which are distributed globally and has automatic DDoS protection. Since this is a global load balancer, it is configured to operate in Premium Tier where GFEs offer global, cross-regional load balancing, directing traffic to the closest healthy backend that has capacity and terminating HTTP(S) as close as possible to the client. You have the option to pass in the backend services and/or backend buckets behind the load balancer.
+This module creates a global [external Google Cloud HTTP(S) load balancer](https://cloud.google.com/load-balancing/docs/https). External HTTP(S) load balancing is implemented by many proxies called Google Front Ends (GFEs), which are distributed globally and has automatic DDoS protection. Since this is a global load balancer, it is configured to operate in Premium Tier where GFEs offer global, cross-regional load balancing, directing traffic to the closest healthy backend that has capacity and terminating HTTP(S) as close as possible to the client. You have the option to define the Backend Services and/or Backend Buckets behind the load balancer.
 
 ## Usage
 
@@ -32,7 +32,7 @@ module "lb" {
 
   url_map = [{
     hosts = ["*"]
-    default_service_index = 0
+    default_backend_service_index = 0
     path_rules = [{
       paths = ["/static", "/static/*"]
       backend_service_index = 1
@@ -49,7 +49,7 @@ module "lb" {
 4. `google_compute_ssl_certificate.https`: A [self-managed SSL certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates) resource is created if a certificate and private key are specified.
 5. `google_compute_managed_ssl_certificate.https`: A [Google-managed SSL certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates#managed-certs) is created for each domain in `ssl_domains`.
 6. `google_compute_url_map.default`: A [URL map](https://cloud.google.com/load-balancing/docs/https/url-map) is automatically generated to direct traffic to the specified backend services and/or backend buckets. A custom one can also be provided.
-7. `module.gce_backend_service.*`: A set of backend services are created based on the provided parameters (see [`gce_backend_service`](https://github.com/sybl/terraform-modules/gce_backend_service) module).
+7. `module.gce_backend_service.*`: A set of backend services are created based on the provided parameters (see [`gce_backend_service`](https://github.com/sybl/terraform-modules/tree/master/gce_backend_service) module).
 
 ## References
 

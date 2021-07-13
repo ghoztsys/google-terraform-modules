@@ -1,11 +1,6 @@
 output backend_services {
   description = "The backend service resources."
-  value = [for service in google_compute_backend_service.default : service.self_link]
-}
-
-output backend_buckets {
-  description = "The backend bucket resources."
-  value = [for bucket in google_compute_backend_bucket.default : bucket.self_link]
+  value = [ for service in module.backend_service : service.self_link ]
 }
 
 output public_ip {

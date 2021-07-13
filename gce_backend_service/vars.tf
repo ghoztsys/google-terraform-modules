@@ -14,6 +14,18 @@ variable type {
   }
 }
 
+variable network {
+  default = "default"
+  description = "The name of the network to add the firewall rules to."
+  type = string
+}
+
+variable regional {
+  default = false
+  description = "Indicates whether created resources should be regional instead of global. When `true`, `enable_cdn` will take no effect."
+  type = bool
+}
+
 variable enable_cdn {
   default = false
   description = "Specifies if Cloud CDN should be enabled"
@@ -104,7 +116,7 @@ variable labels {
 
 variable location {
   default = "US"
-  description = "Location of the current Backend Bucket (if this load balancer is regional, its location must match this) (NOTE: This variable is only used if `type` is `bucket`)."
+  description = "Location of the current Backend Bucket (if `regional` is `true`, this value must represent a region) (NOTE: This variable is only used if `type` is `bucket`). For a list of supported values, see https://cloud.google.com/storage/docs/locations."
   type = string
 }
 

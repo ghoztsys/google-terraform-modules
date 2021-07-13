@@ -102,6 +102,8 @@ module "backend_service" {
 
   name = "${var.name}-backend-service${each.key}"
   type = lookup(each.value, "type", "service")
+  regional = false
+  network = var.network
   backends = lookup(each.value, "backends", [])
   enable_cdn = lookup(each.value, "enable_cdn", false)
   health_checks = lookup(each.value, "health_checks", [])

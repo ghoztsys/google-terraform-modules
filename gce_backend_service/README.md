@@ -1,6 +1,6 @@
 # `gce_backend_service`
 
-This module creates a Backend Service/Bucket, depending on the specified `type` variable.
+This module creates a Backend Service/Bucket, depending on the specified `type` variable. Created resources may also be regional instead of global (default) if `regional` is set to `true` (defaults to `false`).
 
 ## Usage
 

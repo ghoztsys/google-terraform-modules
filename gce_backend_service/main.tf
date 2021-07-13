@@ -27,7 +27,7 @@ resource "google_compute_health_check" "default" {
 resource "google_compute_backend_service" "default" {
   count = var.type == "service" ? 1 : 0
 
-  enable_cdn = var.enable_cdn
+  enable_cdn = var.regional ? false : var.enable_cdn
   health_checks = length(local.health_check_links) == 0 ? null : local.health_check_links
   load_balancing_scheme = "EXTERNAL"
   name = var.name
@@ -58,7 +58,7 @@ resource "google_compute_backend_bucket" "default" {
   count = var.type == "bucket" ? 1 : 0
 
   bucket_name = google_storage_bucket.default[0].name
-  enable_cdn = var.enable_cdn
+  enable_cdn = var.regional ? false : var.enable_cdn
   name = var.name
 }
 
@@ -67,9 +67,25 @@ resource "google_storage_bucket" "default" {
   count = var.type == "bucket" ? 1 : 0
 
   force_destroy = true
+  labels = var.labels
   location = var.location
   name = "${var.name}-bucket123"
-  labels = var.labels
+  storage_class = var.regional ? "REGIONAL" : null
+
+  dynamic "lifecycle_rule" {
+    for_each = var.regional ? [true] : []
+
+    content {
+      action {
+        type = "SetStorageClass"
+        storage_class = "NEARLINE"
+      }
+
+      condition {
+        matches_storage_class = ["REGIONAL"]
+      }
+    }
+  }
 
   versioning {
     enabled = var.versioning
@@ -98,7 +114,7 @@ resource "google_compute_firewall" "default" {
   count = length(local.firewall_ports)
 
   name = "${var.name}-firewall"
-  network = "default"
+  network = var.network
   source_ranges = [
     "35.191.0.0/16",
     "130.211.0.0/22",
