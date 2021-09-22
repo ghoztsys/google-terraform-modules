@@ -69,7 +69,7 @@ resource "google_storage_bucket" "default" {
   force_destroy = true
   labels = var.labels
   location = var.location
-  name = "${var.name}-bucket123"
+  name = "${var.name}-bucket"
   storage_class = var.regional ? "REGIONAL" : null
 
   dynamic "lifecycle_rule" {
