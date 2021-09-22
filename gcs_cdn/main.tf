@@ -3,7 +3,6 @@ terraform {
 
   required_providers {
     google = ">= 3.47.0"
-    google-beta = ">= 3.47.0"
   }
 }
 
@@ -95,12 +94,13 @@ resource "google_storage_bucket" "default" {
   force_destroy = true
   location = var.bucket_location
   name = "${var.name}-bucket"
+  uniform_bucket_level_access = var.uniform_bucket_level_access
 }
 
 # Configure default ACL for the GCS bucket to be readable by everyone.
 resource "google_storage_bucket_acl" "default" {
   bucket = google_storage_bucket.default.name
-  default_acl = "publicread"
+  default_acl = var.default_acl
 }
 
 # Create the backend bucket.

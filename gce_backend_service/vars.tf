@@ -120,14 +120,14 @@ variable location {
   type = string
 }
 
-variable versioning {
-  default = false
-  description = "Specifies if versioning is enabled for the GCS bucket (NOTE: This variable is only used if `type` is `bucket`)."
-  type = bool
-}
-
 variable uniform_bucket_level_access {
   default = false
   description = "Enables Uniform bucket-level access to the GCS bucket (NOTE: This variable is only used if `type` is `bucket`)."
+  type = bool
+}
+
+variable versioning {
+  default = false
+  description = "Specifies if versioning is enabled for the GCS bucket (NOTE: This variable is only used if `type` is `bucket`)."
   type = bool
 }

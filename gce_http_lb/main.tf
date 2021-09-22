@@ -115,6 +115,7 @@ module "backend_service" {
   default_acl = lookup(each.value, "default_acl", "publicread")
   labels = lookup(each.value, "labels", {})
   location = lookup(each.value, "location", "US")
+  uniform_bucket_level_access = lookup(each.value, "uniform_bucket_level_access", false)
   versioning = lookup(each.value, "versioning", false)
 }
 

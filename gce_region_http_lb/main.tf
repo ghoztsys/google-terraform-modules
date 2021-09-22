@@ -121,6 +121,7 @@ module "backend_service" {
   labels = lookup(each.value, "labels", {})
   location = var.region
   versioning = lookup(each.value, "versioning", false)
+  uniform_bucket_level_access = lookup(each.value, "uniform_bucket_level_access", false)
 }
 
 # Create a HTTP URL map for HTTP-to-HTTPS redirection only, if needed.
