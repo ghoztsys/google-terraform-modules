@@ -71,6 +71,7 @@ resource "google_storage_bucket" "default" {
   location = var.location
   name = "${var.name}-bucket"
   storage_class = var.regional ? "REGIONAL" : null
+  uniform_bucket_level_access = var.uniform_bucket_level_access
 
   dynamic "lifecycle_rule" {
     for_each = var.regional ? [true] : []
