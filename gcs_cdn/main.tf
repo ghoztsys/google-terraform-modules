@@ -1,11 +1,3 @@
-terraform {
-  required_version = ">= 1.0.1"
-
-  required_providers {
-    google = ">= 3.47.0"
-  }
-}
-
 # Reserve a static IP for the load balancer.
 resource "google_compute_global_address" "default" {
   name = "${var.name}-address"

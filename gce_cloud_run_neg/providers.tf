@@ -3,5 +3,6 @@ terraform {
 
   required_providers {
     google = ">= 4.2.0"
+    random = ">= 3.1.0"
   }
 }

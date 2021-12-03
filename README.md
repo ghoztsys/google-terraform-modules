@@ -35,6 +35,6 @@ $ git push --tags
 
 Check out the `README`'s of the individual modules to learn more.
 
-## License
+---
 
 © Sybl

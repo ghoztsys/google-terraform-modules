@@ -3,14 +3,6 @@
 # the nodes that actually run the app, the database node(s) for storing data, and the application node(s) for serving
 # the app and handling requests.
 
-terraform {
-  required_version = ">= 1.0.1"
-
-  required_providers {
-    google = ">= 3.47.0"
-  }
-}
-
 # Generate random ID to be used for naming the created cloud resources.
 module "uuid" {
   basename = "${var.app_id}-${var.service_id}-${var.datacenter}"

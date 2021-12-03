@@ -1,12 +1,3 @@
-terraform {
-  required_version = ">= 1.0.1"
-
-  required_providers {
-    google = ">= 3.74.0"
-    random = ">= 3.1.0"
-  }
-}
-
 resource "google_compute_region_network_endpoint_group" "default" {
   name = var.name == null ? "${var.service_name}-neg" : var.name
   network_endpoint_type = "SERVERLESS"

@@ -1,11 +1,3 @@
-terraform {
-  required_version = ">= 1.0.1"
-
-  required_providers {
-    google = ">= 3.74.0"
-  }
-}
-
 # Set up A records to enable naked domain for Google Sites (IPv4).
 resource "google_dns_record_set" "a" {
   count = var.site_setup ? 1 : 0
