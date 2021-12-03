@@ -6,7 +6,7 @@ This module creates a global [external Google Cloud HTTP(S) load balancer](https
 
 ```ruby
 module "lb" {
-  source = "git::git@github.com:sybl/terraform-modules//gce_http_lb?ref=v0.42.0"
+  source = "git::git@github.com:sybl/terraform-modules//gce_http_lb?ref=v0.50.0"
 
   name = "lb"
   ssl_domains = ["www.example.com"]
