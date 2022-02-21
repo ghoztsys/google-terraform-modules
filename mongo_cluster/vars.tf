@@ -1,6 +1,6 @@
 variable app_id {
-  default = "sybl"
-  description = "The app ID (i.e. `sybl`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
+  default = "app"
+  description = "The app ID (i.e. `app`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
 }
 
 variable nodes {

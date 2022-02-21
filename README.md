@@ -1,6 +1,6 @@
 # Terraform Modules
 
-Terraform modules package cloud resources together to make up an enclosed, reusable system. This repo consists of Sybl's custom reusable Terraform modules.
+Terraform modules package cloud resources together to make up an enclosed, reusable system.
 
 ## Usage
 
@@ -8,8 +8,21 @@ Because often times a service has multiple environments and we want to be able t
 
 ```hcl
 module "k8s_cluster" {
-  source = "git::git@github.com:sybl/terraform-modules//k8s_cluster?ref=v1.0.0"
+  source = "git::https://github.com/0xGHOZT/terraform-modules//gke_cluster?ref=v0.50.0"
+  # source = "git::git.com:0xGHOZT/terraform-modules//gke_cluster?ref=v0.50.0" # If using SSH to checkout private repos instead
 }
+```
+
+### CI Environment
+
+To checkout `terraform-modules` over HTTPS:
+
+``` yaml
+- env:
+    GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+  run: |
+    git config --local --remove-section http."https://github.com/"
+    git config --global url."https://username:${GH_ACCESS_TOKEN}@github.com/your-org".insteadOf "https://github.com/your-org"
 ```
 
 ## Creating a New Module
@@ -34,7 +47,3 @@ $ git push --tags
 ## Documentation
 
 Check out the `README`'s of the individual modules to learn more.
-
----
-
-© Sybl

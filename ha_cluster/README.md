@@ -11,7 +11,7 @@ This module defines a high availability cluster that runs an application, consis
 
 ### Optional
 
-- `app_id` [default=``]: The app ID (i.e. `sybl-api`, `sybl-www`, etc) to associate with this module. This value will be used for generating a unique resource name and resource tagging.
+- `app_id` [default=``]: The app ID (i.e. `api`, `www`, etc) to associate with this module. This value will be used for generating a unique resource name and resource tagging.
 - `datacenter` [default=`default`]: The datacenter of this resource. This value becomes a tag.
 - `environment` [default=`development`]: The environment of this resource, i.e. `development`, `staging`, etc. This value becomes a tag.
 - `{node_type}_count` [default=`1`]: The number of resources to create for this particular node type. `{node_type}` is one of `node`, `lb`, `db`, and `master`.

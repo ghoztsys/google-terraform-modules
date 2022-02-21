@@ -1,5 +1,5 @@
 variable dns_name {
-  description = "The target DNS name, i.e. `sybl.io.`"
+  description = "The target DNS name, i.e. `ghozt.io.`"
 }
 
 variable dns_managed_zone {
