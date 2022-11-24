@@ -1,7 +1,9 @@
-# This module defines a high availability cluster that runs an application, consisting of the following nodes: the
-# master node(s) for controlling all other nodes within the cluster, the load balancer node(s) for directing traffic to
-# the nodes that actually run the app, the database node(s) for storing data, and the application node(s) for serving
-# the app and handling requests.
+# This module defines a high availability cluster that runs an application,
+# consisting of the following nodes: the master node(s) for controlling all
+# other nodes within the cluster, the load balancer node(s) for directing
+# traffic to the nodes that actually run the app, the database node(s) for
+# storing data, and the application node(s) for serving the app and handling
+# requests.
 
 # Generate random ID to be used for naming the created cloud resources.
 module "uuid" {
@@ -10,8 +12,8 @@ module "uuid" {
   source = "../uuid"
 }
 
-# Create the GCE instance(s) for Consul/Nomad masters. They are responsible for service discoveries and orchestrating
-# Docker containers.
+# Create the GCE instance(s) for Consul/Nomad masters. They are responsible for
+# service discoveries and orchestrating Docker containers.
 resource "google_compute_instance" "master" {
   count = var.master_count
   machine_type = var.master_machine_type
@@ -60,7 +62,8 @@ resource "google_compute_instance" "master" {
   }
 }
 
-# Create the GCE instance(s) for Nomad nodes. These nodes will be housing all the orchestrated Docker app containers.
+# Create the GCE instance(s) for Nomad nodes. These nodes will be housing all
+# the orchestrated Docker app containers.
 resource "google_compute_instance" "node" {
   count = var.node_count
   machine_type = var.node_machine_type
@@ -313,7 +316,8 @@ resource "google_compute_firewall" "mongodb" {
   }
 }
 
-# Create common firewall rules for external access to all generated GCE instances.
+# Create common firewall rules for external access to all generated GCE
+# instances.
 resource "google_compute_firewall" "external" {
   name = "${module.uuid.value}-external"
   network = var.network
@@ -342,7 +346,8 @@ resource "google_compute_firewall" "external" {
   }
 }
 
-# Create common firewall rules for internal access to all generated GCE instances.
+# Create common firewall rules for internal access to all generated GCE
+# instances.
 resource "google_compute_firewall" "internal" {
   name = "${module.uuid.value}-internal"
   network = var.network

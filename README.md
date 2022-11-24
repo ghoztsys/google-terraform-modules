@@ -42,11 +42,11 @@ This is a private repository, so checking out these modules from an external rep
 
 Follow the existing project directory structure. Create a folder in the project root with your module's name in `snake_case` and write your plan in there. At the very minimum you need to distinguish between input variables, module output and the main script for resource creation, ideally between these 3 files:
 
-1. `vars.tf` - All supported variables of the module (if any) with a detailed description in each variable. This is so consumers understand what they can customize.
+1. `variables.tf` - All supported variables of the module (if any) with a detailed description in each variable. This is so consumers understand what they can customize.
 2. `main.tf` - Defines the resources that the module will be provisioning. This should be a black box, consumers shouldn't need to look at this file to understand what the module does.
 3. `outputs.tf` - The outputs of the module (if any).
 
-You should also provide a `README` file in the root of the module directory to describe what the module does and how to use it. Ideally all consumers need to look at (in order to be able to start using your module) are the `README`, `vars.tf` and `outputs.tf` files.
+You should also provide a `README` file in the root of the module directory to describe what the module does and how to use it. Ideally all consumers need to look at (in order to be able to start using your module) are the `README`, `variables.tf` and `outputs.tf` files.
 
 ## Releasing a New Version of a Module
 

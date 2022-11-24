@@ -108,9 +108,11 @@ resource "google_storage_bucket_acl" "default" {
   default_acl = var.default_acl
 }
 
-# Create a firewall rule so the load balancer can perform health checks and send load-balanced packets to this service
-# (see https://cloud.google.com/load-balancing/docs/https#firewall_rules). At the minimum, the firewall must allow the
-# ports exposed by each backend and used by each health check resource.
+# Create a firewall rule so the load balancer can perform health checks and send
+# load-balanced packets to this service (see
+# https://cloud.google.com/load-balancing/docs/https#firewall_rules). At the
+# minimum, the firewall must allow the ports exposed by each backend and used by
+# each health check resource.
 resource "google_compute_firewall" "default" {
   count = length(local.firewall_ports)
 

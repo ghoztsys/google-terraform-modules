@@ -1,5 +1,5 @@
-# This module defines a single GCE instance that contains all the services required to run an application (i.e. master,
-# load balancer, database).
+# This module defines a single GCE instance that contains all the services
+# required to run an application (i.e. master, load balancer, database).
 
 # Generate random ID to be used for naming the created cloud resources.
 module "uuid" {
@@ -64,7 +64,9 @@ resource "google_compute_firewall" "external" {
     google_compute_instance.default.name,
   ]
 
-  allow { # Allow access to HTTP/HTTPS, HAProxy stats and Consul endpoints from anywhere.
+  # Allow access to HTTP/HTTPS, HAProxy stats and Consul endpoints from
+  # anywhere.
+  allow {
     protocol = "tcp"
     ports = [
       var.http_port,
