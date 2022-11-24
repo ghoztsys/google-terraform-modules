@@ -8,8 +8,8 @@ Because often times a service has multiple environments and we want to be able t
 
 ```hcl
 module "k8s_cluster" {
-  source = "git::https://github.com/0xGHOZT/terraform-modules//gke_cluster?ref=v0.50.0"
-  # source = "git::git.com:0xGHOZT/terraform-modules//gke_cluster?ref=v0.50.0" # If using SSH to checkout private repos
+  source = "git::https://github.com/0xGHOZT/terraform-modules//gke_cluster?ref=<release_tag>"
+  # source = "git::git.com:0xGHOZT/terraform-modules//gke_cluster?ref=<release_tag>" # If using SSH to checkout private repos
 }
 ```
 
