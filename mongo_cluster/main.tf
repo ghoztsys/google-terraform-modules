@@ -1,16 +1,16 @@
 # Generate random ID to be used for naming the created cloud resources.
-module "uuid" {
+module "resource_id" {
   basename = "${var.app_id}-${var.service_id}-${var.datacenter}"
   environment = var.environment
-  source = "../uuid"
+  source = "../resource_id"
 }
 
 resource "google_compute_instance" "default" {
   count = var.nodes
   machine_type = var.machine_type
-  name = "${module.uuid.value}-db${count.index}"
+  name = "${module.resource_id.value}-db${count.index}"
   tags = concat(var.tags, [
-    "${module.uuid.value}-db${count.index}",
+    "${module.resource_id.value}-db${count.index}",
     "db",
     var.service_id,
     var.environment,

@@ -2,17 +2,17 @@
 # required to run an application (i.e. master, load balancer, database).
 
 # Generate random ID to be used for naming the created cloud resources.
-module "uuid" {
+module "resource_id" {
   basename = "${var.app_id}-${var.service_id}-${var.datacenter}"
   environment = var.environment
-  source = "../uuid"
+  source = "../resource_id"
 }
 
 resource "google_compute_instance" "default" {
   machine_type = var.machine_type
-  name = "${module.uuid.value}-sandbox"
+  name = "${module.resource_id.value}-sandbox"
   tags = concat(var.tags, [
-    "${module.uuid.value}-sandbox",
+    "${module.resource_id.value}-sandbox",
     "sandbox",
     var.service_id,
     var.environment,

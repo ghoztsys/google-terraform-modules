@@ -6,10 +6,10 @@
 # requests.
 
 # Generate random ID to be used for naming the created cloud resources.
-module "uuid" {
+module "resource_id" {
   basename = "${var.app_id}-${var.service_id}-${var.datacenter}"
   environment = var.environment
-  source = "../uuid"
+  source = "../resource_id"
 }
 
 # Create the GCE instance(s) for Consul/Nomad masters. They are responsible for
@@ -17,9 +17,9 @@ module "uuid" {
 resource "google_compute_instance" "master" {
   count = var.master_count
   machine_type = var.master_machine_type
-  name = "${module.uuid.value}-master${count.index}"
+  name = "${module.resource_id.value}-master${count.index}"
   tags = concat(var.master_tags, [
-    "${module.uuid.value}-master${count.index}",
+    "${module.resource_id.value}-master${count.index}",
     "master",
     "ha-cluster",
     var.service_id,
@@ -67,9 +67,9 @@ resource "google_compute_instance" "master" {
 resource "google_compute_instance" "node" {
   count = var.node_count
   machine_type = var.node_machine_type
-  name = "${module.uuid.value}-node${count.index}"
+  name = "${module.resource_id.value}-node${count.index}"
   tags = concat(var.node_tags, [
-    "${module.uuid.value}-node${count.index}",
+    "${module.resource_id.value}-node${count.index}",
     "node",
     "ha-cluster",
     var.service_id,
@@ -116,9 +116,9 @@ resource "google_compute_instance" "node" {
 resource "google_compute_instance" "db" {
   count = var.db_count
   machine_type = var.db_machine_type
-  name = "${module.uuid.value}-db${count.index}"
+  name = "${module.resource_id.value}-db${count.index}"
   tags = concat(var.db_tags, [
-    "${module.uuid.value}-db${count.index}",
+    "${module.resource_id.value}-db${count.index}",
     "db",
     "ha-cluster",
     var.service_id,
@@ -165,9 +165,9 @@ resource "google_compute_instance" "db" {
 resource "google_compute_instance" "lb" {
   count = var.lb_count
   machine_type = var.lb_machine_type
-  name = "${module.uuid.value}-lb${count.index}"
+  name = "${module.resource_id.value}-lb${count.index}"
   tags = concat(var.lb_tags, [
-    "${module.uuid.value}-lb${count.index}",
+    "${module.resource_id.value}-lb${count.index}",
     "lb",
     "ha-cluster",
     var.service_id,
@@ -212,7 +212,7 @@ resource "google_compute_instance" "lb" {
 
 # Create firewall rules WWW access.
 resource "google_compute_firewall" "www" {
-  name = "${module.uuid.value}-www"
+  name = "${module.resource_id.value}-www"
   network = var.network
   priority = 1000
   source_ranges = [
@@ -231,7 +231,7 @@ resource "google_compute_firewall" "www" {
 
 # Create firewall rules for HAProxy stats access.
 resource "google_compute_firewall" "haproxy" {
-  name = "${module.uuid.value}-haproxy"
+  name = "${module.resource_id.value}-haproxy"
   network = var.network
   priority = 1000
   source_tags = google_compute_instance.lb[*].name
@@ -247,7 +247,7 @@ resource "google_compute_firewall" "haproxy" {
 
 # Create firewall rules for Nomad node access.
 resource "google_compute_firewall" "node" {
-  name = "${module.uuid.value}-node"
+  name = "${module.resource_id.value}-node"
   network = var.network
   priority = 1000
   source_tags = google_compute_instance.lb[*].name
@@ -263,7 +263,7 @@ resource "google_compute_firewall" "node" {
 
 # Create firewall rules for Consul discovery.
 resource "google_compute_firewall" "consul" {
-  name = "${module.uuid.value}-consul"
+  name = "${module.resource_id.value}-consul"
   network = var.network
   priority = 1000
   source_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
@@ -286,7 +286,7 @@ resource "google_compute_firewall" "consul" {
 
 # Create firewall rules for Nomad discovery.
 resource "google_compute_firewall" "nomad" {
-  name = "${module.uuid.value}-nomad"
+  name = "${module.resource_id.value}-nomad"
   network = var.network
   priority = 1000
   source_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name)
@@ -302,7 +302,7 @@ resource "google_compute_firewall" "nomad" {
 
 # Create firewall rules for MongoDB access.
 resource "google_compute_firewall" "mongodb" {
-  name = "${module.uuid.value}-mongodb"
+  name = "${module.resource_id.value}-mongodb"
   network = var.network
   priority = 1000
   source_tags = google_compute_instance.node[*].name
@@ -319,7 +319,7 @@ resource "google_compute_firewall" "mongodb" {
 # Create common firewall rules for external access to all generated GCE
 # instances.
 resource "google_compute_firewall" "external" {
-  name = "${module.uuid.value}-external"
+  name = "${module.resource_id.value}-external"
   network = var.network
   priority = 1000
   source_ranges = [
@@ -349,7 +349,7 @@ resource "google_compute_firewall" "external" {
 # Create common firewall rules for internal access to all generated GCE
 # instances.
 resource "google_compute_firewall" "internal" {
-  name = "${module.uuid.value}-internal"
+  name = "${module.resource_id.value}-internal"
   network = var.network
   priority = 1000
   source_ranges = [
