@@ -4,7 +4,7 @@ Terraform modules package cloud resources together to make up an enclosed, reusa
 
 ## Usage
 
-Because often times a service has multiple environments and we want to be able to test module changes without affecting the live environments, all live plans should refer to modules by their release tags.
+Because often times a service has multiple environments and we want to be able to test module changes without affecting the live environments, all live plans should refer to modules by their release tags:
 
 ```hcl
 module "k8s_cluster" {
@@ -60,3 +60,7 @@ $ git push --tags
 ## Documentation
 
 Check out the `README`'s of the individual modules to learn more.
+
+---
+
+© GHOZT
