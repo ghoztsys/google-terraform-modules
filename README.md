@@ -7,7 +7,7 @@ Terraform modules package cloud resources together to make up an enclosed, reusa
 Because often times a service has multiple environments and we want to be able to test module changes without affecting the live environments, all live plans should refer to modules by their release tags:
 
 ```hcl
-module "k8s_cluster" {
+module "gke_cluster" {
   source = "git::https://github.com/0xGHOZT/terraform-modules//gke_cluster?ref=<release_tag>"
   # source = "git::git.com:0xGHOZT/terraform-modules//gke_cluster?ref=<release_tag>" # If using SSH to checkout private repos
 }
@@ -45,6 +45,7 @@ Follow the existing project directory structure. Create a folder in the project 
 1. `variables.tf` - All supported variables of the module (if any) with a detailed description in each variable. This is so consumers understand what they can customize.
 2. `main.tf` - Defines the resources that the module will be provisioning. This should be a black box, consumers shouldn't need to look at this file to understand what the module does.
 3. `outputs.tf` - The outputs of the module (if any).
+4. `versions.tf` - The version requirements for Terraform and providers.
 
 You should also provide a `README` file in the root of the module directory to describe what the module does and how to use it. Ideally all consumers need to look at (in order to be able to start using your module) are the `README`, `variables.tf` and `outputs.tf` files.
 
