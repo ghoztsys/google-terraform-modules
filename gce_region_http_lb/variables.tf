@@ -15,7 +15,6 @@ variable region {
 }
 
 variable backend_services {
-  description = "List of maps, each defining a Backend Service/Bucket to be created (all key/value pairs correspond to the parameters of the submodule `https://github.com/0xGHOZT/terraform-modules/tree/master/gce_backend_service`). The first Backend Service in the list is the default service applied to the generated URL Map. See https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service."
   type = any
 }
 
@@ -58,13 +57,12 @@ variable ssl_domains {
 variable url_map {
   default = []
   description = "A map that describes how the URL map should be constructed."
-  type = any
-  # type = list(object({
-  #   hosts = list(string)
-  #   default_backend_service_index = number
-  #   path_rules = list(object({
-  #     paths = list(string)
-  #     backend_service_index = number
-  #   }))
-  # }))
+  type = list(object({
+    hosts = list(string)
+    default_backend_service_index = number
+    path_rules = list(object({
+      paths = list(string)
+      backend_service_index = number
+    }))
+  }))
 }
