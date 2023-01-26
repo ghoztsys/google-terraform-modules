@@ -18,10 +18,11 @@ resource "google_container_cluster" "default" {
   }
 
   node_config {
+    labels = var.labels
     machine_type = var.machine_type
     oauth_scopes = var.service_scopes
+    service_account = var.service_account
     tags = concat(var.tags, [var.name], values(var.labels))
-    labels = var.labels
   }
 
   # Wait for the GCE LB controller to cleanup the resources.

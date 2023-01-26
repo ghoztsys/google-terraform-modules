@@ -56,6 +56,12 @@ variable region_zone {
   type = string
 }
 
+variable service_account {
+  description = "The service account to assign to the cluster nodes."
+  required = false
+  type = string
+}
+
 variable service_scopes {
   default = [
     "https://www.googleapis.com/auth/compute",
