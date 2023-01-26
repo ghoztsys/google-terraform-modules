@@ -17,7 +17,7 @@ locals {
 resource "google_compute_health_check" "default" {
   for_each = zipmap(range(length(var.health_checks)), var.health_checks)
 
-  name = "${var.name}-health-check-${each.key}"
+  name = "${var.name}-health-check${each.key}"
 
   dynamic "http_health_check" {
     for_each = var.protocol == "HTTP" ? [each.value] : []
