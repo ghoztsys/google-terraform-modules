@@ -57,8 +57,8 @@ variable region_zone {
 }
 
 variable service_account {
+  default = null
   description = "The service account to assign to the cluster nodes."
-  required = false
   type = string
 }
 
