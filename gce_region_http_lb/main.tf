@@ -34,6 +34,7 @@ resource "google_compute_target_http_proxy" "http" {
   count = var.enable_http ? 1 : 0
 
   name    = "${var.name}-http-proxy"
+  project = var.project_id
   url_map = local.https_redirect ? google_compute_url_map.redirect[0].self_link : google_compute_url_map.default.self_link
 }
 
@@ -49,6 +50,7 @@ resource "google_compute_forwarding_rule" "http" {
   network_tier          = "STANDARD"
   port_range            = 80
   region                = var.region
+  project               = var.project_id
   target                = google_compute_target_http_proxy.http[0].self_link
 }
 
@@ -61,6 +63,7 @@ resource "google_compute_region_ssl_certificate" "https" {
   certificate = var.ssl_certificate
   private_key = var.ssl_private_key
   region      = var.region
+  project     = var.project_id
 
   lifecycle {
     create_before_destroy = true
@@ -73,7 +76,8 @@ resource "google_compute_region_ssl_certificate" "https" {
 resource "google_compute_managed_ssl_certificate" "https" {
   count = length(var.ssl_domains)
 
-  name = "${var.name}-${random_id.managed_cert[0].hex}-cert${count.index}"
+  name    = "${var.name}-${random_id.managed_cert[0].hex}-cert${count.index}"
+  project = var.project_id
 
   managed {
     domains = [
@@ -94,6 +98,7 @@ resource "google_compute_target_https_proxy" "https" {
   count = (length(var.ssl_domains) > 0 || (var.ssl_private_key != "" && var.ssl_certificate != "")) ? 1 : 0
 
   name             = "${var.name}-https-proxy"
+  project          = var.project_id
   ssl_certificates = compact(concat(google_compute_region_ssl_certificate.https[*].self_link, google_compute_managed_ssl_certificate.https[*].self_link))
   url_map          = google_compute_url_map.default.self_link
 }
@@ -109,6 +114,7 @@ resource "google_compute_forwarding_rule" "https" {
   name                  = "${var.name}-https"
   network_tier          = "STANDARD"
   port_range            = 443
+  project               = var.project_id
   region                = var.region
   target                = google_compute_target_https_proxy.https[0].self_link
 }
@@ -128,6 +134,7 @@ module "backend_service" {
   backends                    = lookup(each.value, "backends", [])
   health_checks               = lookup(each.value, "health_checks", [])
   port_name                   = lookup(each.value, "port_name", null)
+  project_id                  = var.project_id
   protocol                    = lookup(each.value, "protocol", "HTTP")
   security_policy             = lookup(each.value, "security_policy", null)
   timeout                     = lookup(each.value, "timeout", null)
@@ -143,7 +150,8 @@ module "backend_service" {
 resource "google_compute_url_map" "redirect" {
   count = local.https_redirect ? 1 : 0
 
-  name = "${var.name}-url-map-redirect"
+  name    = "${var.name}-url-map-redirect"
+  project = var.project_id
 
   default_url_redirect {
     https_redirect         = true
@@ -158,6 +166,7 @@ resource "google_compute_url_map" "redirect" {
 resource "google_compute_url_map" "default" {
   default_service = module.backend_service[0].self_link
   name            = "${var.name}-url-map"
+  project         = var.project_id
 
   dynamic "host_rule" {
     for_each = zipmap(range(length(var.url_map)), var.url_map)

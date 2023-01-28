@@ -1,5 +1,5 @@
 variable "project_id" {
-  description = "ID of the project to create WIF resources in."
+  description = "The ID of the project in which the resources belong."
   type        = string
 }
 

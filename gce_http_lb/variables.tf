@@ -1,3 +1,8 @@
+variable "project_id" {
+  description = "The ID of the project in which the resources belong."
+  type        = string
+}
+
 variable "name" {
   description = "Name for the forwarding rule and prefix for supporting resources."
   type        = string

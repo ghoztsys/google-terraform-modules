@@ -7,17 +7,18 @@
 
 # Generate random ID to be used for naming the created cloud resources.
 module "resource_id" {
-  basename = "${var.app_id}-${var.service_id}-${var.datacenter}"
+  basename    = "${var.app_id}-${var.service_id}-${var.datacenter}"
   environment = var.environment
-  source = "../resource_id"
+  source      = "../resource_id"
 }
 
 # Create the GCE instance(s) for Consul/Nomad masters. They are responsible for
 # service discoveries and orchestrating Docker containers.
 resource "google_compute_instance" "master" {
-  count = var.master_count
+  count        = var.master_count
   machine_type = var.master_machine_type
-  name = "${module.resource_id.value}-master${count.index}"
+  name         = "${module.resource_id.value}-master${count.index}"
+  project      = var.project_id
   tags = concat(var.master_tags, [
     "${module.resource_id.value}-master${count.index}",
     "master",
@@ -31,14 +32,14 @@ resource "google_compute_instance" "master" {
   boot_disk {
     initialize_params {
       image = var.master_disk_image
-      type = var.master_disk_type
+      type  = var.master_disk_type
     }
   }
 
   labels {
-    service = var.service_id
+    service     = var.service_id
     environment = var.environment
-    datacenter = var.datacenter
+    datacenter  = var.datacenter
   }
 
   network_interface {
@@ -54,9 +55,9 @@ resource "google_compute_instance" "master" {
     script = "${path.module}/scripts/wait_for_instance"
 
     connection {
-      type = "ssh"
-      agent = var.ssh_agent
-      user = var.ssh_user
+      type    = "ssh"
+      agent   = var.ssh_agent
+      user    = var.ssh_user
       timeout = "5m"
     }
   }
@@ -65,9 +66,10 @@ resource "google_compute_instance" "master" {
 # Create the GCE instance(s) for Nomad nodes. These nodes will be housing all
 # the orchestrated Docker app containers.
 resource "google_compute_instance" "node" {
-  count = var.node_count
+  count        = var.node_count
   machine_type = var.node_machine_type
-  name = "${module.resource_id.value}-node${count.index}"
+  name         = "${module.resource_id.value}-node${count.index}"
+  project      = var.project_id
   tags = concat(var.node_tags, [
     "${module.resource_id.value}-node${count.index}",
     "node",
@@ -81,14 +83,14 @@ resource "google_compute_instance" "node" {
   boot_disk {
     initialize_params {
       image = var.node_disk_image
-      type = var.node_disk_type
+      type  = var.node_disk_type
     }
   }
 
   labels {
-    service = var.service_id
+    service     = var.service_id
     environment = var.environment
-    datacenter = var.datacenter
+    datacenter  = var.datacenter
   }
 
   network_interface {
@@ -104,9 +106,9 @@ resource "google_compute_instance" "node" {
     script = "${path.module}/scripts/wait_for_instance"
 
     connection {
-      type = "ssh"
-      agent = var.ssh_agent
-      user = var.ssh_user
+      type    = "ssh"
+      agent   = var.ssh_agent
+      user    = var.ssh_user
       timeout = "5m"
     }
   }
@@ -114,9 +116,10 @@ resource "google_compute_instance" "node" {
 
 # Create the GCE instance(s) for MongoDB.
 resource "google_compute_instance" "db" {
-  count = var.db_count
+  count        = var.db_count
   machine_type = var.db_machine_type
-  name = "${module.resource_id.value}-db${count.index}"
+  name         = "${module.resource_id.value}-db${count.index}"
+  project      = var.project_id
   tags = concat(var.db_tags, [
     "${module.resource_id.value}-db${count.index}",
     "db",
@@ -130,14 +133,14 @@ resource "google_compute_instance" "db" {
   boot_disk {
     initialize_params {
       image = var.db_disk_image
-      type = var.db_disk_type
+      type  = var.db_disk_type
     }
   }
 
   labels {
-    service = var.service_id
+    service     = var.service_id
     environment = var.environment
-    datacenter = var.datacenter
+    datacenter  = var.datacenter
   }
 
   network_interface {
@@ -153,9 +156,9 @@ resource "google_compute_instance" "db" {
     script = "${path.module}/scripts/wait_for_instance"
 
     connection {
-      type = "ssh"
-      agent = var.ssh_agent
-      user = var.ssh_user
+      type    = "ssh"
+      agent   = var.ssh_agent
+      user    = var.ssh_user
       timeout = "5m"
     }
   }
@@ -163,9 +166,10 @@ resource "google_compute_instance" "db" {
 
 # Create the GCE instance(s) for HAProxy load balancing.
 resource "google_compute_instance" "lb" {
-  count = var.lb_count
+  count        = var.lb_count
   machine_type = var.lb_machine_type
-  name = "${module.resource_id.value}-lb${count.index}"
+  name         = "${module.resource_id.value}-lb${count.index}"
+  project      = var.project_id
   tags = concat(var.lb_tags, [
     "${module.resource_id.value}-lb${count.index}",
     "lb",
@@ -179,14 +183,14 @@ resource "google_compute_instance" "lb" {
   boot_disk {
     initialize_params {
       image = var.lb_disk_image
-      type = var.lb_disk_type
+      type  = var.lb_disk_type
     }
   }
 
   labels {
-    service = var.service_id
+    service     = var.service_id
     environment = var.environment
-    datacenter = var.datacenter
+    datacenter  = var.datacenter
   }
 
   network_interface {
@@ -202,9 +206,9 @@ resource "google_compute_instance" "lb" {
     script = "${path.module}/scripts/wait_for_instance"
 
     connection {
-      type = "ssh"
-      agent = var.ssh_agent
-      user = var.ssh_user
+      type    = "ssh"
+      agent   = var.ssh_agent
+      user    = var.ssh_user
       timeout = "5m"
     }
   }
@@ -212,9 +216,10 @@ resource "google_compute_instance" "lb" {
 
 # Create firewall rules WWW access.
 resource "google_compute_firewall" "www" {
-  name = "${module.resource_id.value}-www"
-  network = var.network
+  name     = "${module.resource_id.value}-www"
+  network  = var.network
   priority = 1000
+  project  = var.project_id
   source_ranges = [
     "0.0.0.0/0",
   ]
@@ -231,9 +236,10 @@ resource "google_compute_firewall" "www" {
 
 # Create firewall rules for HAProxy stats access.
 resource "google_compute_firewall" "haproxy" {
-  name = "${module.resource_id.value}-haproxy"
-  network = var.network
-  priority = 1000
+  name        = "${module.resource_id.value}-haproxy"
+  network     = var.network
+  priority    = 1000
+  project     = var.project_id
   source_tags = google_compute_instance.lb[*].name
   target_tags = google_compute_instance.lb[*].name
 
@@ -247,9 +253,10 @@ resource "google_compute_firewall" "haproxy" {
 
 # Create firewall rules for Nomad node access.
 resource "google_compute_firewall" "node" {
-  name = "${module.resource_id.value}-node"
-  network = var.network
-  priority = 1000
+  name        = "${module.resource_id.value}-node"
+  network     = var.network
+  priority    = 1000
+  project     = var.project_id
   source_tags = google_compute_instance.lb[*].name
   target_tags = google_compute_instance.node[*].name
 
@@ -263,9 +270,10 @@ resource "google_compute_firewall" "node" {
 
 # Create firewall rules for Consul discovery.
 resource "google_compute_firewall" "consul" {
-  name = "${module.resource_id.value}-consul"
-  network = var.network
-  priority = 1000
+  name        = "${module.resource_id.value}-consul"
+  network     = var.network
+  priority    = 1000
+  project     = var.project_id
   source_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
   target_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
 
@@ -286,9 +294,10 @@ resource "google_compute_firewall" "consul" {
 
 # Create firewall rules for Nomad discovery.
 resource "google_compute_firewall" "nomad" {
-  name = "${module.resource_id.value}-nomad"
-  network = var.network
-  priority = 1000
+  name        = "${module.resource_id.value}-nomad"
+  network     = var.network
+  priority    = 1000
+  project     = var.project_id
   source_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name)
   target_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name)
 
@@ -302,9 +311,10 @@ resource "google_compute_firewall" "nomad" {
 
 # Create firewall rules for MongoDB access.
 resource "google_compute_firewall" "mongodb" {
-  name = "${module.resource_id.value}-mongodb"
-  network = var.network
-  priority = 1000
+  name        = "${module.resource_id.value}-mongodb"
+  network     = var.network
+  priority    = 1000
+  project     = var.project_id
   source_tags = google_compute_instance.node[*].name
   target_tags = google_compute_instance.db[*].name
 
@@ -319,9 +329,10 @@ resource "google_compute_firewall" "mongodb" {
 # Create common firewall rules for external access to all generated GCE
 # instances.
 resource "google_compute_firewall" "external" {
-  name = "${module.resource_id.value}-external"
-  network = var.network
+  name     = "${module.resource_id.value}-external"
+  network  = var.network
   priority = 1000
+  project  = var.project_id
   source_ranges = [
     "0.0.0.0/0",
   ]
@@ -349,9 +360,10 @@ resource "google_compute_firewall" "external" {
 # Create common firewall rules for internal access to all generated GCE
 # instances.
 resource "google_compute_firewall" "internal" {
-  name = "${module.resource_id.value}-internal"
-  network = var.network
+  name     = "${module.resource_id.value}-internal"
+  network  = var.network
   priority = 1000
+  project  = var.project_id
   source_ranges = [
     "10.128.0.0/9",
   ]

@@ -1,14 +1,14 @@
-output backend_bucket {
+output "backend_bucket" {
   description = "The backend bucket."
-  value = google_compute_backend_bucket.default.self_link
+  value       = google_compute_backend_bucket.default.self_link
 }
 
-output external_ip {
+output "external_ip" {
   description = "The external IP assigned to the global fowarding rule."
-  value = google_compute_global_address.default.address
+  value       = google_compute_global_address.default.address
 }
 
-output ssl_domains {
+output "ssl_domains" {
   description = "Domain names of Google-managed SSL certificates."
-  value = var.ssl_domains
+  value       = var.ssl_domains
 }

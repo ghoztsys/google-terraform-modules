@@ -3,14 +3,15 @@
 
 # Generate random ID to be used for naming the created cloud resources.
 module "resource_id" {
-  basename = "${var.app_id}-${var.service_id}-${var.datacenter}"
+  basename    = "${var.app_id}-${var.service_id}-${var.datacenter}"
   environment = var.environment
-  source = "../resource_id"
+  source      = "../resource_id"
 }
 
 resource "google_compute_instance" "default" {
   machine_type = var.machine_type
-  name = "${module.resource_id.value}-sandbox"
+  name         = "${module.resource_id.value}-sandbox"
+  project      = var.project_id
   tags = concat(var.tags, [
     "${module.resource_id.value}-sandbox",
     "sandbox",
@@ -23,14 +24,14 @@ resource "google_compute_instance" "default" {
   boot_disk {
     initialize_params {
       image = var.disk_image
-      type = var.disk_type
+      type  = var.disk_type
     }
   }
 
   labels {
-    service = var.service_id
+    service     = var.service_id
     environment = var.environment
-    datacenter = var.datacenter
+    datacenter  = var.datacenter
   }
 
   network_interface {
@@ -45,18 +46,19 @@ resource "google_compute_instance" "default" {
   provisioner "remote-exec" {
     script = "${path.module}/scripts/wait_for_instance"
     connection {
-      type = "ssh"
-      agent = var.ssh_agent
-      user = var.ssh_user
+      type    = "ssh"
+      agent   = var.ssh_agent
+      user    = var.ssh_user
       timeout = "5m"
     }
   }
 }
 
 resource "google_compute_firewall" "external" {
-  name = "${google_compute_instance.default.name}-external"
-  network = var.network
+  name     = "${google_compute_instance.default.name}-external"
+  network  = var.network
   priority = 1000
+  project  = var.project_id
   source_ranges = [
     "0.0.0.0/0",
   ]
@@ -97,9 +99,10 @@ resource "google_compute_firewall" "external" {
 }
 
 resource "google_compute_firewall" "internal" {
-  name = "${google_compute_instance.default.name}-internal"
-  network = var.network
+  name     = "${google_compute_instance.default.name}-internal"
+  network  = var.network
   priority = 1000
+  project  = var.project_id
   source_ranges = [
     "10.128.0.0/9",
   ]

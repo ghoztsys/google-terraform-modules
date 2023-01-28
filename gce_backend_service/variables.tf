@@ -1,3 +1,8 @@
+variable "project_id" {
+  description = "The ID of the project in which the resources belong."
+  type        = string
+}
+
 variable "name" {
   description = "Prefix for provisioned resources."
   type        = string
