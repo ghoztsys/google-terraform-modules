@@ -1,15 +1,12 @@
-output "projects" {
-  description = "The created project(s)."
+output "ids" {
+  description = "ID(s) of the created project (s)."
   value = {
-    for env, proj in google_project.default : env => {
-      name = proj.name
-      id   = proj.project_id
-    }
+    for env, proj in google_project.default : env => proj.project_id
   }
 }
 
 output "service_accounts" {
-  description = "The created service account(s)."
+  description = "Service account(s) created."
   value = {
     for env, sa in google_service_account.default : env => {
       email         = sa.email

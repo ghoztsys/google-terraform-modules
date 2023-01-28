@@ -7,6 +7,14 @@ locals {
       }
     ]
   ])
+  roles_map = flatten([
+    for env in local.environments : [
+      for role in var.service_account_roles : {
+        environment = env
+        role        = role
+      }
+    ]
+  ])
   environments              = local.has_multiple_environments ? var.environments : ["default"]
   has_multiple_environments = length(var.environments) > 0
 }
@@ -79,11 +87,12 @@ resource "google_service_account" "default" {
 }
 
 # Bind IAM policies to projects.
-resource "google_project_iam_policy" "default" {
-  for_each = google_service_account.default
+resource "google_project_iam_member" "default" {
+  for_each = { for descriptor in local.roles_map : "${descriptor.environment}+${descriptor.role}" => descriptor }
 
-  policy_data = data.google_iam_policy.project[each.key].policy_data
-  project     = each.value.project
+  member  = google_service_account.default[each.value.environment].member
+  project = each.value.project
+  role    = each.value.role
 }
 
 # Bind IAM policies to service accounts to whitelist impersonators.
