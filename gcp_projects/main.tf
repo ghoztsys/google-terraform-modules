@@ -70,7 +70,7 @@ resource "google_project_service" "default" {
 
 # Disable creating default service accounts when certain APIs are activated.
 resource "google_project_default_service_accounts" "default" {
-  for_each = var.disable_default_service_accounts ? google_project.default : toset([])
+  for_each = var.disable_default_service_accounts ? google_project.default : {}
 
   action  = "DELETE"
   project = each.value.project_id
