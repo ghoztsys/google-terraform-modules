@@ -30,13 +30,13 @@ variable "service_account_id" {
 }
 
 variable "service_account_name" {
-  default     = null
+  default     = "Service account for WIF GitHub identity"
   description = "Name of the service account to impersonate."
   type        = string
 }
 
 variable "service_account_description" {
-  default     = "Service account to impersonate for WIF"
+  default     = null
   description = "Description of the service account to impersonate."
   type        = string
 }
