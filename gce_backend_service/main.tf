@@ -1,13 +1,13 @@
 locals {
   # Generate a list of generated health check resource links.
-  health_check_links = [ for health_check in google_compute_health_check.default: health_check.self_link ]
+  health_check_links = [for health_check in google_compute_health_check.default : health_check.self_link]
 
   # Generate a list of all ports to allow access by GFEs per Backend Service.
   firewall_ports = distinct(concat(
-    [ for health_check in var.health_checks:
+    [for health_check in var.health_checks :
       lookup(health_check, "port", var.protocol == "HTTPS" ? 443 : 80)
     ],
-    compact([ for backend in var.backends:
+    compact([for backend in var.backends :
       lookup(backend, "port", 8080)
     ]),
   ))
@@ -23,7 +23,7 @@ resource "google_compute_health_check" "default" {
     for_each = var.protocol == "HTTP" ? [each.value] : []
 
     content {
-      port = lookup(http_health_check.value, "port", 80)
+      port         = lookup(http_health_check.value, "port", 80)
       request_path = lookup(http_health_check.value, "path", "/health")
     }
   }
@@ -32,7 +32,7 @@ resource "google_compute_health_check" "default" {
     for_each = var.protocol == "HTTPS" ? [each.value] : []
 
     content {
-      port = lookup(https_health_check.value, "port", 443)
+      port         = lookup(https_health_check.value, "port", 443)
       request_path = lookup(https_health_check.value, "path", "/health")
     }
   }
@@ -42,28 +42,28 @@ resource "google_compute_health_check" "default" {
 resource "google_compute_backend_service" "default" {
   count = var.type == "service" ? 1 : 0
 
-  enable_cdn = var.regional ? false : var.enable_cdn
-  health_checks = length(local.health_check_links) == 0 ? null : local.health_check_links
+  enable_cdn            = var.regional ? false : var.enable_cdn
+  health_checks         = length(local.health_check_links) == 0 ? null : local.health_check_links
   load_balancing_scheme = "EXTERNAL"
-  name = var.name
-  port_name = var.port_name
-  protocol = var.protocol
-  security_policy = var.security_policy
-  timeout_sec = var.timeout
+  name                  = var.name
+  port_name             = var.port_name
+  protocol              = var.protocol
+  security_policy       = var.security_policy
+  timeout_sec           = var.timeout
 
   dynamic "backend" {
     for_each = toset(var.backends)
 
     content {
-      balancing_mode = lookup(backend.value, "balancing_mode", null)
-      capacity_scaler = lookup(backend.value, "capacity_scaler", null)
-      description = lookup(backend.value, "description", null)
-      group = lookup(backend.value, "group", null)
-      max_connections = lookup(backend.value, "max_connections", null)
+      balancing_mode               = lookup(backend.value, "balancing_mode", null)
+      capacity_scaler              = lookup(backend.value, "capacity_scaler", null)
+      description                  = lookup(backend.value, "description", null)
+      group                        = lookup(backend.value, "group", null)
+      max_connections              = lookup(backend.value, "max_connections", null)
       max_connections_per_instance = lookup(backend.value, "max_connections_per_instance", null)
-      max_rate = lookup(backend.value, "max_rate", null)
-      max_rate_per_instance = lookup(backend.value, "max_rate_per_instance", null)
-      max_utilization = lookup(backend.value, "max_utilization", null)
+      max_rate                     = lookup(backend.value, "max_rate", null)
+      max_rate_per_instance        = lookup(backend.value, "max_rate_per_instance", null)
+      max_utilization              = lookup(backend.value, "max_utilization", null)
     }
   }
 }
@@ -73,19 +73,19 @@ resource "google_compute_backend_bucket" "default" {
   count = var.type == "bucket" ? 1 : 0
 
   bucket_name = google_storage_bucket.default[0].name
-  enable_cdn = var.regional ? false : var.enable_cdn
-  name = var.name
+  enable_cdn  = var.regional ? false : var.enable_cdn
+  name        = var.name
 }
 
 # Create a GCS bucket if this is a Backend Bucket.
 resource "google_storage_bucket" "default" {
   count = var.type == "bucket" ? 1 : 0
 
-  force_destroy = true
-  labels = var.labels
-  location = var.location
-  name = "${var.name}-bucket"
-  storage_class = var.regional ? "REGIONAL" : null
+  force_destroy               = true
+  labels                      = var.labels
+  location                    = var.location
+  name                        = "${var.name}-bucket"
+  storage_class               = var.regional ? "REGIONAL" : null
   uniform_bucket_level_access = var.uniform_bucket_level_access
 
   dynamic "lifecycle_rule" {
@@ -93,7 +93,7 @@ resource "google_storage_bucket" "default" {
 
     content {
       action {
-        type = "SetStorageClass"
+        type          = "SetStorageClass"
         storage_class = "NEARLINE"
       }
 
@@ -108,8 +108,8 @@ resource "google_storage_bucket" "default" {
   }
 
   cors {
-    origin = lookup(var.cors, "origin", null)
-    method = lookup(var.cors, "method", null)
+    origin          = lookup(var.cors, "origin", null)
+    method          = lookup(var.cors, "method", null)
     response_header = lookup(var.cors, "response_header", null)
     max_age_seconds = lookup(var.cors, "max_age_seconds", null)
   }
@@ -120,7 +120,7 @@ resource "google_storage_bucket" "default" {
 resource "google_storage_bucket_acl" "default" {
   count = var.type == "bucket" ? 1 : 0
 
-  bucket = google_storage_bucket.default[0].name
+  bucket      = google_storage_bucket.default[0].name
   default_acl = var.default_acl
 }
 
@@ -132,18 +132,18 @@ resource "google_storage_bucket_acl" "default" {
 resource "google_compute_firewall" "default" {
   count = length(local.firewall_ports)
 
-  name = "${var.name}-firewall"
+  name    = "${var.name}-firewall"
   network = var.network
   source_ranges = [
     "35.191.0.0/16",
     "130.211.0.0/22",
   ]
-  target_tags = flatten([ for backend in var.backends:
+  target_tags = flatten([for backend in var.backends :
     lookup(backend, "target_tags", [])
   ])
 
   allow {
     protocol = "tcp"
-    ports = local.firewall_ports
+    ports    = local.firewall_ports
   }
 }

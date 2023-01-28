@@ -1,10 +1,11 @@
 # Create the Kubernetes cluster.
 resource "google_container_cluster" "default" {
-  cluster_ipv4_cidr = var.cluster_ipv4_cidr
+  cluster_ipv4_cidr  = var.cluster_ipv4_cidr
   initial_node_count = var.node_count
-  location = var.region_zone
-  name = var.name
-  network = var.network
+  location           = var.region_zone
+  name               = var.name
+  network            = var.network
+  project            = var.project_id
 
   # Use legacy ABAC until these issues are resolved:
   #   https://github.com/mcuadros/terraform-provider-helm/issues/56
@@ -18,16 +19,16 @@ resource "google_container_cluster" "default" {
   }
 
   node_config {
-    labels = var.labels
-    machine_type = var.machine_type
-    oauth_scopes = var.service_scopes
+    labels          = var.labels
+    machine_type    = var.machine_type
+    oauth_scopes    = var.service_scopes
     service_account = var.service_account
-    tags = concat(var.tags, [var.name], values(var.labels))
+    tags            = concat(var.tags, [var.name], values(var.labels))
   }
 
   # Wait for the GCE LB controller to cleanup the resources.
   provisioner "local-exec" {
-    when = destroy
+    when    = destroy
     command = "sleep 90"
   }
 }

@@ -1,14 +1,14 @@
-output backend_services {
+output "backend_services" {
   description = "The backend service resources."
-  value = [ for service in module.backend_service : service.self_link ]
+  value       = [for service in module.backend_service : service.self_link]
 }
 
-output public_ip {
+output "public_ip" {
   description = "The public IP for accessing the load balancer."
-  value = google_compute_address.default.address
+  value       = google_compute_address.default.address
 }
 
-output ssl_domains {
+output "ssl_domains" {
   description = "Domain names of Google-managed SSL certificates."
-  value = var.ssl_domains
+  value       = var.ssl_domains
 }
