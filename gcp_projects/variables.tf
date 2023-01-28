@@ -67,13 +67,13 @@ variable "service_account_id" {
 }
 
 variable "service_account_name" {
-  default     = null
-  description = "Display name prefix of service account(s)."
+  default     = "Project-specific Terraform-managed service account"
+  description = "Display name of service account(s)."
   type        = string
 }
 
 variable "service_account_description" {
-  default     = "Project-specific Terraform-managed service account"
+  default     = null
   description = "The description of the service account."
   type        = string
 }

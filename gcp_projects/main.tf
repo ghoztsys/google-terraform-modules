@@ -81,8 +81,8 @@ resource "google_service_account" "default" {
   for_each = google_project.default
 
   account_id   = var.service_account_id
-  display_name = "${coalesce(var.service_account_name, var.service_account_id)}-${each.key}"
   description  = var.service_account_description
+  display_name = var.service_account_name
   project      = each.value.project_id
 }
 
