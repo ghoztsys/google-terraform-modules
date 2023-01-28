@@ -26,6 +26,12 @@ variable "name_prefix" {
   }
 }
 
+variable "disable_default_service_accounts" {
+  default     = false
+  description = "Specifies whether default service accounts should be disabled (beta)."
+  type        = bool
+}
+
 variable "environments" {
   default     = []
   description = "A list of supported environments of which one project will be generated per environment."
