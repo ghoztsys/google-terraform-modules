@@ -91,7 +91,7 @@ resource "google_project_iam_member" "default" {
   for_each = { for descriptor in local.roles_map : "${descriptor.environment}+${descriptor.role}" => descriptor }
 
   member  = google_service_account.default[each.value.environment].member
-  project = each.value.project
+  project = google_project.default[each.value.environment].project_id
   role    = each.value.role
 }
 
