@@ -73,7 +73,7 @@ module "project_iam" {
 
   source = "../gcp_project_iam"
 
-  policies = var.iam_policies
+  policies   = var.iam_policies
   project_id = each.value.project_id
 }
 

@@ -56,7 +56,7 @@ variable "enabled_apis" {
 }
 
 variable "iam_policies" {
-  default = []
+  default     = []
   description = "IAM policies for each created project."
   type = list(object({
     members = list(string)
