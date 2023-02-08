@@ -68,13 +68,22 @@ resource "google_project_service" "default" {
   service                    = each.value.api
 }
 
-# Disable creating default service accounts when certain APIs are activated.
-resource "google_project_default_service_accounts" "default" {
-  for_each = var.disable_default_service_accounts ? google_project.default : {}
+module "project_iam" {
+  for_each = google_project.default
 
-  action  = "DELETE"
-  project = each.value.project_id
+  source = "../gcp_project_iam"
+
+  policies = var.iam_policies
+  project_id = each.value.project_id
 }
+
+# Disable creating default service accounts when certain APIs are activated.
+# resource "google_project_default_service_accounts" "default" {
+#   for_each = var.disable_default_service_accounts ? google_project.default : {}
+
+#   action  = "DELETE"
+#   project = each.value.project_id
+# }
 
 # Create Terraform-managed service account per project.
 resource "google_service_account" "default" {

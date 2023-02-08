@@ -55,6 +55,15 @@ variable "enabled_apis" {
   type        = list(string)
 }
 
+variable "iam_policies" {
+  default = []
+  description = "IAM policies for each created project."
+  type = list(object({
+    members = list(string)
+    roles   = list(string)
+  }))
+}
+
 variable "service_account_id" {
   default     = "terraform"
   description = "The account ID of the Terraform-managed service account (the username of the email address, i.e. <account_id>@<project_id>.iam.gserviceaccount.com)."
