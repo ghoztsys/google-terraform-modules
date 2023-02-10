@@ -7,11 +7,6 @@ resource "google_container_cluster" "default" {
   network            = var.network
   project            = var.project_id
 
-  # Use legacy ABAC until these issues are resolved:
-  #   https://github.com/mcuadros/terraform-provider-helm/issues/56
-  #   https://github.com/terraform-providers/terraform-provider-kubernetes/pull/73
-  enable_legacy_abac = true
-
   addons_config {
     network_policy_config {
       disabled = true
