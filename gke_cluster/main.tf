@@ -28,10 +28,9 @@ resource "google_container_cluster" "default" {
   }
 }
 
-# Set named ports for created instance group. Note that this requires the gcloud
-# CLI installed on the host.
-resource "null_resource" "default" {
-  provisioner "local-exec" {
-    command = "gcloud compute instance-groups set-named-ports ${google_container_cluster.default.node_pool[0].managed_instance_group_urls[0]} --named-ports=${var.port_name}:${var.port}"
-  }
+resource "google_compute_instance_group_named_port" "default" {
+  group = google_container_cluster.default.node_pool[0].instance_group_urls[0]
+  name = var.port_name
+  port = var.port
+  zone = var.region_zone
 }
