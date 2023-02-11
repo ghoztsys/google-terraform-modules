@@ -1,6 +1,6 @@
-output "node_pool" {
-  description = "List of node pools associated with the cluster."
-  value       = google_container_cluster.default.node_pool
+output "managed_instance_group_urls" {
+  description = "List of instance group URLs assigned to the node pool."
+  value       = google_container_node_pool.default.managed_instance_group_urls
 }
 
 output "name" {
