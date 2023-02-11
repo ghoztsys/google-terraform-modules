@@ -1,4 +1,4 @@
-# `gcp_org_iam`
+# `iam_org`
 
 This module creates non-authoritative IAM policies on the organization level.
 

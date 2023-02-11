@@ -1,4 +1,4 @@
-# Terraform Modules
+# Terraform Modules for Google Cloud Platform
 
 Terraform modules package cloud resources together to make up an enclosed, reusable system.
 

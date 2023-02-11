@@ -1,4 +1,4 @@
-# `gce_backend_service`
+# `backend_service`
 
 This module creates a Backend Service/Bucket, depending on the specified `type` variable. Created resources may also be regional instead of global (default) if `regional` is set to `true` (defaults to `false`).
 
@@ -6,7 +6,7 @@ This module creates a Backend Service/Bucket, depending on the specified `type` 
 
 ```ruby
 module "backend_service" {
-  source = "git::git@github.com:0xGHOZT/terraform-modules//gce_backend_service?ref=<release_tag>"
+  source = "git::git@github.com:0xGHOZT/terraform-modules//backend_service?ref=<release_tag>"
 
   backends = [{
     port = 8080
@@ -24,7 +24,7 @@ module "backend_service" {
 }
 
 module "backend_bucket" {
-  source = "git::git@github.com:0xGHOZT/terraform-modules//gce_backend_service?ref=v0.52.0"
+  source = "git::git@github.com:0xGHOZT/terraform-modules//backend_service?ref=v0.52.0"
 
   enable_cdn = true
   location = "US"

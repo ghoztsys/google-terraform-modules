@@ -114,7 +114,7 @@ resource "google_compute_global_forwarding_rule" "https" {
 # parameters. See issue https://github.com/hashicorp/terraform/issues/24142
 module "backend_service" {
   for_each = zipmap(range(length(var.backend_services)), var.backend_services)
-  source   = "../gce_backend_service"
+  source   = "../backend_service"
 
   name                        = "${var.name}-backend-service${each.key}"
   type                        = lookup(each.value, "type", "service")

@@ -68,10 +68,10 @@ resource "google_project_service" "default" {
   service                    = each.value.api
 }
 
-module "project_iam" {
+module "iam_project" {
   for_each = google_project.default
 
-  source = "../gcp_project_iam"
+  source = "../iam_project"
 
   policies   = var.iam_policies
   project_id = each.value.project_id
