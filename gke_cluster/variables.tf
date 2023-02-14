@@ -42,6 +42,11 @@ variable "node_count" {
   default     = 1
   description = "The initial number of nodes to create for this Kubernetes cluster."
   type        = number
+
+  validation {
+    condition     = var.node_count % 2 != 0
+    error_message = "node_count must be an odd number."
+  }
 }
 
 variable "port" {
