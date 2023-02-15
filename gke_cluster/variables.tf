@@ -4,7 +4,12 @@ variable "project_id" {
 }
 
 variable "name" {
-  description = "Name of this module."
+  description = "Name of the GKE cluster."
+  type        = string
+}
+
+variable "node_pool_name" {
+  description = "Name of the node pool."
   type        = string
 }
 

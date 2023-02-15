@@ -20,7 +20,7 @@ resource "google_container_cluster" "default" {
 resource "google_container_node_pool" "default" {
   cluster    = google_container_cluster.default.name
   location   = var.region_zone
-  name       = var.name
+  name       = var.node_pool_name
   node_count = var.node_count
 
   node_config {
