@@ -33,7 +33,13 @@ variable "regional" {
 
 variable "enable_cdn" {
   default     = false
-  description = "Specifies if Cloud CDN should be enabled"
+  description = "Specifies if Cloud CDN should be enabled/"
+  type        = bool
+}
+
+variable "enable_logging" {
+  default     = true
+  description = "Specifies if logging is enabled."
   type        = bool
 }
 

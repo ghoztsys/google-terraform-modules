@@ -53,6 +53,10 @@ resource "google_compute_backend_service" "default" {
   security_policy       = var.security_policy
   timeout_sec           = var.timeout
 
+  log_config {
+    enable = var.enable_logging
+  }
+
   dynamic "backend" {
     for_each = toset(var.backends)
 

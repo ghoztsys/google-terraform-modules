@@ -1,11 +1,11 @@
 output "name" {
   description = "Project name."
-  value = google_project.default.name
+  value       = google_project.default.name
 }
 
 output "id" {
   description = "Project ID."
-  value = google_project.default.project_id
+  value       = google_project.default.project_id
 }
 
 output "service_account" {

@@ -46,7 +46,7 @@ resource "google_container_node_pool" "default" {
 
 # Set named ports for the instance group URLs.
 resource "google_compute_instance_group_named_port" "default" {
-  group = google_container_node_pool.default.instance_group_urls[0]
+  group = google_container_node_pool.default.managed_instance_group_urls[0]
   name  = var.port_name
   port  = var.port
   zone  = var.region_zone

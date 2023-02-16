@@ -127,23 +127,25 @@ module "backend_service" {
   for_each = zipmap(range(length(var.backend_services)), var.backend_services)
   source   = "../backend_service"
 
-  name                        = "${var.name}-backend-service${each.key}"
-  type                        = lookup(each.value, "type", "service")
-  regional                    = true
-  network                     = var.network
   backends                    = lookup(each.value, "backends", [])
+  cors                        = lookup(each.value, "cors", {})
+  default_acl                 = lookup(each.value, "default_acl", "publicread")
   health_checks               = lookup(each.value, "health_checks", [])
+  labels                      = lookup(each.value, "labels", {})
+  location                    = var.region
+  enable_logging              = lookup(each.value, "enable_logging", null)
+  enable_cdn                  = lookup(each.value, "enable_cdn", null)
+  name                        = "${var.name}-backend-service${each.key}"
+  network                     = var.network
   port_name                   = lookup(each.value, "port_name", null)
   project_id                  = var.project_id
   protocol                    = lookup(each.value, "protocol", "HTTP")
+  regional                    = true
   security_policy             = lookup(each.value, "security_policy", null)
   timeout                     = lookup(each.value, "timeout", null)
-  cors                        = lookup(each.value, "cors", {})
-  default_acl                 = lookup(each.value, "default_acl", "publicread")
-  labels                      = lookup(each.value, "labels", {})
-  location                    = var.region
-  versioning                  = lookup(each.value, "versioning", false)
+  type                        = lookup(each.value, "type", "service")
   uniform_bucket_level_access = lookup(each.value, "uniform_bucket_level_access", false)
+  versioning                  = lookup(each.value, "versioning", false)
 }
 
 # Create a HTTP URL map for HTTP-to-HTTPS redirection only, if needed.
