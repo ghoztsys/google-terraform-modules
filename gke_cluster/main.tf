@@ -1,3 +1,7 @@
+locals {
+  name = "${var.name}${var.use_hex_suffix ? "-${random_id.default[0].hex}" : ""}"
+}
+
 # If enabled, generate random 6-character string to append to the cluster name.
 resource "random_id" "default" {
   count = var.use_hex_suffix ? 1 : 0
@@ -15,7 +19,7 @@ resource "google_container_cluster" "default" {
   cluster_ipv4_cidr        = var.cluster_ipv4_cidr
   initial_node_count       = 1
   location                 = var.region_zone
-  name                     = "${var.name}${var.use_hex_suffix ? "-${random_id.default[0].hex}" : ""}"
+  name                     = local.name
   network                  = var.network
   project                  = var.project_id
   remove_default_node_pool = true
@@ -40,7 +44,7 @@ resource "google_container_node_pool" "default" {
     machine_type    = var.machine_type
     oauth_scopes    = var.service_scopes
     service_account = var.service_account
-    tags            = concat(var.tags, [var.name], values(var.labels))
+    tags            = concat(var.tags, [local.name], values(var.labels))
   }
 }
 
