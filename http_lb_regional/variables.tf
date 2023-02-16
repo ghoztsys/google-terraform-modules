@@ -4,6 +4,7 @@ variable "project_id" {
 }
 
 variable "name" {
+  default     = "lb"
   description = "Name for the forwarding rule and prefix for supporting resources."
   type        = string
 }

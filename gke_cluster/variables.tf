@@ -4,6 +4,7 @@ variable "project_id" {
 }
 
 variable "name" {
+  name        = "cluster"
   description = "Name of the GKE cluster."
   type        = string
 }
@@ -15,13 +16,14 @@ variable "use_hex_suffix" {
 }
 
 variable "node_pool_name" {
+  default     = "node-pool"
   description = "Name of the node pool."
   type        = string
 }
 
 variable "cluster_ipv4_cidr" {
-  default     = ""
   description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."
+  nullable    = true
   type        = string
 }
 
