@@ -14,7 +14,7 @@ variable "type" {
   type        = string
 
   validation {
-    condition     = var.type == "service" || var.type == "bucket"
+    condition     = contains(["service", "bucket"], var.type)
     error_message = "The only accepted values are 'service' and 'bucket'."
   }
 }
@@ -27,7 +27,7 @@ variable "network" {
 
 variable "regional" {
   default     = false
-  description = "Indicates whether created resources should be regional instead of global. When `true`, `enable_cdn` will take no effect."
+  description = "Indicates whether created resources should be regional instead of global. When `true`, `enable_cdn` will have no effect."
   type        = bool
 }
 
@@ -40,11 +40,10 @@ variable "enable_cdn" {
 variable "health_checks" {
   default     = []
   description = "Health check ports/paths for all backends in this Backend Service (NOTE: This variable is only used if `type` is `service`)."
-  type        = list(any)
-  # type = list(object({
-  #   path = string,
-  #   port = number,
-  # }))
+  type = list(object({
+    path = string
+    port = number
+  }))
 }
 
 variable "port_name" {
