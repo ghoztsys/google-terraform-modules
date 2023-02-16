@@ -22,6 +22,7 @@ variable "node_pool_name" {
 }
 
 variable "cluster_ipv4_cidr" {
+  default     = null
   description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."
   nullable    = true
   type        = string
