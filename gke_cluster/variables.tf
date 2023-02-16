@@ -4,7 +4,7 @@ variable "project_id" {
 }
 
 variable "name" {
-  name        = "cluster"
+  default     = "cluster"
   description = "Name of the GKE cluster."
   type        = string
 }
