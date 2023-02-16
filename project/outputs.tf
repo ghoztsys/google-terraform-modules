@@ -8,7 +8,7 @@ output "id" {
   value = google_project.default.project_id
 }
 
-output "service_accounts" {
+output "service_account" {
   description = "Terraform-managed service account."
   value = {
     email         = google_service_account.default.email
