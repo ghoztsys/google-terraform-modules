@@ -133,8 +133,8 @@ module "backend_service" {
   health_checks               = lookup(each.value, "health_checks", [])
   labels                      = lookup(each.value, "labels", {})
   location                    = var.region
-  enable_logging              = lookup(each.value, "enable_logging", null)
-  enable_cdn                  = lookup(each.value, "enable_cdn", null)
+  enable_logging              = lookup(each.value, "enable_logging", true)
+  enable_cdn                  = lookup(each.value, "enable_cdn", false)
   name                        = "${var.name}-backend-service${each.key}"
   network                     = var.network
   port_name                   = lookup(each.value, "port_name", null)
