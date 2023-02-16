@@ -1,5 +1,5 @@
 variable "project_id" {
-  description = "ID of project to create the Google Artifact Registry repositories in."
+  description = "ID of project to create resources in."
   type        = string
 }
 

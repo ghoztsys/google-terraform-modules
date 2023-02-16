@@ -161,8 +161,8 @@ resource "google_compute_url_map" "redirect" {
   }
 }
 
-# Create a basic URL map for the load balancer if `create_url_map` is `true`.
-# This URL map routes all paths to the first Backend Service resource created.
+# Create a basic URL map for the load balancer. This URL map routes all paths to
+# the first Backend Service resource created.
 resource "google_compute_url_map" "default" {
   default_service = module.backend_service[0].self_link
   name            = "${var.name}-url-map"

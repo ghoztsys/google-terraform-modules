@@ -1,5 +1,5 @@
 variable "project_id" {
-  description = "The ID of the project in which the resources belong."
+  description = "ID of project to create resources in."
   type        = string
 }
 

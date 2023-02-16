@@ -1,5 +1,5 @@
 variable "project_id" {
-  description = "The ID of the project in which the resources belong."
+  description = "ID of project to create resources in."
   type        = string
 }
 
@@ -24,7 +24,7 @@ variable "name" {
 }
 
 variable "project_id" {
-  description = "Google Cloud Platform project ID."
+  description = "ID of project to create resources in."
 }
 
 variable "region" {
