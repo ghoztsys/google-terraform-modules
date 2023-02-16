@@ -4,7 +4,7 @@ locals {
 
 output "registry" {
   description = "Host URL of Google Artifact Registry resource."
-  value = local.registry
+  value       = local.registry
 }
 
 output "repos" {

@@ -64,6 +64,7 @@ resource "google_project_service" "default" {
   for_each = { for descriptor in local.apis_map : "${descriptor.environment}+${descriptor.api}" => descriptor }
 
   disable_dependent_services = true
+  disable_on_destroy         = false
   project                    = google_project.default[each.value.environment].project_id
   service                    = each.value.api
 }

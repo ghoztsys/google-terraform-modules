@@ -8,6 +8,12 @@ variable "name" {
   type        = string
 }
 
+variable "use_hex_suffix" {
+  default     = true
+  description = "Specifies if 6-character hex suffix should be appended to the cluster name."
+  type        = bool
+}
+
 variable "node_pool_name" {
   description = "Name of the node pool."
   type        = string
