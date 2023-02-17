@@ -55,6 +55,7 @@ resource "google_compute_backend_service" "default" {
 
   log_config {
     enable = var.enable_logging
+    sample_rate = var.enable_logging ? 1 : null
   }
 
   dynamic "backend" {
