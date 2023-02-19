@@ -54,7 +54,7 @@ resource "google_compute_backend_service" "default" {
   timeout_sec           = var.timeout
 
   log_config {
-    enable = var.enable_logging
+    enable      = var.enable_logging
     sample_rate = var.enable_logging ? 1 : null
   }
 

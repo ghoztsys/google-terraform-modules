@@ -9,7 +9,7 @@ variable "name" {
   default     = null
 }
 
-variable "service_name" {
+variable "cloud_run_name" {
   description = "Name of the Cloud Run service (i.e. google_cloud_run_service.default.name)."
   type        = string
 }
@@ -17,12 +17,6 @@ variable "service_name" {
 variable "region" {
   description = "The region where the project resides."
   type        = string
-}
-
-variable "no_auth" {
-  default     = true
-  description = "Specifies if unauthenticated invocations are allowed. This is required if you are using an external load balancer"
-  type        = bool
 }
 
 variable "tag" {
