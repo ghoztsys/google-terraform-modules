@@ -23,6 +23,21 @@ resource "google_cloud_run_service" "default" {
       containers {
         image = var.container.image
 
+        startup_probe {
+          failure_threshold     = 5
+          initial_delay_seconds = 10
+          timeout_seconds       = 3
+          period_seconds        = 3
+
+          http_get {
+            path = "/"
+            http_headers {
+              name  = "Access-Control-Allow-Origin"
+              value = "*"
+            }
+          }
+        }
+
         dynamic "env" {
           for_each = var.container.env
 
@@ -69,6 +84,20 @@ resource "google_cloud_run_domain_mapping" "default" {
 
   spec {
     route_name = google_cloud_run_service.default.name
+  }
+}
+
+resource "google_compute_region_network_endpoint_group" "default" {
+  count = var.neg == null ? 0 : 1
+
+  name                  = "${google_cloud_run_service.default.name}-neg"
+  network_endpoint_type = "SERVERLESS"
+  project               = var.project_id
+  region                = google_cloud_run_service.default.location
+
+  cloud_run {
+    service = google_cloud_run_service.default.name
+    tag     = var.neg.tag
   }
 }
 

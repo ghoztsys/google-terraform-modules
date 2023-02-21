@@ -41,6 +41,15 @@ variable "name" {
   type        = string
 }
 
+variable "neg" {
+  default     = null
+  description = "If specified, creates a Network Endpoint Group (NEG) for the Cloud Run service with the contained attributes."
+  nullable    = true
+  type = object({
+    tag = optional(string)
+  })
+}
+
 variable "project_id" {
   description = "ID of project to create resources in."
   type        = string
