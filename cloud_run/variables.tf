@@ -45,3 +45,10 @@ variable "project_id" {
   description = "ID of project to create resources in."
   type        = string
 }
+
+variable "service_account" {
+  default     = null
+  description = "Email of the service account to associate with the Cloud Run instance."
+  nullable    = true
+  type        = string
+}

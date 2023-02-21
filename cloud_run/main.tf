@@ -18,6 +18,8 @@ resource "google_cloud_run_service" "default" {
 
   template {
     spec {
+      service_account_name = var.service_account
+
       containers {
         image = var.container.image
 
