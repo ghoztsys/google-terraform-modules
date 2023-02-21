@@ -1,11 +1,11 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
-  type        = string
-}
-
 variable "location" {
   default     = "us"
   description = "Location of the repositories (see https://cloud.google.com/artifact-registry/docs/repositories/repo-locations)."
+  type        = string
+}
+
+variable "project_id" {
+  description = "ID of project to create resources in."
   type        = string
 }
 

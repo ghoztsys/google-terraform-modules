@@ -1,9 +1,3 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
-  type        = string
-}
-
-
 variable "app_id" {
   default     = "app"
   description = "The app ID (i.e. `app`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instance."
@@ -62,6 +56,11 @@ variable "machine_type" {
 variable "network" {
   default     = "default"
   description = "The name of the network to the created GCE instance and firewall to."
+}
+
+variable "project_id" {
+  description = "ID of project to create resources in."
+  type        = string
 }
 
 variable "region_zone" {

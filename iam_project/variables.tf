@@ -1,8 +1,3 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
-  type        = string
-}
-
 variable "policies" {
   default     = []
   description = "IAM policies."
@@ -10,4 +5,9 @@ variable "policies" {
     members = list(string)
     roles   = list(string)
   }))
+}
+
+variable "project_id" {
+  description = "ID of project to create resources in."
+  type        = string
 }

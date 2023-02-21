@@ -1,8 +1,3 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
-  type        = string
-}
-
 variable "bucket_location" {
   default     = "US"
   description = "GCS bucket location"
@@ -25,6 +20,7 @@ variable "name" {
 
 variable "project_id" {
   description = "ID of project to create resources in."
+  type        = string
 }
 
 variable "region" {

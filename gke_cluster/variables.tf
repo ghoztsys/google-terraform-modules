@@ -1,26 +1,3 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
-  type        = string
-}
-
-variable "name" {
-  default     = "cluster"
-  description = "Name of the GKE cluster."
-  type        = string
-}
-
-variable "use_hex_suffix" {
-  default     = true
-  description = "Specifies if 6-character hex suffix should be appended to the cluster name."
-  type        = bool
-}
-
-variable "node_pool_name" {
-  default     = "node-pool"
-  description = "Name of the node pool."
-  type        = string
-}
-
 variable "cluster_ipv4_cidr" {
   default     = null
   description = "The IP address range of the kubernetes pods in this cluster. Default is an automatically assigned CIDR."
@@ -40,9 +17,20 @@ variable "disk_type" {
   type        = string
 }
 
+variable "labels" {
+  description = "Labels (key/value pair) to be added to each node. The value of each label will also be added as tags."
+  type        = map(string)
+}
+
 variable "machine_type" {
   default     = "g1-small"
   description = "The machine type of the resource. See https://cloud.google.com/compute/docs/machine-types."
+  type        = string
+}
+
+variable "name" {
+  default     = "cluster"
+  description = "Name of the GKE cluster."
   type        = string
 }
 
@@ -63,6 +51,12 @@ variable "node_count" {
   }
 }
 
+variable "node_pool_name" {
+  default     = "node-pool"
+  description = "Name of the node pool."
+  type        = string
+}
+
 variable "port" {
   default     = 30000
   description = "Port in the K8s cluster that is exposed to the external network."
@@ -72,6 +66,11 @@ variable "port" {
 variable "port_name" {
   default     = "http"
   description = "Name of the port in the K8s cluster that is exposed to the external network."
+  type        = string
+}
+
+variable "project_id" {
+  description = "ID of project to create resources in."
   type        = string
 }
 
@@ -97,13 +96,14 @@ variable "service_scopes" {
   type        = list(string)
 }
 
-variable "labels" {
-  description = "Labels (key/value pair) to be added to each node. The value of each label will also be added as tags."
-  type        = map(string)
-}
-
 variable "tags" {
   default     = []
   description = "Additional tags to add to each node."
   type        = list(string)
+}
+
+variable "use_hex_suffix" {
+  default     = true
+  description = "Specifies if 6-character hex suffix should be appended to the cluster name."
+  type        = bool
 }

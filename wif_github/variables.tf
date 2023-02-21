@@ -1,13 +1,3 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
-  type        = string
-}
-
-variable "wif_id" {
-  description = "String identifier to prepend to all WIF resources."
-  type        = string
-}
-
 variable "github_owner" {
   description = "Owner of GitHub repositories that will access GCP resources via WIF."
   type        = string
@@ -17,6 +7,17 @@ variable "github_repositories" {
   default     = []
   description = "GitHub repositories that will access GCP resources via WIF (format: <owner>/<repo>)."
   type        = list(string)
+}
+
+variable "project_id" {
+  description = "ID of project to create resources in."
+  type        = string
+}
+
+variable "service_account_description" {
+  default     = null
+  description = "Description of the service account to impersonate."
+  type        = string
 }
 
 variable "service_account_id" {
@@ -35,14 +36,13 @@ variable "service_account_name" {
   type        = string
 }
 
-variable "service_account_description" {
-  default     = null
-  description = "Description of the service account to impersonate."
-  type        = string
-}
-
 variable "service_account_roles" {
   default     = []
   description = "Roles to assign to the service account on the project level."
   type        = list(string)
+}
+
+variable "wif_id" {
+  description = "String identifier to prepend to all WIF resources."
+  type        = string
 }

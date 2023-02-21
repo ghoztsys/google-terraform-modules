@@ -1,5 +1,5 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
+variable "cloud_run_name" {
+  description = "Name of the Cloud Run service (i.e. google_cloud_run_service.default.name)."
   type        = string
 }
 
@@ -9,8 +9,8 @@ variable "name" {
   default     = null
 }
 
-variable "cloud_run_name" {
-  description = "Name of the Cloud Run service (i.e. google_cloud_run_service.default.name)."
+variable "project_id" {
+  description = "ID of project to create resources in."
   type        = string
 }
 

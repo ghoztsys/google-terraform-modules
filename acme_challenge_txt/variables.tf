@@ -1,5 +1,5 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
+variable "dns_managed_zone" {
+  description = "The name of the DNS managed zone."
   type        = string
 }
 
@@ -8,8 +8,8 @@ variable "dns_name" {
   type        = string
 }
 
-variable "dns_managed_zone" {
-  description = "The name of the DNS managed zone."
+variable "project_id" {
+  description = "ID of project to create resources in."
   type        = string
 }
 

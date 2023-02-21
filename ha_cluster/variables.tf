@@ -1,8 +1,3 @@
-variable "project_id" {
-  description = "ID of project to create resources in."
-  type        = string
-}
-
 variable "app_id" {
   default     = "app"
   description = "The app ID (i.e. `app`, etc) to associate with this module. This value will be prefixed to the name of the generated GCE instances."
@@ -144,31 +139,6 @@ variable "mongodb_port" {
   description = "MongoDB port"
 }
 
-variable "node_port_max" {
-  default     = 65535
-  description = "Port upper bound of Nomad client service."
-}
-
-variable "node_port_min" {
-  default     = 0
-  description = "Port bottom bound of Nomad client service."
-}
-
-variable "nomad_http_port" {
-  default     = 4646
-  description = "HTTP port of Nomad services."
-}
-
-variable "nomad_rpc_port" {
-  default     = 4647
-  description = "RPC port of Nomad services."
-}
-
-variable "nomad_serf_port" {
-  default     = 4648
-  description = "Serf port of Nomad services."
-}
-
 variable "network" {
   default     = "default"
   description = "The name of the network to attach this interface to."
@@ -194,6 +164,16 @@ variable "node_machine_type" {
   description = "The machine type of the Nomad node resources. See https://cloud.google.com/compute/docs/machine-types."
 }
 
+variable "node_port_max" {
+  default     = 65535
+  description = "Port upper bound of Nomad client service."
+}
+
+variable "node_port_min" {
+  default     = 0
+  description = "Port bottom bound of Nomad client service."
+}
+
 variable "node_service_scopes" {
   default = [
     "https://www.googleapis.com/auth/devstorage.read_write",
@@ -205,6 +185,26 @@ variable "node_service_scopes" {
 variable "node_tags" {
   default     = []
   description = "Additional tags for Nomad node resources."
+}
+
+variable "nomad_http_port" {
+  default     = 4646
+  description = "HTTP port of Nomad services."
+}
+
+variable "nomad_rpc_port" {
+  default     = 4647
+  description = "RPC port of Nomad services."
+}
+
+variable "nomad_serf_port" {
+  default     = 4648
+  description = "Serf port of Nomad services."
+}
+
+variable "project_id" {
+  description = "ID of project to create resources in."
+  type        = string
 }
 
 variable "region_zone" {

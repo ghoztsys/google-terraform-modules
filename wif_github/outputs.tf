@@ -1,8 +1,8 @@
-output "service_account" {
-  description = "Service account for WIF impersonation."
+output "github" {
+  description = "Whitelisted GitHub resources."
   value = {
-    email  = google_service_account.default.email
-    member = google_service_account.default.member
+    owner        = var.github_owner
+    repositories = var.github_repositories
   }
 }
 
@@ -22,10 +22,10 @@ output "provider" {
   }
 }
 
-output "github" {
-  description = "Whitelisted GitHub resources."
+output "service_account" {
+  description = "Service account for WIF impersonation."
   value = {
-    owner        = var.github_owner
-    repositories = var.github_repositories
+    email  = google_service_account.default.email
+    member = google_service_account.default.member
   }
 }
