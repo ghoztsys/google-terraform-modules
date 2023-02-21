@@ -39,6 +39,22 @@ resource "google_cloud_run_service" "default" {
   }
 }
 
+resource "google_cloud_run_domain_mapping" "default" {
+  count = var.domain_mapping == null ? 0 : 1
+
+  location = google_cloud_run_service.default.location
+  name     = var.domain_mapping
+
+  metadata {
+    labels = google_cloud_run_service.default.metadata[0].labels
+    namespace = google_cloud_run_service.default.metadata[0].namespace
+  }
+
+  spec {
+    route_name = google_cloud_run_service.default.name
+  }
+}
+
 resource "google_cloud_run_service_iam_policy" "default" {
   count = length(var.invokers) > 0 ? 1 : 0
 
