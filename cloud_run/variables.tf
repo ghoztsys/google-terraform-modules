@@ -2,14 +2,15 @@ variable "container" {
   description = "Configuration of the container in the Cloud Run service."
   type = object({
     image = string
-    env = map(string)
+    env   = map(string)
   })
 }
 
 variable "domain_mapping" {
+  default     = null
   description = "The custom domain name to map to the Cloud Run service."
-  nullable = true
-  type = string
+  nullable    = true
+  type        = string
 }
 
 variable "invokers" {

@@ -3,7 +3,7 @@ data "google_iam_policy" "default" {
 
   binding {
     members = var.invokers
-    role = "roles/run.invoker"
+    role    = "roles/run.invoker"
   }
 }
 
@@ -46,7 +46,7 @@ resource "google_cloud_run_domain_mapping" "default" {
   name     = var.domain_mapping
 
   metadata {
-    labels = google_cloud_run_service.default.metadata[0].labels
+    labels    = google_cloud_run_service.default.metadata[0].labels
     namespace = google_cloud_run_service.default.metadata[0].namespace
   }
 
