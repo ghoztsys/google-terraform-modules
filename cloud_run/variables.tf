@@ -2,7 +2,11 @@ variable "container" {
   description = "Configuration of the container in the Cloud Run service."
   type = object({
     image = string
-    env   = map(string)
+    env   = optional(map(string), {})
+    secrets = optional(map(object({
+      key  = optional(string, "latest")
+      name = string
+    })), {})
   })
 }
 

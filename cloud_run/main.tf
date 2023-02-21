@@ -29,6 +29,21 @@ resource "google_cloud_run_service" "default" {
             value = env.value
           }
         }
+
+        dynamic "env" {
+          for_each = var.container.secrets
+
+          content {
+            name = env.key
+
+            value_from {
+              secret_key_ref {
+                key  = env.value.key
+                name = env.value.name
+              }
+            }
+          }
+        }
       }
     }
   }
