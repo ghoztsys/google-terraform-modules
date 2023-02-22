@@ -11,7 +11,7 @@ locals {
 
 # Create Health Check resource(s).
 resource "google_compute_health_check" "default" {
-  for_each = toset(var.health_checks)
+  for_each = zipmap(range(length(var.health_checks)), var.health_checks)
 
   name    = "${var.name}-health-check${each.key}"
   project = var.project
