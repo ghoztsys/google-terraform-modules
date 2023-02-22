@@ -14,7 +14,7 @@ variable "backend_services" {
       max_utilization              = optional(number)
       port                         = optional(number, 8080)
       target_tags                  = optional(list(string), [])
-    }), []))
+    })), [])
     cors = optional(object({
       origin          = optional(list(string))
       method          = optional(list(string))
@@ -112,6 +112,6 @@ variable "url_map" {
     path_rules = optional(list(object({
       paths                 = list(string)
       backend_service_index = optional(number, 0)
-    }), []))
+    })), [])
   }))
 }
