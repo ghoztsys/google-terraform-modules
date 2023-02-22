@@ -2,7 +2,7 @@
 resource "google_dns_record_set" "a" {
   managed_zone = var.managed_zone
   name         = var.name
-  project      = var.project_id
+  project      = var.project
   rrdatas = [
     "216.239.32.21",
     "216.239.34.21",
@@ -17,7 +17,7 @@ resource "google_dns_record_set" "a" {
 resource "google_dns_record_set" "aaaa" {
   managed_zone = var.managed_zone
   name         = var.name
-  project      = var.project_id
+  project      = var.project
   rrdatas = [
     "2001:4860:4802:32::15",
     "2001:4860:4802:34::15",

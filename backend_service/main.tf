@@ -14,7 +14,7 @@ resource "google_compute_health_check" "default" {
   for_each = toset(var.health_checks)
 
   name    = "${var.name}-health-check${each.key}"
-  project = var.project_id
+  project = var.project
 
   dynamic "http_health_check" {
     for_each = var.protocol == "HTTP" ? [each.value] : []
@@ -44,7 +44,7 @@ resource "google_compute_backend_service" "default" {
   load_balancing_scheme = "EXTERNAL"
   name                  = var.name
   port_name             = var.port_name
-  project               = var.project_id
+  project               = var.project
   protocol              = var.protocol
   security_policy       = var.security_policy
   timeout_sec           = var.timeout
@@ -78,7 +78,7 @@ resource "google_compute_backend_bucket" "default" {
   bucket_name = google_storage_bucket.default[0].name
   enable_cdn  = var.regional ? false : var.enable_cdn
   name        = var.name
-  project     = var.project_id
+  project     = var.project
 }
 
 # Create a GCS bucket if this is a Backend Bucket.
@@ -89,7 +89,7 @@ resource "google_storage_bucket" "default" {
   labels                      = var.labels
   location                    = var.location
   name                        = "${var.name}-bucket"
-  project                     = var.project_id
+  project                     = var.project
   storage_class               = var.regional ? "REGIONAL" : null
   uniform_bucket_level_access = var.uniform_bucket_level_access
 
@@ -139,7 +139,7 @@ resource "google_compute_firewall" "default" {
 
   name    = "${var.name}-firewall"
   network = var.network
-  project = var.project_id
+  project = var.project
   source_ranges = [
     "35.191.0.0/16",
     "130.211.0.0/22",

@@ -202,7 +202,7 @@ variable "nomad_serf_port" {
   description = "Serf port of Nomad services."
 }
 
-variable "project_id" {
+variable "project" {
   description = "ID of project to create resources in."
   type        = string
 }

@@ -18,7 +18,7 @@ variable "name" {
   description = "Name for the forwarding rule and prefix for supporting resources."
 }
 
-variable "project_id" {
+variable "project" {
   description = "ID of project to create resources in."
   type        = string
 }

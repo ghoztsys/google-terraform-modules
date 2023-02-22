@@ -3,6 +3,6 @@ resource "google_artifact_registry_repository" "default" {
 
   format        = "DOCKER"
   location      = var.location
-  project       = var.project_id
+  project       = var.project
   repository_id = each.value
 }

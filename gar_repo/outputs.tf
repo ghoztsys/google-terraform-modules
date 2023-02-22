@@ -1,5 +1,5 @@
 locals {
-  registry = "${var.location}-docker.pkg.dev/${var.project_id}"
+  registry = "${var.location}-docker.pkg.dev/${var.project}"
 }
 
 output "registry" {

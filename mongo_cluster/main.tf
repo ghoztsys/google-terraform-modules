@@ -9,7 +9,7 @@ resource "google_compute_instance" "default" {
   count        = var.nodes
   machine_type = var.machine_type
   name         = "${module.resource_id.value}-db${count.index}"
-  project      = var.project_id
+  project      = var.project
   tags = concat(var.tags, [
     "${module.resource_id.value}-db${count.index}",
     "db",
@@ -58,7 +58,7 @@ resource "google_compute_firewall" "external" {
   name     = "${google_compute_instance.default.name}-external"
   network  = var.network
   priority = 1000
-  project  = var.project_id
+  project  = var.project
   source_ranges = [
     "0.0.0.0/0",
   ]
@@ -87,7 +87,7 @@ resource "google_compute_firewall" "internal" {
   name     = "${google_compute_instance.default.name}-internal"
   network  = var.network
   priority = 1000
-  project  = var.project_id
+  project  = var.project
   source_ranges = [
     "10.128.0.0/9",
   ]

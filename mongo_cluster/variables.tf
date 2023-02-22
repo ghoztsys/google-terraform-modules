@@ -43,7 +43,7 @@ variable "nodes" {
   description = "Number of nodes to create in the cluster."
 }
 
-variable "project_id" {
+variable "project" {
   description = "ID of project to create resources in."
   type        = string
 }

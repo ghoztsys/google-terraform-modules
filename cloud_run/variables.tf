@@ -50,7 +50,7 @@ variable "invokers" {
   type        = list(string)
 }
 
-variable "project_id" {
+variable "project" {
   description = "ID of project to create resources in."
   type        = string
 }

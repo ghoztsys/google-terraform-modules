@@ -1,12 +1,12 @@
 # Create Workload Identity Pool.
 resource "google_iam_workload_identity_pool" "default" {
-  project                   = var.project_id
+  project                   = var.project
   workload_identity_pool_id = var.wif_id
 }
 
 # Add GitHub OIDC provider to Workload Identity Pool.
 resource "google_iam_workload_identity_pool_provider" "default" {
-  project                            = var.project_id
+  project                            = var.project
   workload_identity_pool_id          = google_iam_workload_identity_pool.default.workload_identity_pool_id
   workload_identity_pool_provider_id = var.wif_id
 
@@ -29,7 +29,7 @@ resource "google_service_account" "default" {
   account_id   = var.service_account_id
   description  = var.service_account_description
   display_name = var.service_account_name
-  project      = var.project_id
+  project      = var.project
 }
 
 # Bind roles to service account.
@@ -37,7 +37,7 @@ resource "google_project_iam_member" "default" {
   for_each = toset(var.service_account_roles)
 
   member  = "serviceAccount:${google_service_account.default.email}"
-  project = var.project_id
+  project = var.project
   role    = each.key
 }
 

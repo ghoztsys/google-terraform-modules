@@ -13,7 +13,7 @@ module "site" {
 
   managed_zone = var.dns_managed_zone.name
   name         = var.dns_managed_zone.dns_name
-  project_id   = var.project_id
+  project      = var.project
 }
 
 # Set up Google Workspace email via MX records.
@@ -23,7 +23,7 @@ module "email" {
 
   managed_zone = var.dns_managed_zone.name
   name         = var.dns_managed_zone.dns_name
-  project_id   = var.project_id
+  project      = var.project
 }
 
 # Create custom URLs for Google Workspace apps.
@@ -33,7 +33,7 @@ module "custom_urls" {
 
   managed_zone = var.dns_managed_zone.name
   name         = "${each.value}.${var.dns_managed_zone.dns_name}"
-  project_id   = var.project_id
+  project      = var.project
 }
 
 # Set up TXT record for Google Workspace SPF and/or Google site verification.
@@ -42,7 +42,7 @@ resource "google_dns_record_set" "txt" {
 
   managed_zone = var.dns_managed_zone.name
   name         = var.dns_managed_zone.dns_name
-  project      = var.project_id
+  project      = var.project
   rrdatas      = local.txt_records
   ttl          = 3600
   type         = "TXT"

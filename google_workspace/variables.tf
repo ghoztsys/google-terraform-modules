@@ -24,7 +24,7 @@ variable "email_setup" {
   type        = bool
 }
 
-variable "project_id" {
+variable "project" {
   description = "ID of project to create resources in."
   type        = string
 }

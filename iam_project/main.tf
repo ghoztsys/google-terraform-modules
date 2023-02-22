@@ -15,6 +15,6 @@ resource "google_project_iam_member" "organization" {
   for_each = { for descriptor in local.policies_map : "${descriptor.member}+${descriptor.role}" => descriptor }
 
   member  = each.value.member
-  project = var.project_id
+  project = var.project
   role    = each.value.role
 }

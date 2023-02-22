@@ -48,8 +48,8 @@ resource "google_service_account" "default" {
 module "iam_project" {
   source = "../iam_project"
 
-  policies   = var.iam_policies
-  project_id = google_project.default.project_id
+  policies = var.iam_policies
+  project  = google_project.default.project_id
 }
 
 # Bind IAM policies for Terraform-managed service account to project.

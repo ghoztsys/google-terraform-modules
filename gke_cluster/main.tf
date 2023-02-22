@@ -21,7 +21,7 @@ resource "google_container_cluster" "default" {
   location                 = var.region_zone
   name                     = local.name
   network                  = var.network
-  project                  = var.project_id
+  project                  = var.project
   remove_default_node_pool = true
 
   addons_config {

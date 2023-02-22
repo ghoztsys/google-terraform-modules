@@ -18,7 +18,7 @@ resource "google_compute_instance" "master" {
   count        = var.master_count
   machine_type = var.master_machine_type
   name         = "${module.resource_id.value}-master${count.index}"
-  project      = var.project_id
+  project      = var.project
   tags = concat(var.master_tags, [
     "${module.resource_id.value}-master${count.index}",
     "master",
@@ -69,7 +69,7 @@ resource "google_compute_instance" "node" {
   count        = var.node_count
   machine_type = var.node_machine_type
   name         = "${module.resource_id.value}-node${count.index}"
-  project      = var.project_id
+  project      = var.project
   tags = concat(var.node_tags, [
     "${module.resource_id.value}-node${count.index}",
     "node",
@@ -119,7 +119,7 @@ resource "google_compute_instance" "db" {
   count        = var.db_count
   machine_type = var.db_machine_type
   name         = "${module.resource_id.value}-db${count.index}"
-  project      = var.project_id
+  project      = var.project
   tags = concat(var.db_tags, [
     "${module.resource_id.value}-db${count.index}",
     "db",
@@ -169,7 +169,7 @@ resource "google_compute_instance" "lb" {
   count        = var.lb_count
   machine_type = var.lb_machine_type
   name         = "${module.resource_id.value}-lb${count.index}"
-  project      = var.project_id
+  project      = var.project
   tags = concat(var.lb_tags, [
     "${module.resource_id.value}-lb${count.index}",
     "lb",
@@ -219,7 +219,7 @@ resource "google_compute_firewall" "www" {
   name     = "${module.resource_id.value}-www"
   network  = var.network
   priority = 1000
-  project  = var.project_id
+  project  = var.project
   source_ranges = [
     "0.0.0.0/0",
   ]
@@ -239,7 +239,7 @@ resource "google_compute_firewall" "haproxy" {
   name        = "${module.resource_id.value}-haproxy"
   network     = var.network
   priority    = 1000
-  project     = var.project_id
+  project     = var.project
   source_tags = google_compute_instance.lb[*].name
   target_tags = google_compute_instance.lb[*].name
 
@@ -256,7 +256,7 @@ resource "google_compute_firewall" "node" {
   name        = "${module.resource_id.value}-node"
   network     = var.network
   priority    = 1000
-  project     = var.project_id
+  project     = var.project
   source_tags = google_compute_instance.lb[*].name
   target_tags = google_compute_instance.node[*].name
 
@@ -273,7 +273,7 @@ resource "google_compute_firewall" "consul" {
   name        = "${module.resource_id.value}-consul"
   network     = var.network
   priority    = 1000
-  project     = var.project_id
+  project     = var.project
   source_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
   target_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name, google_compute_instance.db[*].name, google_compute_instance.lb[*].name)
 
@@ -297,7 +297,7 @@ resource "google_compute_firewall" "nomad" {
   name        = "${module.resource_id.value}-nomad"
   network     = var.network
   priority    = 1000
-  project     = var.project_id
+  project     = var.project
   source_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name)
   target_tags = concat(google_compute_instance.master[*].name, google_compute_instance.node[*].name)
 
@@ -314,7 +314,7 @@ resource "google_compute_firewall" "mongodb" {
   name        = "${module.resource_id.value}-mongodb"
   network     = var.network
   priority    = 1000
-  project     = var.project_id
+  project     = var.project
   source_tags = google_compute_instance.node[*].name
   target_tags = google_compute_instance.db[*].name
 
@@ -332,7 +332,7 @@ resource "google_compute_firewall" "external" {
   name     = "${module.resource_id.value}-external"
   network  = var.network
   priority = 1000
-  project  = var.project_id
+  project  = var.project
   source_ranges = [
     "0.0.0.0/0",
   ]
@@ -363,7 +363,7 @@ resource "google_compute_firewall" "internal" {
   name     = "${module.resource_id.value}-internal"
   network  = var.network
   priority = 1000
-  project  = var.project_id
+  project  = var.project
   source_ranges = [
     "10.128.0.0/9",
   ]

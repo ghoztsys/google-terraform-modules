@@ -11,7 +11,7 @@ resource "google_cloud_run_service" "default" {
   autogenerate_revision_name = true
   name                       = var.name
   location                   = var.location
-  project                    = var.project_id
+  project                    = var.project
 
   metadata {
     labels = var.labels
@@ -78,7 +78,7 @@ resource "google_compute_region_network_endpoint_group" "default" {
 
   name                  = "${google_cloud_run_service.default.name}-neg"
   network_endpoint_type = "SERVERLESS"
-  project               = var.project_id
+  project               = var.project
   region                = google_cloud_run_service.default.location
 
   cloud_run {

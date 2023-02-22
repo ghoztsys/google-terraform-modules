@@ -58,7 +58,7 @@ variable "network" {
   description = "The name of the network to the created GCE instance and firewall to."
 }
 
-variable "project_id" {
+variable "project" {
   description = "ID of project to create resources in."
   type        = string
 }

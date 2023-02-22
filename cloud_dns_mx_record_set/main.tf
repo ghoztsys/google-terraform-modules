@@ -1,7 +1,7 @@
 resource "google_dns_record_set" "mx" {
   managed_zone = var.managed_zone
   name         = var.name
-  project      = var.project_id
+  project      = var.project
   rrdatas = [
     "1 aspmx.l.google.com.",
     "5 alt1.aspmx.l.google.com.",
