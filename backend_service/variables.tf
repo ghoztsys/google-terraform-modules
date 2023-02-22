@@ -1,35 +1,33 @@
 variable "backends" {
   default     = []
   description = "Fully-qualified URLs of the Instance Groups or Network Endpoint Groups (NEG) of each Backend Service created. Note that each Backend Service resource can have more than one virtual machine to serve traffic for load balancing. This variable is a list of lists and must be one-to-one mappable to the list structure as defined by the variable `backend_services` (i.e. the first element of this list, which is a list of URLs, represents the URLs of all the instance groups used by the first Backend Service resource defined in `backend_services`). Note that this variable is intentionally separate from the `backend_services` variable due to the fact that the creation of Backend Services is done via `for_each`, and as of Terraform v0.13.5, `for_each` cannot depend on resource attributes that cannot be determined until apply (i.e. a dynamic variable such as this which is potentially derived from the outputs of other Terraform resources) (NOTE: This variable is only used if `type` is `service`)."
-  type        = list(any)
-  # type = list(object({
-  #   balancing_mode = string
-  #   capacity_scaler = number
-  #   description = string
-  #   group = list(string)
-  #   max_connections = number
-  #   max_connections_per_instance = number
-  #   max_rate = number
-  #   max_rate_per_instance = number
-  #   max_utilization = number
-  #   port = number # Port accepting load-balanced packets.
-  #   target_tags = list(string) # List of target tags assigned to the VMs to be used for creating health check firewall rules.
-  # }))
+  type = list(object({
+    balancing_mode               = optional(string)
+    capacity_scaler              = optional(number)
+    description                  = optional(string)
+    group                        = string
+    max_connections              = optional(number)
+    max_connections_per_instance = optional(number)
+    max_rate                     = optional(number)
+    max_rate_per_instance        = optional(number)
+    max_utilization              = optional(number)
+    port                         = optional(number, 8080)     # Port accepting load-balanced packets.
+    target_tags                  = optional(list(string), []) # List of target tags assigned to the VMs to be used for creating health check firewall rules.
+  }))
 }
 
 variable "cors" {
   default     = {}
   description = "CORS configuration (NOTE: This variable is only used if `type` is `bucket`)."
-  type        = any
-  # type = object({
-  #   origin = list(string)
-  #   method = list(string)
-  #   response_header = list(string)
-  #   max_age_seconds = number
-  # })
+  type = object({
+    origin          = optional(list(string))
+    method          = optional(list(string))
+    response_header = optional(list(string))
+    max_age_seconds = optional(number)
+  })
 }
 
-variable "default_acl" {
+variable "acl" {
   default     = "publicread"
   description = "Default ACL of the GCS bucket associated with the current Backend Bucket (NOTE: This variable is only used if `type` is `bucket`)."
   type        = string
@@ -37,7 +35,7 @@ variable "default_acl" {
 
 variable "enable_cdn" {
   default     = false
-  description = "Specifies if Cloud CDN should be enabled/"
+  description = "Specifies if Cloud CDN should be enabled (only applies if this is not a regional Backend Service)."
   type        = bool
 }
 
@@ -51,8 +49,8 @@ variable "health_checks" {
   default     = []
   description = "Health check ports/paths for all backends in this Backend Service (NOTE: This variable is only used if `type` is `service`)."
   type = list(object({
-    path = string
-    port = number
+    path = optional(string, "/health")
+    port = optional(number)
   }))
 }
 
@@ -82,6 +80,7 @@ variable "network" {
 variable "port_name" {
   default     = null
   description = "Named port to direct load-balanced packets to. This is only applicable to backends as instance groups (not NEGs) which, if available, must have at least one port with the same name (NOTE: This variable is only used if `type` is `service`)."
+  nullable    = true
   type        = string
 }
 
@@ -109,7 +108,7 @@ variable "regional" {
 
 variable "security_policy" {
   default     = null
-  description = "he resource URL for the security policy to associate with this Backend Service (NOTE: This variable is only used if `type` is `service`)."
+  description = "The resource URL for the security policy to associate with this Backend Service (NOTE: This variable is only used if `type` is `service`)."
   type        = string
 }
 

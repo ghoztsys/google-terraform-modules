@@ -11,6 +11,7 @@ resource "google_cloud_run_service" "default" {
   autogenerate_revision_name = true
   name                       = var.name
   location                   = var.location
+  project                    = var.project_id
 
   metadata {
     labels = var.labels
@@ -22,21 +23,6 @@ resource "google_cloud_run_service" "default" {
 
       containers {
         image = var.container.image
-
-        startup_probe {
-          failure_threshold     = 5
-          initial_delay_seconds = 10
-          timeout_seconds       = 3
-          period_seconds        = 3
-
-          http_get {
-            path = "/"
-            http_headers {
-              name  = "Access-Control-Allow-Origin"
-              value = "*"
-            }
-          }
-        }
 
         dynamic "env" {
           for_each = var.container.env

@@ -4,18 +4,14 @@ locals {
 
   # Generate a list of all ports to allow access by GFEs per Backend Service.
   firewall_ports = distinct(concat(
-    [for health_check in var.health_checks :
-      lookup(health_check, "port", var.protocol == "HTTPS" ? 443 : 80)
-    ],
-    compact([for backend in var.backends :
-      lookup(backend, "port", 8080)
-    ]),
+    [for health_check in var.health_checks : health_check.port != null ? health_check.port : var.protocol == "HTTPS" ? 443 : 80],
+    [for backend in var.backends : backend.port],
   ))
 }
 
 # Create Health Check resource(s).
 resource "google_compute_health_check" "default" {
-  for_each = zipmap(range(length(var.health_checks)), var.health_checks)
+  for_each = toset(var.health_checks)
 
   name    = "${var.name}-health-check${each.key}"
   project = var.project_id
@@ -24,8 +20,8 @@ resource "google_compute_health_check" "default" {
     for_each = var.protocol == "HTTP" ? [each.value] : []
 
     content {
-      port         = lookup(http_health_check.value, "port", 80)
-      request_path = lookup(http_health_check.value, "path", "/health")
+      port         = http_health_check.value.port != null ? http_health_check.value.port : 80
+      request_path = http_health_check.value.path
     }
   }
 
@@ -33,8 +29,8 @@ resource "google_compute_health_check" "default" {
     for_each = var.protocol == "HTTPS" ? [each.value] : []
 
     content {
-      port         = lookup(https_health_check.value, "port", 443)
-      request_path = lookup(https_health_check.value, "path", "/health")
+      port         = https_health_check.value.port != null ? https_health_check.value.port : 443
+      request_path = https_health_check.value.path
     }
   }
 }
@@ -47,8 +43,8 @@ resource "google_compute_backend_service" "default" {
   health_checks         = length(local.health_check_links) == 0 ? null : local.health_check_links
   load_balancing_scheme = "EXTERNAL"
   name                  = var.name
-  project               = var.project_id
   port_name             = var.port_name
+  project               = var.project_id
   protocol              = var.protocol
   security_policy       = var.security_policy
   timeout_sec           = var.timeout
@@ -62,15 +58,15 @@ resource "google_compute_backend_service" "default" {
     for_each = toset(var.backends)
 
     content {
-      balancing_mode               = lookup(backend.value, "balancing_mode", null)
-      capacity_scaler              = lookup(backend.value, "capacity_scaler", null)
-      description                  = lookup(backend.value, "description", null)
-      group                        = lookup(backend.value, "group", null)
-      max_connections              = lookup(backend.value, "max_connections", null)
-      max_connections_per_instance = lookup(backend.value, "max_connections_per_instance", null)
-      max_rate                     = lookup(backend.value, "max_rate", null)
-      max_rate_per_instance        = lookup(backend.value, "max_rate_per_instance", null)
-      max_utilization              = lookup(backend.value, "max_utilization", null)
+      balancing_mode               = backend.value.balancing_mode
+      capacity_scaler              = backend.value.capacity_scaler
+      description                  = backend.value.description
+      group                        = backend.value.group
+      max_connections              = backend.value.max_connections
+      max_connections_per_instance = backend.value.max_connections_per_instance
+      max_rate                     = backend.value.max_rate
+      max_rate_per_instance        = backend.value.max_rate_per_instance
+      max_utilization              = backend.value.max_utilization
     }
   }
 }
@@ -117,10 +113,10 @@ resource "google_storage_bucket" "default" {
   }
 
   cors {
-    origin          = lookup(var.cors, "origin", null)
-    method          = lookup(var.cors, "method", null)
-    response_header = lookup(var.cors, "response_header", null)
-    max_age_seconds = lookup(var.cors, "max_age_seconds", null)
+    origin          = var.cors.origin
+    method          = var.cors.method
+    response_header = var.cors.response_header
+    max_age_seconds = var.cors.max_age_seconds
   }
 }
 
@@ -130,7 +126,7 @@ resource "google_storage_bucket_acl" "default" {
   count = var.type == "bucket" ? 1 : 0
 
   bucket      = google_storage_bucket.default[0].name
-  default_acl = var.default_acl
+  default_acl = var.acl
 }
 
 # Create a firewall rule so the load balancer can perform health checks and send
@@ -148,9 +144,7 @@ resource "google_compute_firewall" "default" {
     "35.191.0.0/16",
     "130.211.0.0/22",
   ]
-  target_tags = flatten([for backend in var.backends :
-    lookup(backend, "target_tags", [])
-  ])
+  target_tags = flatten([for backend in var.backends : backend.target_tags])
 
   allow {
     protocol = "tcp"

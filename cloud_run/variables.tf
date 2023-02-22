@@ -17,12 +17,6 @@ variable "domain_mapping" {
   type        = string
 }
 
-variable "invokers" {
-  default     = []
-  description = "Specifies the members who can invoke the Cloud Run service."
-  type        = list(string)
-}
-
 variable "labels" {
   default     = {}
   description = "Labels to attach to the Cloud Run service."
@@ -48,6 +42,12 @@ variable "neg" {
   type = object({
     tag = optional(string)
   })
+}
+
+variable "invokers" {
+  default     = ["allUsers"]
+  description = "Specifies the members who can invoke the Cloud Run service."
+  type        = list(string)
 }
 
 variable "project_id" {

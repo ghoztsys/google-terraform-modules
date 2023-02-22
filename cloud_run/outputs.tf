@@ -5,7 +5,7 @@ output "name" {
 
 output "neg" {
   description = "NEG ID, if available."
-  value = var.neg == null ? null : google_compute_region_network_endpoint_group.default.id
+  value       = var.neg == null ? null : google_compute_region_network_endpoint_group.default[0].id
 }
 
 output "public_url" {

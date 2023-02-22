@@ -1,5 +1,41 @@
 variable "backend_services" {
-  type = any
+  description = "Configuration for each `backend_service` module."
+  type = list(object({
+    acl = optional(string, "publicread")
+    backends = optional(list(object({
+      balancing_mode               = optional(string)
+      capacity_scaler              = optional(number)
+      description                  = optional(string)
+      group                        = string
+      max_connections              = optional(number)
+      max_connections_per_instance = optional(number)
+      max_rate                     = optional(number)
+      max_rate_per_instance        = optional(number)
+      max_utilization              = optional(number)
+      port                         = optional(number, 8080)
+      target_tags                  = optional(list(string), [])
+    })), [])
+    cors = optional(object({
+      origin          = optional(list(string))
+      method          = optional(list(string))
+      response_header = optional(list(string))
+      max_age_seconds = optional(number)
+    }), {})
+    enable_logging = optional(bool, true)
+    enable_cdn     = optional(bool, false)
+    health_checks = optional(list(object({
+      path = optional(string, "/health")
+      port = optional(number)
+    })), [])
+    labels                      = optional(map(string), {})
+    port_name                   = optional(string)
+    protocol                    = optional(string, "HTTP")
+    security_policy             = optional(string, null)
+    timeout                     = optional(number)
+    type                        = optional(string, "service")
+    uniform_bucket_level_access = optional(bool, false)
+    versioning                  = optional(bool, false)
+  }))
 }
 
 variable "enable_http" {
@@ -64,11 +100,16 @@ variable "url_map" {
   default     = []
   description = "A map that describes how the URL map should be constructed."
   type = list(object({
-    hosts                         = list(string)
-    default_backend_service_index = number
-    path_rules = list(object({
-      paths                 = list(string)
-      backend_service_index = number
+    default_url_redirect = optional(object({
+      host_redirect          = string
+      redirect_response_code = optional(string, "MOVED_PERMANENTLY_DEFAULT")
+      strip_query            = optional(bool, false)
     }))
+    default_backend_service_index = optional(number, 0)
+    hosts                         = list(string)
+    path_rules = optional(list(object({
+      paths                 = list(string)
+      backend_service_index = optional(number, 0)
+    })), [])
   }))
 }

@@ -114,32 +114,29 @@ resource "google_compute_global_forwarding_rule" "https" {
 }
 
 # Create Backend Service(s)/Bucket(s).
-#
-# TODO: Use `null` instead of a literal value to utilize the submodule's default
-# parameters. See issue https://github.com/hashicorp/terraform/issues/24142
 module "backend_service" {
   for_each = zipmap(range(length(var.backend_services)), var.backend_services)
   source   = "../backend_service"
 
-  backends                    = lookup(each.value, "backends", [])
-  cors                        = lookup(each.value, "cors", {})
-  default_acl                 = lookup(each.value, "default_acl", "publicread")
-  enable_cdn                  = lookup(each.value, "enable_cdn", false)
-  enable_logging              = lookup(each.value, "enable_logging", true)
-  health_checks               = lookup(each.value, "health_checks", [])
-  labels                      = lookup(each.value, "labels", {})
-  location                    = lookup(each.value, "location", "US")
+  acl                         = each.value.acl
+  backends                    = each.value.backends
+  cors                        = each.value.cors
+  enable_cdn                  = each.value.enable_cdn
+  enable_logging              = each.value.enable_logging
+  health_checks               = each.value.health_checks
+  labels                      = each.value.labels
+  location                    = each.value.location
   name                        = "${var.name}-backend-service${each.key}"
   network                     = var.network
-  port_name                   = lookup(each.value, "port_name", null)
+  port_name                   = each.value.port_name
   project_id                  = var.project_id
-  protocol                    = lookup(each.value, "protocol", "HTTP")
+  protocol                    = each.value.protocol
   regional                    = false
-  security_policy             = lookup(each.value, "security_policy", null)
-  timeout                     = lookup(each.value, "timeout", null)
-  type                        = lookup(each.value, "type", "service")
-  uniform_bucket_level_access = lookup(each.value, "uniform_bucket_level_access", false)
-  versioning                  = lookup(each.value, "versioning", false)
+  security_policy             = each.value.security_policy
+  timeout                     = each.value.timeout
+  type                        = each.value.type
+  uniform_bucket_level_access = each.value.uniform_bucket_level_access
+  versioning                  = each.value.versioning
 }
 
 # Create a HTTP URL map for HTTP-to-HTTPS redirection only, if needed.
@@ -178,24 +175,24 @@ resource "google_compute_url_map" "default" {
 
     content {
       name            = "path-matcher${path_matcher.key}"
-      default_service = lookup(path_matcher.value, "default_url_redirect", null) == null ? lookup(module.backend_service[lookup(path_matcher.value, "default_backend_service_index", 0)], "self_link") : null
+      default_service = path_matcher.value.default_url_redirect == null ? lookup(module.backend_service[path_matcher.value.default_backend_service_index], "self_link") : null
 
       dynamic "default_url_redirect" {
-        for_each = lookup(path_matcher.value, "default_url_redirect", null) == null ? [] : [path_matcher.value.default_url_redirect]
+        for_each = path_matcher.value.default_url_redirect == null ? [] : [path_matcher.value.default_url_redirect]
 
         content {
           host_redirect          = default_url_redirect.value.host_redirect
-          redirect_response_code = lookup(default_url_redirect.value, "redirect_response_code", "MOVED_PERMANENTLY_DEFAULT")
-          strip_query            = lookup(default_url_redirect.value, "strip_query", false)
+          redirect_response_code = default_url_redirect.value.redirect_response_code
+          strip_query            = default_url_redirect.value.strip_query
         }
       }
 
       dynamic "path_rule" {
-        for_each = lookup(path_matcher.value, "path_rules", [])
+        for_each = path_matcher.value.path_rules
 
         content {
-          service = lookup(module.backend_service[lookup(path_rule.value, "backend_service_index", 0)], "self_link")
           paths   = path_rule.value.paths
+          service = lookup(module.backend_service[path_rule.value.backend_service_index], "self_link")
         }
       }
     }
