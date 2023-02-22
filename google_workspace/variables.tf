@@ -1,7 +1,7 @@
-variable "custom_urls_setup" {
-  default     = false
-  description = "Specifies if custom URLs should be set up for Google Workspace email (mail.example.com), Google Workspace calendar (calendar.example.com), and Google Drive (drive.example.com)."
-  type        = bool
+variable "custom_urls" {
+  default     = []
+  description = "Specifies custom subdomain names to set up for Google Workspace custom URLs (i.e. 'mail' as in mail.example.com, 'calendar' as in calendar.example.com, 'drive' as in drive.example.com)."
+  type        = list(string)
 }
 
 variable "dns_managed_zone" {
