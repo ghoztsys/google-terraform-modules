@@ -21,6 +21,12 @@ resource "google_cloud_run_service" "default" {
     spec {
       service_account_name = var.service_account
 
+      metadata {
+        annotations = var.always_allocate_cpu ? {
+          "run.googleapis.com/cpu-throttling" = false
+        } : {}
+      }
+
       containers {
         image = var.container.image
 
