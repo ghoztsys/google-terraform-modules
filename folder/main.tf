@@ -1,5 +1,5 @@
 locals {
-  policies_map = flatten([
+  policies_map = distinct(flatten([
     for policy in var.iam_policies : [
       for role in policy.roles : [
         for member in policy.members : {
@@ -8,7 +8,7 @@ locals {
         }
       ]
     ]
-  ])
+  ]))
 }
 
 resource "google_folder" "default" {

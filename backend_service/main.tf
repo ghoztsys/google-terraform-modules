@@ -144,7 +144,7 @@ resource "google_compute_firewall" "default" {
     "35.191.0.0/16",
     "130.211.0.0/22",
   ]
-  target_tags = flatten([for backend in var.backends : backend.target_tags])
+  target_tags = distinct(flatten([for backend in var.backends : backend.target_tags]))
 
   allow {
     protocol = "tcp"
