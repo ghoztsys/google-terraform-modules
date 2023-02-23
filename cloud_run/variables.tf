@@ -1,7 +1,7 @@
 variable "always_allocate_cpu" {
   default     = false
   description = "Specifies if CPU should be always allocated to the Cloud Run service."
-  type        = boolean
+  type        = bool
 }
 
 variable "container" {
