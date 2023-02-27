@@ -29,6 +29,14 @@ resource "google_container_cluster" "default" {
       disabled = true
     }
   }
+
+  dynamic "workload_identity_config" {
+    for_each = toset(var.enable_workload_identity ? [true] : [])
+
+    content {
+      workload_pool = "${var.project}.svc.id.goog"
+    }
+  }
 }
 
 # Create separately managed node pool for the cluster. This allows node pools to

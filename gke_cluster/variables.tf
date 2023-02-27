@@ -17,6 +17,12 @@ variable "disk_type" {
   type        = string
 }
 
+variable "enable_workload_identity" {
+  default     = false
+  description = "Specifies if Workload Identity should be enabled for the cluster."
+  type        = bool
+}
+
 variable "labels" {
   description = "Labels (key/value pair) to be added to each node. The value of each label will also be added as tags."
   type        = map(string)
