@@ -53,6 +53,14 @@ resource "google_container_node_pool" "default" {
     oauth_scopes    = var.service_scopes
     service_account = var.service_account
     tags            = concat(var.tags, [local.name], values(var.labels))
+
+    dynamic "workload_metadata_config" {
+      for_each = toset(var.enable_workload_identity ? [true] : [])
+
+      content {
+        mode = "GKE_METADATA"
+      }
+    }
   }
 }
 
