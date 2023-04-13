@@ -6,7 +6,7 @@ This module creates a Backend Service/Bucket, depending on the specified `type` 
 
 ```ruby
 module "backend_service" {
-  source = "git::git@github.com:0xGHOZT/terraform-modules//backend_service?ref=<release_tag>"
+  source = "git::git@github.com:ghoztsys/terraform-modules//backend_service?ref=<release_tag>"
 
   backends = [{
     port = 8080
@@ -24,7 +24,7 @@ module "backend_service" {
 }
 
 module "backend_bucket" {
-  source = "git::git@github.com:0xGHOZT/terraform-modules//backend_service?ref=v0.52.0"
+  source = "git::git@github.com:ghoztsys/terraform-modules//backend_service?ref=v0.52.0"
 
   enable_cdn = true
   location = "US"

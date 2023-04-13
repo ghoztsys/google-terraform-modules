@@ -6,7 +6,7 @@ This module creates a regional [external Google Cloud HTTP(S) load balancer](htt
 
 ```ruby
 module "lb" {
-  source = "git::git@github.com:0xGHOZT/terraform-modules//http_lb_regional?ref=v0.28.0"
+  source = "git::git@github.com:ghoztsys/terraform-modules//http_lb_regional?ref=v0.28.0"
 
   name = "lb"
   region = "us-central1"

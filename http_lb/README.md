@@ -6,7 +6,7 @@ This module creates a global [external Google Cloud HTTP(S) load balancer](https
 
 ```ruby
 module "lb" {
-  source = "git::git@github.com:0xGHOZT/terraform-modules//http_lb?ref=<release_tag>"
+  source = "git::git@github.com:ghoztsys/terraform-modules//http_lb?ref=<release_tag>"
 
   name = "lb"
   ssl_domains = ["www.example.com"]
@@ -49,7 +49,7 @@ module "lb" {
 4. `google_compute_ssl_certificate.https`: A [self-managed SSL certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates) resource is created if a certificate and private key are specified.
 5. `google_compute_managed_ssl_certificate.https`: A [Google-managed SSL certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates#managed-certs) is created for each domain in `ssl_domains`.
 6. `google_compute_url_map.default`: A [URL map](https://cloud.google.com/load-balancing/docs/https/url-map) is automatically generated to direct traffic to the specified backend services and/or backend buckets. A custom one can also be provided.
-7. `module.backend_service.*`: A set of backend services are created based on the provided parameters (see [`backend_service`](https://github.com/0xGHOZT/terraform-modules/tree/master/backend_service) module).
+7. `module.backend_service.*`: A set of backend services are created based on the provided parameters (see [`backend_service`](https://github.com/ghoztsys/terraform-modules/tree/master/backend_service) module).
 
 ## References
 

@@ -8,8 +8,8 @@ Because often times a service has multiple environments and we want to be able t
 
 ```hcl
 module "gke_cluster" {
-  source = "git::https://github.com/0xGHOZT/terraform-modules//gke_cluster?ref=<release_tag>"
-  # source = "git::git.com:0xGHOZT/terraform-modules//gke_cluster?ref=<release_tag>" # If using SSH to checkout private repos
+  source = "git::https://github.com/ghoztsys/terraform-modules//gke_cluster?ref=<release_tag>"
+  # source = "git::git.com:ghoztsys/terraform-modules//gke_cluster?ref=<release_tag>" # If using SSH to checkout private repos
 }
 ```
 
@@ -35,7 +35,7 @@ This is a private repository, so checking out these modules from an external rep
         GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
       run: |
         git config --local --remove-section http."https://github.com/"
-        git config --global url."https://username:${GH_ACCESS_TOKEN}@github.com/0xGHOZT".insteadOf "https://github.com/0xGHOZT"
+        git config --global url."https://username:${GH_ACCESS_TOKEN}@github.com/ghoztsys".insteadOf "https://github.com/ghoztsys"
     ```
 
 ## Creating a New Module
