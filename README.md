@@ -61,7 +61,3 @@ $ git push --tags
 ## Documentation
 
 Check out the `README`'s of the individual modules to learn more.
-
----
-
-© GHOZT
