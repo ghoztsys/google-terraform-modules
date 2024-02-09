@@ -8,12 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.github_token }}
           script: |
             const tag = process.env.GITHUB_REF.split('/').slice(-1)[0]
-            const major_version="$(cut -d '.' -f 1 <<< "$tag")"
             try {
               await github.rest.repos.createRelease({
                 draft: false,
@@ -28,17 +27,14 @@ jobs:
             catch (error) {
               core.setFailed(error.message)
             }
-            git tag -fa ${major_version} -m "Map ${major_version} to ${tag}"
-            git push origin ${major_version} --force
   notify:
     needs: [release]
     name: Notify
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: andrewscwei/telegram-action@v1
+      - uses: andrewscwei/telegram-action@v1.0.0
         with:
           success: ${{ needs.release.result == 'success' }}
-          cancelled: ${{ needs.release.result == 'cancelled' }}
           bot-token: ${{ secrets.TELEGRAM_DEVOPS_BOT_TOKEN }}
           chat-id: ${{ secrets.TELEGRAM_DEVOPS_CHAT_ID }}
