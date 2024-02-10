@@ -13,6 +13,8 @@ jobs:
           github-token: ${{ secrets.github_token }}
           script: |
             const tag = process.env.GITHUB_REF.split('/').slice(-1)[0]
+            const [semVer, prefix, major, minor, patch, prerelease, buildmetadata] = tag.match(/^(v?)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/) ?? []
+
             try {
               await github.rest.repos.createRelease({
                 draft: false,
@@ -27,6 +29,11 @@ jobs:
             catch (error) {
               core.setFailed(error.message)
             }
+      - name: Update major version
+        run: |
+          MAJOR_VERSION="$(cut -d '.' -f 1 <<< "$GITHUB_REF_NAME")"
+          git tag -fa ${MAJOR_VERSION} -m "Map ${MAJOR_VERSION} to ${GITHUB_REF_NAME}"
+          git push origin ${MAJOR_VERSION} --force
   notify:
     needs: [release]
     name: Notify
