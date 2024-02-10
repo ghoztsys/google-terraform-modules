@@ -1,4 +1,4 @@
-# Terraform Modules for Google Cloud Platform
+# Terraform Modules for Google Cloud Platform [![CD](https://github.com/ghoztsys/google-terraform-modules/workflows/CD/badge.svg)](https://github.com/ghoztsys/google-terraform-modules/actions/workflows/cd.yml)
 
 Terraform modules package cloud resources together to make up an enclosed, reusable system. This repo contains modules used at GHOZT targeting Google Cloud Platform.
 
