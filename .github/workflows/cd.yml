@@ -30,10 +30,13 @@ jobs:
         run: |
           output=$(npx semantic-release)
 
+          echo $output
+
           if [[ "$output" == *"There are no relevant changes, so no new version is released."* ]]; then
             echo "Skipped release due to no relevant changes since last release" >> $GITHUB_STEP_SUMMARY
           else
             version=$(echo "$output" | grep "The new version is" | awk '{print $NF}')
+            echo $version
             major_version="$(cut -d '.' -f 1 <<< "${version}")"
             git config user.name "${GIT_USER}"
             git config user.email "${GIT_EMAIL}"
