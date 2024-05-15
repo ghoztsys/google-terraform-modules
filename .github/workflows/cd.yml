@@ -1,43 +1,41 @@
 name: CD
 on:
   push:
-    tags: ["v*"]
+    branches: [master]
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
     steps:
+      - name: Authenticate bot
+        id: auth
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.DEVOPS_BOT_APP_ID }}
+          private_key: ${{ secrets.DEVOPS_BOT_PRIVATE_KEY }}
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Create release
-        uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.github_token }}
-          script: |
-            const tag = process.env.GITHUB_REF.split('/').slice(-1)[0]
-            const [semVer, prefix, major, minor, patch, prerelease, buildmetadata] = tag.match(/^(v?)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/) ?? []
-
-            try {
-              await github.rest.repos.createRelease({
-                draft: false,
-                generate_release_notes: true,
-                name: tag,
-                owner: context.repo.owner,
-                prerelease: false,
-                repo: context.repo.repo,
-                tag_name: tag,
-              })
-            }
-            catch (error) {
-              core.setFailed(error.message)
-            }
-      - name: Update major version
+          token: ${{ steps.auth.outputs.token }}
+      - name: Create release
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ steps.auth.outputs.token }}
         run: |
-          MAJOR_VERSION="$(cut -d '.' -f 1 <<< "$GITHUB_REF_NAME")"
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git tag -fa ${MAJOR_VERSION} -m "Map ${MAJOR_VERSION} to ${GITHUB_REF_NAME}"
-          git push origin ${MAJOR_VERSION} --force
+          output=$(npx semantic-release)
+
+          if [[ "$output" == *"There are no relevant changes, so no new version is released."* ]]; then
+            echo "Skipped release due to no relevant changes since last release" >> $GITHUB_STEP_SUMMARY
+          else
+            version=$(echo "$output" | grep "The new version is" | awk '{print $NF}')
+            major_version="$(cut -d '.' -f 1 <<< "${version}")"
+            git config user.name "${{ vars.DEVOPS_BOT_GIT_USER }}"
+            git config user.email "${{ vars.DEVOPS_BOT_GIT_EMAIL }}"
+            git tag -fa ${major_version} -m "Map `${major_version}` to `${version}`"
+            git push origin ${major_version} --force
+
+            echo "Successfully released `${version}`" >> $GITHUB_STEP_SUMMARY
+          fi
   notify:
     needs: [release]
     name: Notify
