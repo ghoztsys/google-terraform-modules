@@ -1,0 +1,41 @@
+name: Major Release
+on:
+  release:
+    types: [published]
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Authenticate bot
+        id: auth
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.DEVOPS_BOT_APP_ID }}
+          private_key: ${{ secrets.DEVOPS_BOT_PRIVATE_KEY }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.auth.outputs.token }}
+      - name: Release major version
+        env:
+          GITHUB_USER: ${{ secrets.DEVOPS_BOT_GIT_USER }}
+          GITHUB_EMAIL: ${{ secrets.DEVOPS_BOT_GIT_EMAIL }}
+        run: |
+          MAJOR_VERSION="$(cut -d '.' -f 1 <<< "$GITHUB_REF_NAME")"
+          git config user.name "${GITHUB_USER}"
+          git config user.email "${GITHUB_EMAIL}"
+          git tag -fa ${MAJOR_VERSION} -m "Map ${MAJOR_VERSION} to ${GITHUB_REF_NAME}"
+          git push origin ${MAJOR_VERSION} --force
+  notify:
+    needs: [release]
+    name: Notify
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: andrewscwei/telegram-action@v1
+        with:
+          success: ${{ needs.release.result == 'success' }}
+          cancelled: ${{ needs.release.result == 'cancelled' }}
+          bot-token: ${{ secrets.TELEGRAM_DEVOPS_BOT_TOKEN }}
+          chat-id: ${{ secrets.TELEGRAM_DEVOPS_CHAT_ID }}

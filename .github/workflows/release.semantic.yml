@@ -1,0 +1,37 @@
+name: Semantic Release
+on:
+  push:
+    branches: [master]
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Authenticate bot
+        id: auth
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.DEVOPS_BOT_APP_ID }}
+          private_key: ${{ secrets.DEVOPS_BOT_PRIVATE_KEY }}
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+      - name: Release semantic version
+        env:
+          GITHUB_TOKEN: ${{ steps.auth.outputs.token }}
+        run: npx semantic-release
+  notify:
+    needs: [release]
+    name: Notify
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: andrewscwei/telegram-action@v1
+        with:
+          success: ${{ needs.release.result == 'success' }}
+          cancelled: ${{ needs.release.result == 'cancelled' }}
+          bot-token: ${{ secrets.TELEGRAM_DEVOPS_BOT_TOKEN }}
+          chat-id: ${{ secrets.TELEGRAM_DEVOPS_CHAT_ID }}
