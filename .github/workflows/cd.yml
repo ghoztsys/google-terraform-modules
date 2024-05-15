@@ -24,6 +24,8 @@ jobs:
       - name: Create release
         id: release
         env:
+          GITHUB_USER: ${{ secrets.DEVOPS_BOT_GIT_USER }}
+          GITHUB_EMAIL: ${{ secrets.DEVOPS_BOT_GIT_EMAIL }}
           GITHUB_TOKEN: ${{ steps.auth.outputs.token }}
         run: |
           output=$(npx semantic-release)
@@ -33,8 +35,8 @@ jobs:
           else
             version=$(echo "$output" | grep "The new version is" | awk '{print $NF}')
             major_version="$(cut -d '.' -f 1 <<< "${version}")"
-            git config user.name "${{ vars.DEVOPS_BOT_GIT_USER }}"
-            git config user.email "${{ vars.DEVOPS_BOT_GIT_EMAIL }}"
+            git config user.name "${GIT_USER}"
+            git config user.email "${GIT_EMAIL}"
             git tag -fa ${major_version} -m "Map `${major_version}` to `${version}`"
             git push origin ${major_version} --force
 
