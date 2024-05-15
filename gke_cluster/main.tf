@@ -17,6 +17,7 @@ resource "random_id" "default" {
 # Create the Kubernetes cluster but immediately delete the default node pool.
 resource "google_container_cluster" "default" {
   cluster_ipv4_cidr        = var.cluster_ipv4_cidr
+  deletion_protection      = false
   initial_node_count       = 1
   location                 = var.region_zone
   name                     = local.name
