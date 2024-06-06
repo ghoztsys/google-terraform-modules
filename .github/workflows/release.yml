@@ -1,4 +1,4 @@
-name: Semantic Release
+name: Release
 on:
   push:
     branches: [master]
@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Authenticate bot
         id: auth
-        uses: tibdex/github-app-token@v2
+        uses: getsentry/action-github-app-token@v3
         with:
           app_id: ${{ secrets.DEVOPS_BOT_APP_ID }}
           private_key: ${{ secrets.DEVOPS_BOT_PRIVATE_KEY }}
@@ -23,6 +23,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.auth.outputs.token }}
         run: npx semantic-release
+      - name: Release major version
+        env:
+          GITHUB_USER: ${{ secrets.DEVOPS_BOT_GIT_USER }}
+          GITHUB_EMAIL: ${{ secrets.DEVOPS_BOT_GIT_EMAIL }}
+        run: |
+          VERSION="$(git tag --points-at ${{ github.sha }})"
+
+          if [ -z $VERSION ]; then
+            echo "No major version to publish" >> $GITHUB_STEP_SUMMARY
+          else
+            MAJOR_VERSION="$(cut -d '.' -f 1 <<< "$VERSION")"
+
+            git config user.name "${GITHUB_USER}"
+            git config user.email "${GITHUB_EMAIL}"
+            git tag -fa ${MAJOR_VERSION} -m "Map ${MAJOR_VERSION} to ${VERSION}"
+            git push origin ${MAJOR_VERSION} --force
+
+            echo "Successfully published semantic version \`$VERSION\` and major version \`$MAJOR_VERSION\`" >> $GITHUB_STEP_SUMMARY
+          fi
   notify:
     needs: [release]
     name: Notify
