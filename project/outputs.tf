@@ -10,9 +10,5 @@ output "id" {
 
 output "service_account" {
   description = "Terraform-managed service account."
-  value = {
-    email         = google_service_account.default.email
-    member        = google_service_account.default.member
-    impersonators = google_service_account_iam_binding.default.members
-  }
+  value       = module.service_account
 }

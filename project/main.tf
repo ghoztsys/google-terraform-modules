@@ -36,14 +36,6 @@ resource "google_project_default_service_accounts" "default" {
   project = google_project.default.project_id
 }
 
-# Create Terraform-managed service account.
-resource "google_service_account" "default" {
-  account_id   = var.service_account_id
-  description  = var.service_account_description
-  display_name = var.service_account_name
-  project      = google_project.default.project_id
-}
-
 # Bind general IAM policies to project.
 module "iam_project" {
   source = "../iam_project"
@@ -52,18 +44,13 @@ module "iam_project" {
   project  = google_project.default.project_id
 }
 
-# Bind IAM policies for Terraform-managed service account to project.
-resource "google_project_iam_member" "default" {
-  for_each = toset(var.service_account_roles)
+module "service_account" {
+  source = "../service_account"
 
-  member  = google_service_account.default.member
-  project = google_project.default.project_id
-  role    = each.value
-}
-
-# Bind IAM policies to service accounts to whitelist impersonators.
-resource "google_service_account_iam_binding" "default" {
-  members            = var.service_account_impersonators
-  role               = "roles/iam.serviceAccountTokenCreator"
-  service_account_id = google_service_account.default.name
+  description   = var.service_account.description
+  id            = var.service_account.id
+  impersonators = var.service_account.impersonators
+  name          = var.service_account.name
+  project       = google_project.default.project_id
+  roles         = var.service_account.roles
 }

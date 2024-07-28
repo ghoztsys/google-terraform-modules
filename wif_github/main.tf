@@ -24,7 +24,6 @@ resource "google_iam_workload_identity_pool_provider" "default" {
   }
 }
 
-# Create service account for WIF impersonation.
 resource "google_service_account" "default" {
   account_id   = var.service_account_id
   description  = var.service_account_description

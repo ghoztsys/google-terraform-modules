@@ -53,39 +53,15 @@ variable "parent" {
   }
 }
 
-variable "service_account_description" {
-  default     = null
-  description = "The description of the service account."
-  type        = string
-}
-
-variable "service_account_id" {
-  default     = "terraform"
-  description = "The account ID of the Terraform-managed service account (the username of the email address, i.e. <account_id>@<project_id>.iam.gserviceaccount.com)."
-  type        = string
-
-  validation {
-    condition     = can(regex("[a-z][a-z-]*", var.service_account_id))
-    error_message = "Invalid characters detected for `sa_id`."
-  }
-}
-
-variable "service_account_impersonators" {
-  default     = []
-  description = "Whitelist of IAM members who can impersonate each service account."
-  type        = list(string)
-}
-
-variable "service_account_name" {
-  default     = "Project-specific Terraform-managed service account"
-  description = "Display name of service account(s)."
-  type        = string
-}
-
-variable "service_account_roles" {
-  default     = []
-  description = "IAM roles to assign to each service account at the project level."
-  type        = list(string)
+variable "service_account" {
+  description = "Terraform-managed service account specific to this project."
+  type = object({
+    name          = optional(string, "Project-specific Terraform-managed service account")
+    id            = optional(string, "terraform")
+    description   = optional(string)
+    roles         = optional(list(string), [])
+    impersonators = optional(list(string), [])
+  })
 }
 
 variable "use_hex_suffix" {
