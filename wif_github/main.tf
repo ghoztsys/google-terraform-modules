@@ -1,7 +1,16 @@
+# Generate random 6-character string to append to the WIF ID.
+resource "random_id" "default" {
+  byte_length = 3
+
+  keepers = {
+    id = var.wif_id
+  }
+}
+
 # Create Workload Identity Pool.
 resource "google_iam_workload_identity_pool" "default" {
   project                   = var.project
-  workload_identity_pool_id = var.wif_id
+  workload_identity_pool_id = "${var.wif_id}-${random_id.default[0].hex}"
 }
 
 # Add GitHub OIDC provider to Workload Identity Pool.
