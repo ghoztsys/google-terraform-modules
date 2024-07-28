@@ -50,9 +50,22 @@ resource "google_dns_record_set" "txt" {
 
 # Set up TXT record for DMARC
 resource "google_dns_record_set" "dmarc" {
+  count = var.dmarc_setup ? 1 : 0
+
   managed_zone = var.dns_managed_zone.name
   name         = "_dmarc.${var.dns_managed_zone.dns_name}"
   rrdatas      = ["\"v=DMARC1;\" \"p=reject;\" \"rua=mailto:dmarc-reports@${var.dns_managed_zone.dns_name}\""]
+  ttl          = 3600
+  type         = "TXT"
+}
+
+# Set up TXT record for DKIM
+resource "google_dns_record_set" "dkim" {
+  count = var.dkim_setup != "" ? 1 : 0
+
+  managed_zone = var.dns_managed_zone.name
+  name         = "google._domainkey.${var.dns_managed_zone.dns_name}"
+  rrdatas      = [var.dkim_setup]
   ttl          = 3600
   type         = "TXT"
 }
