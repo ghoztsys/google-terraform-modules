@@ -10,7 +10,7 @@ resource "random_id" "default" {
 # Create Workload Identity Pool.
 resource "google_iam_workload_identity_pool" "default" {
   project                   = var.project
-  workload_identity_pool_id = "${var.wif_id}-${random_id.default[0].hex}"
+  workload_identity_pool_id = "${var.wif_id}-${random_id.default.hex}"
 }
 
 # Add GitHub OIDC provider to Workload Identity Pool.
