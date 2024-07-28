@@ -8,7 +8,7 @@ output "member" {
   value       = google_service_account.default.member
 }
 
-output "email" {
+output "impersonators" {
   description = "Impersonators of the service account."
   value       = google_service_account_iam_binding.default.members
 }
