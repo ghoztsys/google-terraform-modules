@@ -28,7 +28,7 @@ jobs:
           GITHUB_USER: ${{ secrets.DEVOPS_BOT_GIT_USER }}
           GITHUB_EMAIL: ${{ secrets.DEVOPS_BOT_GIT_EMAIL }}
         run: |
-          VERSION="$(git tag --points-at ${{ github.sha }})"
+          VERSION="$(git tag --points-at $(git rev-parse HEAD))"
 
           if [ -z $VERSION ]; then
             echo "No major version to publish" >> $GITHUB_STEP_SUMMARY
