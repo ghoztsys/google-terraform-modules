@@ -1,4 +1,5 @@
 variable "backend_services" {
+  default     = []
   description = "Configuration for each `backend_service` module."
   type = list(object({
     acl = optional(string, "publicread")
@@ -43,12 +44,6 @@ variable "enable_http" {
   default     = true
   description = "Set to `false` to disable HTTP forward to port 80."
   type        = bool
-}
-
-variable "host_redirect" {
-  default     = null
-  description = "Specifies the host to redirect to (by applying `default_url_redirect.host_redirect`), see https://cloud.google.com/load-balancing/docs/url-map-concepts#url-redirects."
-  type        = string
 }
 
 variable "https_redirect" {
@@ -102,13 +97,13 @@ variable "url_map" {
   default     = []
   description = "A map that describes how the URL map should be constructed."
   type = list(object({
+    default_backend_service_index = optional(number, 0)
     default_url_redirect = optional(object({
       host_redirect          = string
       redirect_response_code = optional(string, "MOVED_PERMANENTLY_DEFAULT")
       strip_query            = optional(bool, false)
     }))
-    default_backend_service_index = optional(number, 0)
-    hosts                         = list(string)
+    hosts = list(string)
     path_rules = optional(list(object({
       paths                 = list(string)
       backend_service_index = optional(number, 0)

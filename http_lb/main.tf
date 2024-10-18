@@ -88,7 +88,7 @@ resource "google_compute_managed_ssl_certificate" "https" {
 }
 
 # Create a HTTP URL map for HTTP-to-HTTPS redirection only, if needed.
-resource "google_compute_url_map" "redirect" {
+resource "google_compute_url_map" "http" {
   count = local.https_redirect ? 1 : 0
 
   name    = "${var.name}-url-map-redirect"
@@ -96,7 +96,6 @@ resource "google_compute_url_map" "redirect" {
 
   default_url_redirect {
     https_redirect         = true
-    host_redirect          = var.host_redirect
     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
     strip_query            = false
   }
@@ -110,7 +109,7 @@ resource "google_compute_target_http_proxy" "http" {
 
   name    = "${var.name}-http-proxy"
   project = var.project
-  url_map = local.https_redirect ? google_compute_url_map.redirect[0].self_link : google_compute_url_map.default.self_link
+  url_map = local.https_redirect ? google_compute_url_map.http[0].self_link : google_compute_url_map.https.self_link
 }
 
 # Create a global forwarding rule for HTTP routing using the Target HTTP Proxy
@@ -129,10 +128,21 @@ resource "google_compute_global_forwarding_rule" "http" {
 
 # Create a basic URL map for the load balancer if `create_url_map` is `true`.
 # This URL map routes all paths to the first Backend Service resource created.
-resource "google_compute_url_map" "default" {
-  default_service = module.backend_service[0].self_link
+resource "google_compute_url_map" "https" {
+  default_service = length(module.backend_service) > 0 ? module.backend_service[0].self_link : null
   name            = "${var.name}-url-map"
   project         = var.project
+
+  dynamic "default_url_redirect" {
+    for_each = length(module.backend_service) == 0 ? [var.url_map[0].default_url_redirect] : []
+
+    content {
+      host_redirect          = default_url_redirect.value.host_redirect
+      https_redirect         = var.https_redirect
+      redirect_response_code = default_url_redirect.value.redirect_response_code
+      strip_query            = default_url_redirect.value.strip_query
+    }
+  }
 
   dynamic "host_rule" {
     for_each = zipmap(range(length(var.url_map)), var.url_map)
@@ -148,7 +158,7 @@ resource "google_compute_url_map" "default" {
 
     content {
       name            = "path-matcher${path_matcher.key}"
-      default_service = path_matcher.value.default_url_redirect == null ? lookup(module.backend_service[path_matcher.value.default_backend_service_index], "self_link") : null
+      default_service = length(module.backend_service) > path_matcher.value.default_backend_service_index && path_matcher.value.default_url_redirect == null ? lookup(module.backend_service[path_matcher.value.default_backend_service_index], "self_link") : null
 
       dynamic "default_url_redirect" {
         for_each = path_matcher.value.default_url_redirect == null ? [] : [path_matcher.value.default_url_redirect]
@@ -165,7 +175,7 @@ resource "google_compute_url_map" "default" {
 
         content {
           paths   = path_rule.value.paths
-          service = lookup(module.backend_service[path_rule.value.backend_service_index], "self_link")
+          service = length(module.backend_service) > path_rule.value.backend_service_index ? lookup(module.backend_service[path_rule.value.backend_service_index], "self_link") : null
         }
       }
     }
@@ -182,7 +192,7 @@ resource "google_compute_target_https_proxy" "https" {
   name             = "${var.name}-https-proxy"
   project          = var.project
   ssl_certificates = compact(concat(google_compute_ssl_certificate.https[*].self_link, google_compute_managed_ssl_certificate.https[*].self_link))
-  url_map          = google_compute_url_map.default.self_link
+  url_map          = google_compute_url_map.https.self_link
 }
 
 # Create a global forwarding rule for HTTPS routing (if SSL certificates are
