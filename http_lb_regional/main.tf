@@ -163,7 +163,7 @@ resource "google_compute_url_map" "redirect" {
 # Create a basic URL map for the load balancer. This URL map routes all paths to
 # the first Backend Service resource created.
 resource "google_compute_url_map" "default" {
-  default_service = module.backend_service[0].self_link
+  default_service = length(module.backend_service) > 0 ? module.backend_service[0].self_link : null
   name            = "${var.name}-url-map"
   project         = var.project
 
@@ -181,7 +181,7 @@ resource "google_compute_url_map" "default" {
 
     content {
       name            = "path-matcher${path_matcher.key}"
-      default_service = path_matcher.value.default_url_redirect == null ? lookup(module.backend_service[path_matcher.value.default_backend_service_index], "self_link") : null
+      default_service = (length(module.backend_service) > 0 && path_matcher.value.default_url_redirect == null) ? lookup(module.backend_service[path_matcher.value.default_backend_service_index], "self_link") : null
 
       dynamic "default_url_redirect" {
         for_each = path_matcher.value.default_url_redirect == null ? [] : [path_matcher.value.default_url_redirect]
@@ -198,7 +198,7 @@ resource "google_compute_url_map" "default" {
 
         content {
           paths   = path_rule.value.paths
-          service = lookup(module.backend_service[path_rule.value.backend_service_index], "self_link")
+          service = length(module.backend_service) > 0 ? lookup(module.backend_service[path_rule.value.backend_service_index], "self_link") : null
         }
       }
     }
