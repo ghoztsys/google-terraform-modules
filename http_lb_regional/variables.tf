@@ -1,5 +1,4 @@
 variable "backend_services" {
-  default     = []
   description = "Configuration for each `backend_service` module."
   type = list(object({
     acl = optional(string, "publicread")
