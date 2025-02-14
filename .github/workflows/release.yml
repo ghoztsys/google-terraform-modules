@@ -7,12 +7,6 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - name: Authenticate bot
-        id: auth
-        uses: getsentry/action-github-app-token@v3
-        with:
-          app_id: ${{ secrets.DEVOPS_BOT_APP_ID }}
-          private_key: ${{ secrets.DEVOPS_BOT_PRIVATE_KEY }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up Node
@@ -21,12 +15,12 @@ jobs:
           node-version: 21
       - name: Release semantic version
         env:
-          GITHUB_TOKEN: ${{ steps.auth.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
       - name: Release major version
         env:
-          GITHUB_USER: ${{ secrets.DEVOPS_BOT_GIT_USER }}
-          GITHUB_EMAIL: ${{ secrets.DEVOPS_BOT_GIT_EMAIL }}
+          GITHUB_USER: ${{ vars.GH_ACTIONS_BOT_USER }}
+          GITHUB_EMAIL: ${{ vars.GH_ACTIONS_BOT_EMAIL }}
         run: |
           VERSION="$(git tag --points-at $(git rev-parse HEAD))"
 
@@ -52,5 +46,5 @@ jobs:
         with:
           success: ${{ needs.release.result == 'success' }}
           cancelled: ${{ needs.release.result == 'cancelled' }}
-          bot-token: ${{ secrets.TELEGRAM_DEVOPS_BOT_TOKEN }}
-          chat-id: ${{ secrets.TELEGRAM_DEVOPS_CHAT_ID }}
+          bot-token: ${{ secrets.TG_BOT_TOKEN }}
+          chat-id: ${{ secrets.TG_CHAT_ID }}
