@@ -46,5 +46,5 @@ jobs:
         with:
           success: ${{ needs.release.result == 'success' }}
           cancelled: ${{ needs.release.result == 'cancelled' }}
-          bot-token: ${{ secrets.TG_BOT_TOKEN }}
-          chat-id: ${{ secrets.TG_CHAT_ID }}
+          bot-token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat-id: ${{ vars.TELEGRAM_CHAT_ID }}
