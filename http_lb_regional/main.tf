@@ -133,7 +133,7 @@ resource "google_compute_forwarding_rule" "http" {
 # Create a basic URL map for the load balancer. This URL map routes all paths to
 # the first Backend Service resource created.
 resource "google_compute_url_map" "https" {
-  default_service = module.backend_service[0].self_link
+  default_service = length(module.backend_service) > 0 ? module.backend_service[0].self_link : null
   name            = "${var.name}-url-map"
   project         = var.project
 
