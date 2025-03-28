@@ -3,12 +3,6 @@ variable "bucket_location" {
   description = "GCS bucket location"
 }
 
-variable "default_acl" {
-  default     = "publicread"
-  description = "Default ACL of the GCS bucket."
-  type        = string
-}
-
 variable "ip_version" {
   default     = ""
   description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"
@@ -21,10 +15,6 @@ variable "name" {
 variable "project" {
   description = "ID of project to create resources in."
   type        = string
-}
-
-variable "region" {
-  description = "The region where the project resides."
 }
 
 variable "ssl_certificate" {

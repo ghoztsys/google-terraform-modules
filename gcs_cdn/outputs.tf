@@ -1,3 +1,8 @@
+output "name" {
+  description = "The bucket name."
+  value       = google_storage_bucket.default.name
+}
+
 output "backend_bucket" {
   description = "The backend bucket."
   value       = google_compute_backend_bucket.default.self_link

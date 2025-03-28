@@ -71,7 +71,7 @@ resource "google_compute_global_forwarding_rule" "https" {
   name       = "${var.name}-https"
   port_range = "443"
   project    = var.project
-  target     = google_compute_target_https_proxy.default.self_link
+  target     = google_compute_target_https_proxy.default[0].self_link
 
   depends_on = [
     google_compute_global_address.default
@@ -102,12 +102,6 @@ resource "google_storage_bucket" "default" {
   name                        = "${var.name}-bucket"
   project                     = var.project
   uniform_bucket_level_access = var.uniform_bucket_level_access
-}
-
-# Configure default ACL for the GCS bucket to be readable by everyone.
-resource "google_storage_bucket_acl" "default" {
-  bucket      = google_storage_bucket.default.name
-  default_acl = var.default_acl
 }
 
 # Create the backend bucket.
