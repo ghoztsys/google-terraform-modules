@@ -111,6 +111,15 @@ resource "google_compute_backend_bucket" "default" {
   name        = "${var.name}-backend-bucket"
   project     = var.project
 
+  cdn_policy {
+    cache_mode        = "CACHE_ALL_STATIC"
+    default_ttl       = 31536000
+    client_ttl        = 31536000
+    max_ttl           = 31536000
+    serve_while_stale = 86400
+    negative_caching = true
+  }
+
   depends_on = [
     google_storage_bucket.default,
   ]

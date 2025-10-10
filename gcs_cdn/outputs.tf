@@ -5,7 +5,7 @@ output "name" {
 
 output "backend_bucket" {
   description = "The backend bucket."
-  value       = google_compute_backend_bucket.default.self_link
+  value       = google_compute_backend_bucket.default.name
 }
 
 output "external_ip" {
@@ -16,4 +16,9 @@ output "external_ip" {
 output "ssl_domains" {
   description = "Domain names of Google-managed SSL certificates."
   value       = var.ssl_domains
+}
+
+output "url_map" {
+  description = "The URL map."
+  value       = google_compute_url_map.default.name
 }
