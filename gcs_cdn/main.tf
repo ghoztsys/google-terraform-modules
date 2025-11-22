@@ -102,6 +102,16 @@ resource "google_storage_bucket" "default" {
   name                        = "${var.name}-bucket"
   project                     = var.project
   uniform_bucket_level_access = var.uniform_bucket_level_access
+
+  dynamic "cors" {
+    for_each = var.cors == null ? [] : [var.cors]
+    content {
+      origin          = cors.value.origin
+      method          = cors.value.method
+      response_header = cors.value.response_header
+      max_age_seconds = cors.value.max_age_seconds
+    }
+  }
 }
 
 # Create the backend bucket.

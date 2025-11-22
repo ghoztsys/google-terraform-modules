@@ -3,6 +3,17 @@ variable "bucket_location" {
   description = "GCS bucket location"
 }
 
+variable "cors" {
+  default = null
+  description = "Optional CORS configuration for the GCS bucket"
+  type = object({
+    origin          = list(string)
+    method          = list(string)
+    response_header = list(string)
+    max_age_seconds = number
+  })
+}
+
 variable "ip_version" {
   default     = ""
   description = "IP version for the global address (IPv4 or v6), empty defaults to IPV4"
