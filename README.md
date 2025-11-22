@@ -26,12 +26,7 @@ Also provide a `README` file in the root of the module directory to describe wha
 
 ## Releasing a New Version of a Module
 
-Publish tagged releases so modules can be directly referenced by a specific version in production:
-
-```sh
-$ git tag v1.0.0
-$ git push --tags
-```
+Releases are managed by [`semantic-release`](https://github.com/semantic-release/semantic-release) where published releases are based on [commit messages](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md).
 
 ## Documentation
 
